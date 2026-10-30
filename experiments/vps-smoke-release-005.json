@@ -1,0 +1,33 @@
+{
+  "checks": {
+    "frontend": true,
+    "assets": true,
+    "secure_cookie": true,
+    "demo_import": true,
+    "version_signal": true,
+    "formal_rule": true,
+    "real_citation": true,
+    "original_download": true,
+    "diff": true,
+    "private_upload_search": true,
+    "scan_status": true,
+    "docx_parse": true,
+    "bad_format_rejected": true,
+    "csrf_rejected": true,
+    "isolation": true,
+    "deletion": true,
+    "cleanup": true
+  },
+  "passed": 17,
+  "total": 17,
+  "query_latency_ms": [
+    5.7402560487389565,
+    5.393201019614935,
+    5.610933993011713,
+    5.62849291600287,
+    5.132776917889714
+  ],
+  "median_query_ms": 5.610933993011713,
+  "service": "MemoryCurrent=67035136\nCPUUsageNSec=1905067000\nActiveState=active\n",
+  "limitation": "5 sequential real queries on tiny corpus; not a VPS load/capacity test"
+}

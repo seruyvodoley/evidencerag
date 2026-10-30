@@ -18,14 +18,16 @@ with httpx.Client(base_url='http://127.0.0.1:8077',timeout=20) as c:
     r=c.post('/api/demos/device/import');r.raise_for_status()
     docs=c.get('/api/documents').json();checks['demo_import']=len(docs)==2
     r=c.post('/api/search',json={'question':'Какая ёмкость аккумулятора?','family':'device'});r.raise_for_status();data=r.json()
-    checks['version_signal']=data['status']=='potential_conflict' and len(data['hits'])==2
+    checks['version_signal']=(data['status']=='versioned_difference' and len(data['hits'])==2
+        and bool(data.get('version_differences')) and not data.get('conflicts'))
     r=c.post('/api/search',json={'question':'Какая ёмкость аккумулятора?','family':'device','version':'2.0'});r.raise_for_status();data=r.json()
     checks['formal_rule']=data['status']=='confirmed_formal' and '3600' in data['answer']['text']
     hit=data['hits'][0];source=c.get('/api/documents/'+hit['document']).json()
     checks['real_citation']=any(h['id']==hit['id'] and h['text']==hit['text'] for h in source['chunks'])
     checks['original_download']=len(c.get('/api/documents/'+hit['document']+'/original').content)>100
     r=c.post('/api/compare',json={'left':docs[0]['id'],'right':docs[1]['id']});r.raise_for_status()
-    checks['diff']=bool(r.json()['changes']) and bool(r.json()['conflicts'])
+    checks['diff']=(bool(r.json()['changes']) and bool(r.json()['version_differences'])
+        and not r.json()['conflicts'])
     r=c.post('/api/documents',files={'file':('smoke.txt','Проверка сервера: сапфир721'.encode())});r.raise_for_status();private=r.json()
     r=c.post('/api/search',json={'question':'сапфир721'});r.raise_for_status();checks['private_upload_search']=bool(r.json()['hits'])
     b=io.BytesIO();w=PdfWriter();w.add_blank_page(width=100,height=100);w.write(b)

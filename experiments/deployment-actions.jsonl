@@ -1,2 +1,4 @@
 {"rollback_test": [{"release": "20261031-002", "rollback_healthy": true}, {"release": "20261031-003", "restored_healthy": true}]}
 {"proxy_reload": true, "backup_created": true, "original_routes_preserved": true, "current_release": "/opt/evidencerag/releases/20261031-003"}
+{"event": "release-20261031-005-installed", "source_commit": "8e3e704a68d9abc7f99c29927208d9c071366dad", "archive_sha256": "fe650b1a53802e61ead0af824bc5f5b955d62460e05c5f4efc02389463798562", "verified_files": 78, "health_algorithm": "lexical-controller-v2", "own_service_rollback_needed": false, "recorded_at_utc": "2026-10-30T19:00:40Z"}
+{"event": "post-release-validation", "vps_smoke_passed": 17, "vps_smoke_total": 17, "public_e2e_passed": 8, "public_e2e_total": 8, "infra_fingerprints_match_previous_snapshot": true, "caddy_changed": false, "vpn_xray_firewall_or_routes_changed": false, "recorded_at_utc": "2026-10-30T19:00:40Z"}

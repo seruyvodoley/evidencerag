@@ -4,17 +4,19 @@
 
 ## Реальная архитектура VPS
 
-Код: `/opt/evidencerag/releases/20261031-004`, symlink `/opt/evidencerag/current`. Системный пользователь/группа `evidencerag`, unit `/etc/systemd/system/evidencerag.service`, БД в `/var/lib/evidencerag/evidence.sqlite3`. Backend только `127.0.0.1:8077`, один worker, лимит CPU 60%, MemoryMax 640M. HTTPS обслуживает существующий Docker Caddy `ma-alice-https` с host networking. Новых контейнеров/сетей не создавали.
+Код: `/opt/evidencerag/releases/20261031-005`, symlink `/opt/evidencerag/current`. Системный пользователь/группа `evidencerag`, unit `/etc/systemd/system/evidencerag.service`, БД в `/var/lib/evidencerag/evidence.sqlite3`. Backend только `127.0.0.1:8077`, один worker, лимит CPU 60%, MemoryMax 640M. HTTPS обслуживает существующий Docker Caddy `ma-alice-https` с host networking. Новых контейнеров/сетей не создавали.
 
 Изменён только новый собственный systemd-unit и согласованное дополнение `/root/ma-voice-https/Caddyfile`. Приложение запускается после reboot через enabled unit; фактическую перезагрузку VPS не делали. Root/systemd и Docker Caddy владелец инфраструктуры сохраняет под своим управлением. Ключи в проект не копировались.
 
 В Ubuntu отсутствовал ensurepip. Системный Python/apt не менялись: бинарник uv 0.13.6 получен из PyPI wheel с проверкой SHA-256 и размещён только в release/.tools. В каждом релизе собственная `.venv`. У исходных файлов на внешнем Mac-диске были закрытые права; installer явно устанавливает чтение кода сервисным пользователем и запрещает запись группе/прочим.
 
+Release-005 собран из commit `8e3e704a68d9abc7f99c29927208d9c071366dad`. SHA-256 архива: `fe650b1a53802e61ead0af824bc5f5b955d62460e05c5f4efc02389463798562`; перед установкой сверены архив и все 78 файлов по manifest. Пакет передан по ранее подтверждённому private SSH path с `StrictHostKeyChecking=yes`. Установщик создал отдельный каталог релиза и virtualenv, затем переключил symlink и перезапустил только `evidencerag.service`. Схема БД не менялась. Первый health после переключения подтвердил `lexical-controller-v2`.
+
 ## Повторяемое обновление
 
 1. Локально `uv sync`, pytest, web check/build/E2E. Не переносить `var`, `.env`, `.git`, ключи, node_modules, тестовые документы пользователей и AppleDouble `._*`.
 2. Упаковать apps/api, apps/web/dist, datasets/demo, deploy в новый release; зафиксировать SHA-256 архива/файлов как в deploy/release-manifest.json. Передача по существующему SSH с StrictHostKeyChecking=yes.
-3. На сервере создать новый уникальный каталог `/opt/evidencerag/releases/<release>`. Существующие релизы не перезаписывать. Скопировать доверенный project-local uv либо использовать доступный Python venv. Выполнить `sh <release>/deploy/install-localhost.sh <release>`.
+3. На сервере создать новый уникальный каталог `/opt/evidencerag/releases/<release>`. Существующие релизы не перезаписывать. Скопировать проверенный uv из текущего собственного релиза в `.tools/uv` нового каталога либо использовать доступный Python venv. Выполнить `sh <release>/deploy/install-localhost.sh <release>`.
 4. Installer проверяет порт при первом запуске, создаёт отдельного пользователя, окружение, FTS5, права, переключает symlink, включает только evidencerag и проверяет localhost health. При неудаче возвращает предыдущий собственный release. Не трогает VPN, SSH, DNS и firewall.
 5. Выполнить scripts/vps_smoke.py на сервере; проверить сайт с внешнего клиента и сравнить scripts/infra_snapshot.py до/после.
 
@@ -28,7 +30,7 @@ Caddyfile bind-mounted отдельным файлом, поэтому при з
 
 ## Откат
 
-Фактически проверен откат приложения с 003 на 002 и возврат 003: оба health check успешны. Переключать symlink атомарно через временную ссылку, затем `systemctl restart evidencerag.service`; чужие службы не перезапускать. Схема БД между этими релизами одинакова; destructive migrations не было. Для будущей смены схемы нужна отдельная миграционная стратегия.
+Фактически проверен откат приложения с 003 на 002 и возврат 003: оба health check успешны. Для 004→005 установщик сохранил тот же rollback-механизм; после успешного health откат не требовался. Переключать symlink атомарно через временную ссылку, затем `systemctl restart evidencerag.service`; чужие службы не перезапускать. Схема БД не менялась; destructive migrations не было. Для будущей смены схемы нужна отдельная миграционная стратегия.
 
 Откат proxy: сначала убедиться, что после нас никто не изменил Caddyfile; сравнить с сохранённым candidate. Проверить исходный backup через caddy validate. Сохранить текущий файл, записать backup в действующий файл с сохранением inode и выполнить graceful reload. Это уберёт публичный маршрут EvidenceRAG, сохранив исходные службы. Фактического переключения proxy обратно ради теста не делали; проверен синтаксис исходного/нового файла, а реальный rollback-test выполнен на приложении.
 

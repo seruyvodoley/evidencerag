@@ -1,19 +1,17 @@
 # Проверки и результаты
 
-31.10.2026, Python 3.12 / Node 20.20.2 / установленный Google Chrome.
+31.10.2026. Release `20261031-005`, macOS 27 / Python 3.12 / Node 24 / Google Chrome. Браузерные тесты проверяют пользовательские сценарии и мобильную раскладку; они не являются аудитом доступности или нагрузочной оценкой.
 
-- `pytest -q`: 32 теста успешно. Покрыты PDF-страницы, scan-status, DOCX-заголовки/таблицы, Markdown origin, плохие/бинарные файлы, ZIP-bomb, парсер timeout, реальные upload/search, версия/дата, формальное правило, недостаток сведений, scope isolation на read/download/delete/compare/search, каскадное удаление FTS, истечение TTL, CSRF, body/query/document/rate limits, inert prompt injection, поддельные цитаты, отключённая LLM и воспроизводимость offline-метрик. Лог experiments/pytest-final.txt.
-- Svelte/TypeScript `npm run check`: 0 errors, 0 warnings. `npm run build`: успешно, раздаётся production bundle.
-- Локальные Playwright E2E: 8/8 успешно. Затем те же сценарии против https://osnovanie.duckdns.org: 8/8 успешно. Настольный Chrome и mobile emulation iPhone 13 на Chromium; это не тест реального Safari/iOS.
-- E2E проверяют demo→поиск→различия→редакция→правило→источник→diff, реальный upload→поиск→delete→empty, отказ без данных. Проверка ширин 320/390/768/1280 не выявила overflow. Результаты последнего публичного запуска — experiments/e2e-results.json.
-- CUA: визуальный просмотр desktop/mobile, переход к точному источнику, публичный поиск. Снимки docs/screenshots. Проверены label/focus/семантические controls и reduced-motion по frontend-design/web-design-guidelines; это ручной review, не сертификат WCAG и не отдельный axe-аудит.
-- VPS smoke: 17/17 успешно; см. experiments/vps-smoke-final.json. Проверены реальные загрузки TXT/DOCX/scan PDF, источники, оригинал, diff, isolation/delete/CSRF, frontend/assets.
-- Внешний HTTPS: сертификат проверен стандартным клиентом, / и /api/health HTTP 200, health JSON корректен. Нельзя считать пустой HTTP 200 успешной публикацией: такой дефект listener обнаружен и исправлен до итоговой проверки.
-- Откат приложения 003→002→003: оба health check успешны. Общий Caddy не рестартовали; его reload и синтаксис проверены. Фактический reboot и Docker build не выполнялись.
-- Offline: 63 synthetic cases в полном наборе, test 21 × 8 стратегий. Два запуска в автоматическом тесте сравнивают все summary-метрики кроме latency; одинаковые результаты. Финальный run-003 фиксирует source hashes. Численные сравнения не подтверждают научное преимущество.
-- Локальный короткий load: 40/40 валидных HTTP-поисков при concurrency=4. Это не оценка вместимости VPS.
-- pip-audit: известных находок нет; npm production audit 0, полный npm audit 3 low в dev dependencies. Есть предупреждение Starlette о будущем переходе TestClient с httpx на httpx2, текущие тесты проходят.
+- `.venv/bin/pytest -q`: **39 passed**, одно предупреждение Starlette о будущем переходе TestClient с `httpx` на `httpx2`.
+- `.venv/bin/python -m py_compile apps/api/evidencerag/retrieval.py apps/api/evidencerag/store.py apps/api/evidencerag/main.py packages/research/runner.py`: успешно.
+- `npm run check`: 0 ошибок, 0 предупреждений. `npm run build`: успешно; JS 76.20 KB (27.52 KB gzip), CSS 20.26 KB (4.84 KB gzip).
+- Playwright против `https://osnovanie.duckdns.org`: **8/8 всего**, по 4 сценария в desktop и mobile emulation; JSON-журнал — `experiments/e2e-release-005.json`. Проверены прямые URL, назад/вперёд, новая вкладка, upload/delete, источники, сравнение редакций и отсутствие overflow на 320/390/768/1280 px.
+- Серверный smoke на release-005: **17/17**, журнал — `experiments/vps-smoke-release-005.json`. Проверены frontend/assets, TLS cookie, демо, change signal, формальное правило, цитата/оригинал, diff, upload/search/delete, PDF/DOCX, формат/CSRF, изоляция и cleanup. Медиана 5 последовательных запросов на малом наборе — 5.61 ms; это не оценка ёмкости VPS.
+- Внешний `/api/health`: HTTP 200; `algorithm=lexical-controller-v2`, `llm_public=false`, `semantic_sufficiency_judge=false`.
+- Визуально осмотрены публичная главная и локальная страница метода с текущей сборкой. Палитра архива, типографика, сетка и существующая навигация сохранены.
+- Снимок `experiments/infra-after-release-005.json`: контролируемые VPN/Xray unit-состояния и InvocationID, интерфейсы, route/rule/firewall и Docker-network hashes совпали с `experiments/infra-after-publication.json`. Из этого не следует end-to-end проверка всех VPN-клиентов. Существующий Caddy оставлен активным, его конфигурацию и контейнер не меняли.
+- Offline pilot run-004: 21 synthetic test-query × 8 конфигураций; подробные метрики и ограничения в `experiments/run-004/REPORT.md`. Answer quality, semantic sufficiency, false abstention, unsupported answer, faithfulness и API cost — null. Сравнение не подтверждает научное преимущество.
 
-Не проверено: смысловая entailment/faithfulness, официальный S2G GPU baseline, OCR, encrypted-at-rest, массовая многопользовательская нагрузка, реальный мобильный Safari, клиентский трафик каждого VPN-профиля. Эти ограничения не закрываются количеством прошедших fixtures.
+Во время первого post-deploy smoke остались два устаревших утверждения, что редакционные изменения должны находиться в `conflicts`. Проверка зафиксировала корректное новое поведение (`version_differences` отдельно); сценарий `scripts/vps_smoke.py` обновлён, итоговый повтор прошёл 17/17. Same-edition disagreement остаётся отдельным проверяемым сценарием в unit/integration tests.
 
-Навигационные E2E дополнительно проверяют самостоятельные URL /documents, /compare, /method, обновление прямого адреса, Назад/Вперёд и открытие страницы в другом табе. API-тесты проверяют отдачу HTML по трём адресам. Значки браузера проверены HTTP-запросами с корректными MIME и непустым содержимым.
+Локальный Playwright E2E (8/8) выполнен до публикации; текущий release дополнительно проверен 8/8 на публичном HTTPS. Mobile — emulation Chromium, не Safari/iOS. Нет независимого semantic judge, faithfulness, OCR, массовой нагрузки или оценки пропускной способности VPS.
