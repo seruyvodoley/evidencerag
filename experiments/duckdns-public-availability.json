@@ -1,0 +1,13 @@
+{
+  "url": "https://osnovanie.duckdns.org",
+  "tls_verified": true,
+  "home_status": 200,
+  "home_title": true,
+  "health_status": 200,
+  "health": {
+    "status": "ok",
+    "mode": "lexical",
+    "llm_public": false,
+    "algorithm": "lexical-controller-v1"
+  }
+}

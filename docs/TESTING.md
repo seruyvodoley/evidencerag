@@ -4,7 +4,7 @@
 
 - `pytest -q`: 32 теста успешно. Покрыты PDF-страницы, scan-status, DOCX-заголовки/таблицы, Markdown origin, плохие/бинарные файлы, ZIP-bomb, парсер timeout, реальные upload/search, версия/дата, формальное правило, недостаток сведений, scope isolation на read/download/delete/compare/search, каскадное удаление FTS, истечение TTL, CSRF, body/query/document/rate limits, inert prompt injection, поддельные цитаты, отключённая LLM и воспроизводимость offline-метрик. Лог experiments/pytest-final.txt.
 - Svelte/TypeScript `npm run check`: 0 errors, 0 warnings. `npm run build`: успешно, раздаётся production bundle.
-- Локальные Playwright E2E: 8/8 успешно. Затем те же сценарии против https://osnovanie.91-196-32-58.sslip.io: 8/8 успешно. Настольный Chrome и mobile emulation iPhone 13 на Chromium; это не тест реального Safari/iOS.
+- Локальные Playwright E2E: 8/8 успешно. Затем те же сценарии против https://osnovanie.duckdns.org: 8/8 успешно. Настольный Chrome и mobile emulation iPhone 13 на Chromium; это не тест реального Safari/iOS.
 - E2E проверяют demo→поиск→различия→редакция→правило→источник→diff, реальный upload→поиск→delete→empty, отказ без данных. Проверка ширин 320/390/768/1280 не выявила overflow. Результаты последнего публичного запуска — experiments/e2e-results.json.
 - CUA: визуальный просмотр desktop/mobile, переход к точному источнику, публичный поиск. Снимки docs/screenshots. Проверены label/focus/семантические controls и reduced-motion по frontend-design/web-design-guidelines; это ручной review, не сертификат WCAG и не отдельный axe-аудит.
 - VPS smoke: 17/17 успешно; см. experiments/vps-smoke-final.json. Проверены реальные загрузки TXT/DOCX/scan PDF, источники, оригинал, diff, isolation/delete/CSRF, frontend/assets.

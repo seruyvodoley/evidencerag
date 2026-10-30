@@ -1,5 +1,7 @@
 # Основание / EvidenceRAG
 
+Сайт: [osnovanie.duckdns.org](https://osnovanie.duckdns.org).
+
 Работающий прототип проверяемого поиска по документам и сравнения редакций. Русский интерфейс, Svelte 5 + TypeScript + FastAPI + SQLite FTS5. Внешняя модель и платные API не нужны.
 
 ## Локальный запуск
