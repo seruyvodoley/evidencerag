@@ -46,6 +46,6 @@ PYTHONPATH=apps/api .venv/bin/python -m packages.research.runner --output experi
 
 ## Документация
 
-Начните с [состояния проекта](docs/PROJECT_STATUS.md), [передачи контекста](docs/HANDOFF_FOR_CHATGPT.md), [результатов тестов](docs/TESTING.md), [литературы](docs/RESEARCH_LITERATURE.md) и [развёртывания](docs/DEPLOYMENT.md). Актуальный offline-пилот: [experiments/run-004/REPORT.md](experiments/run-004/REPORT.md). Все данные авторские и синтетические; этот результат не подтверждает качество свободных ответов или научное преимущество.
+Начните с [состояния проекта](docs/PROJECT_STATUS.md), [передачи контекста](docs/HANDOFF_FOR_CHATGPT.md), [результатов тестов](docs/TESTING.md), [политики cookie](docs/COOKIE_POLICY.md), [литературы](docs/RESEARCH_LITERATURE.md) и [развёртывания](docs/DEPLOYMENT.md). Актуальный offline-пилот: [experiments/run-004/REPORT.md](experiments/run-004/REPORT.md). Все данные авторские и синтетические; этот результат не подтверждает качество свободных ответов или научное преимущество.
 
 Публичное развёртывание и фактические изменения VPS указаны в [docs/VPS_AUDIT.md](docs/VPS_AUDIT.md). Рабочий сайт — [osnovanie.duckdns.org](https://osnovanie.duckdns.org).

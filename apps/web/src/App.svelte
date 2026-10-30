@@ -12,6 +12,7 @@
   let result = $state<Result|null>(null), source = $state<any>(null), comparison = $state<any>(null);
   let left = $state(''), right = $state(''), selectedCorpus = $state('device');
   let busy = $state(false), error = $state(''), notice = $state(''), hasSession = $state(false);
+  let cookieNoticeVisible = $state(true);
   let uploadDialog: HTMLDialogElement;
   let uploadForm: HTMLFormElement;
   const statuses: Record<string,{title:string;description:string;kind:string}> = {
@@ -143,7 +144,7 @@
   });
 </script>
 
-<svelte:head><title>{view==='home'?'Основание — ответы начинаются с источников':view==='compare'?'Сравнение редакций — Основание':view==='research'?'Метод и ограничения — Основание':'Работа с документами — Основание'}</title></svelte:head>
+<svelte:head><title>{view==='home'?'Основание — ответы начинаются с источников':view==='compare'?'Сравнение редакций — Основание':view==='research'?'Метод и ограничения — Основание':view==='cookies'?'Политика cookie — Основание':'Работа с документами — Основание'}</title></svelte:head>
 <a class="skip" href="#main">Перейти к содержимому</a>
 <header class="topbar">
   <a class="brand" href="/" onclick={(e)=>followLink(e,'home')} aria-label="Основание, главная"><svg viewBox="0 0 36 36" width="34" height="34" fill="none" aria-hidden="true"><path d="M13 5H5v26h8M23 5h8v26h-8M12 24l6-13 6 13M14 20h8" stroke="currentColor" stroke-width="2"/></svg><span>Основание<small>Документы. Источники. Выводы.</small></span></a>
@@ -154,6 +155,12 @@
   </nav>
   <span class="mode"><span class="dot"></span>Без внешней модели</span>
 </header>
+{#if cookieNoticeVisible}
+  <aside class="cookie-notice wrap" role="status" aria-labelledby="cookie-notice-title">
+    <div class="cookie-copy"><strong id="cookie-notice-title">Для рабочего пространства нужен один cookie</strong><p>Он создаётся только после начала работы и хранится не дольше 24 часов. Аналитики, рекламы и сторонних cookie нет.</p></div>
+    <div class="cookie-actions"><a href="/cookies" onclick={(e)=>followLink(e,'cookies')}>Подробнее</a><button class="secondary" onclick={()=>cookieNoticeVisible=false}>Понятно</button></div>
+  </aside>
+{/if}
 <div class="notifications" aria-live="polite" aria-atomic="true">
   {#if error}<p class="message error" role="alert">{error}</p>{/if}
   {#if notice}<p class="message">{notice}</p>{/if}
@@ -215,9 +222,35 @@
     {#if docs.length<2}<div class="starter"><h2>Нужны две редакции</h2><p>При загрузке укажите одинаковую группу документов и разные версии.</p><button class="primary" disabled={busy} onclick={()=>openDemo('device')}>Добавить демонстрационные инструкции</button></div>{:else}<form class="compare-form" onsubmit={(e)=>{e.preventDefault();compareDocs();}}><label>Исходная редакция<select bind:value={left} required><option value="">Выберите документ</option>{#each docs as d}<option value={d.id}>{d.title} — {d.version||d.filename}</option>{/each}</select></label><span class="compare-symbol" aria-hidden="true">⇄</span><label>Новая редакция<select bind:value={right} required><option value="">Выберите документ</option>{#each docs as d}<option value={d.id}>{d.title} — {d.version||d.filename}</option>{/each}</select></label><button class="primary" disabled={busy||left===right}>Сравнить</button></form>{/if}
     {#if comparison}<div class="message">{comparison.limitation}</div><div class="diff-legend"><span class="deletion">Удалено</span><span class="addition">Добавлено</span><span>{comparison.changes.length} блоков изменений</span></div>{#if !comparison.changes.length}<p>Текстовых изменений не найдено.</p>{/if}{#each comparison.changes as change}<div class="diff-block"><div class="diff-old"><h3>Исходный текст</h3>{#each change.old as line}<p>{line||' '}</p>{/each}</div><div class="diff-new"><h3>Новый текст</h3>{#each change.new as line}<p>{line||' '}</p>{/each}</div></div>{/each}{#if comparison.affected_questions.length}<section class="affected"><h2>Что стоит перепроверить</h2>{#each comparison.affected_questions as q}<p>{q}</p>{/each}</section>{/if}{/if}
   </section>
-{:else}
+{:else if view==='research'}
   <section class="wrap research-page"><p class="breadcrumb">Метод и ограничения</p><h1>Проверяемость начинается<br/>с честных границ.</h1><p class="lead">«Основание» — инструмент поиска и исследовательский прототип адаптивного формирования контекста. Текущий режим не выполняет смысловую проверку произвольных утверждений.</p><div class="method-grid"><article><h2>Что происходит с вопросом</h2><ol><li>Русские слова нормализуются; фрагменты ранжируются SQLite FTS5/BM25.</li><li>Стратегия с адаптивным размером контекста отсекает фрагменты по перепаду BM25. Это эвристика релевантности, а не проверка достаточности.</li><li>При поиске по редакциям система сохраняет разные датированные значения как историю изменений.</li><li>Несогласованные значения внутри одной редакции показываются отдельно. Неизвестные даты остаются неизвестными.</li></ol></article><article><h2>Что считается подтверждением</h2><p>Совпадение слов и высокая позиция в поиске — не доказательство. В этом режиме подтверждение возможно только для авторского формального правила, когда все его условия и цитаты присутствуют.</p><p>Без такого правила система показывает источники и не формулирует свободный вывод.</p></article><article><h2>Исследовательская гипотеза</h2><p>Проверяем, помогает ли явное сохранение истории редакций уменьшить ошибки выбора источников и стоимость контекста. Новизна и преимущество метода не установлены.</p><p>Экспериментальные конфигурации включают fixed-k, score-gap adaptive-k, итеративный поиск без подключённого судьи достаточности и прототип EvidenceRAG. Все демонстрационные корпуса синтетические; качество ответов и семантическая достаточность не измерены.</p></article><article><h2>Приватность</h2><p>Пространство доступно по закрытому cookie текущего браузера. Срок хранения — 24 часа от создания. До 20 документов, до 10 МБ на файл и 40 МБ суммарно.</p><p>Внешняя модель отключена. Данные не используются для обучения. Для удаления откройте раздел «Документы».</p></article></div><h2>На какие исследования опираемся</h2><ul class="reading"><li><a href="https://research.google/pubs/sufficient-context-a-new-lens-on-retrieval-augmented-generation-systems/" target="_blank" rel="noreferrer">Sufficient Context (2025)</a> — отдельная оценка достаточности контекста.</li><li><a href="https://aclanthology.org/2025.acl-long.319/" target="_blank" rel="noreferrer">Adaptive Retrieval Without Self-Knowledge? (ACL 2025)</a> — сравнение adaptive retrieval и uncertainty-based методов.</li><li><a href="https://aclanthology.org/2025.emnlp-main.1017/" target="_blank" rel="noreferrer">Adaptive-k (EMNLP 2025)</a> — выбор размера контекста по сходству фрагментов.</li><li><a href="https://aclanthology.org/2026.acl-long.1185/" target="_blank" rel="noreferrer">S2G-RAG (ACL 2026)</a> — обученный судья достаточности, структурированные пробелы и компактный контекст.</li><li><a href="https://aclanthology.org/2026.findings-emnlp.398/" target="_blank" rel="noreferrer">TimelyRAG (Findings EMNLP 2026)</a> — семантическое и временное ранжирование в редакциях с перекрывающимися изменениями.</li></ul></section>
+{:else}
+  <section class="wrap cookie-page">
+    <p class="breadcrumb">Приватность и технологии сайта</p>
+    <h1>Политика cookie</h1>
+    <p class="lead">На сайте нет рекламных или аналитических cookie. Для временного рабочего пространства используется один необходимый cookie.</p>
+    <section class="cookie-detail" aria-labelledby="cookie-purpose">
+      <h2 id="cookie-purpose">Что сохраняется</h2>
+      <dl class="cookie-table">
+        <div><dt>Название</dt><dd><code>evidence_session</code></dd></div>
+        <div><dt>Для чего</dt><dd>Связывает ваш браузер с созданным вами временным пространством и не даёт другим посетителям открыть его документы.</dd></div>
+        <div><dt>Когда появляется</dt><dd>Только когда вы начинаете действие, которому нужно рабочее пространство: открываете демонстрационный набор, ищете или загружаете документ.</dd></div>
+        <div><dt>Срок</dt><dd>Не более 24 часов. После этого сеанс истекает, а документы и индекс удаляются автоматически.</dd></div>
+        <div><dt>Защита</dt><dd>Cookie недоступен JavaScript (<code>HttpOnly</code>), передаётся только по HTTPS (<code>Secure</code>) и ограничен сайтом (<code>SameSite=Strict</code>). В адресную строку он не попадает.</dd></div>
+      </dl>
+    </section>
+    <section class="cookie-detail">
+      <h2>Чего сайт не использует</h2>
+      <p>Нет аналитики, рекламных идентификаторов, профилирования и сторонних cookie. Интерфейс не сохраняет данные в <code>localStorage</code> или <code>sessionStorage</code>. Содержимое документов не отправляется внешним моделям.</p>
+    </section>
+    <section class="cookie-detail">
+      <h2>Управление cookie</h2>
+      <p>Плашка cookie — информационная: кнопка «Понятно» лишь скрывает её до перезагрузки страницы и не является согласием на обработку данных. Если очистить cookie в браузере, доступ к временному пространству потеряется; его данные удалятся по истечении срока хранения.</p>
+      <p>Подробнее о технической реализации и временном хранении документов — на странице <a href="/method" onclick={(e)=>followLink(e,'research')}>«Метод и ограничения»</a>.</p>
+    </section>
+    <p class="cookie-updated">Редакция от 31 октября 2026 года.</p>
+  </section>
 {/if}
 </main>
-<footer class="footer wrap"><span>Основание <span class="muted">/ EvidenceRAG</span></span><span>Исследовательский прототип · источники важнее уверенного тона</span><a class="text-button" href="/method" onclick={(e)=>followLink(e,'research')}>Метод и ограничения</a></footer>
+<footer class="footer wrap"><span>Основание <span class="muted">/ EvidenceRAG</span></span><span>Исследовательский прототип · источники важнее уверенного тона</span><div class="footer-links"><a class="text-button" href="/method" onclick={(e)=>followLink(e,'research')}>Метод и ограничения</a><a class="text-button" href="/cookies" onclick={(e)=>followLink(e,'cookies')}>Cookie</a></div></footer>
 <dialog bind:this={uploadDialog} class="upload-dialog"><div class="dialog-heading"><h2>Добавить документ</h2><button class="secondary" onclick={()=>uploadDialog.close()} aria-label="Закрыть окно загрузки">Закрыть</button></div><p>Только в ваше временное пространство. Внешняя модель отключена.</p><form bind:this={uploadForm} onsubmit={upload}><label>Файл<input name="file" type="file" required accept=".pdf,.docx,.txt,.md"/></label><p class="fine">PDF с текстом, DOCX, TXT или Markdown. До 10 МБ, 300 страниц, 180 000 символов. Для сканов потребуется OCR.</p><label>Название<input name="title" maxlength="160" placeholder="Например, инструкция к устройству…"/></label><label>Группа редакций<input name="family" maxlength="100" placeholder="Одинаковое имя для версий одного документа…"/></label><div class="form-pair"><label>Версия<input name="version" maxlength="40" placeholder="Например, 2.0…"/></label><label>Действует с<input name="date" type="date"/></label></div><p class="fine">Если дата не указана, система не будет предполагать её по времени загрузки. Версия может быть определена из имени вида v2.0.</p>{#if error}<p class="message error" role="alert">{error}</p>{/if}<button class="primary full" disabled={busy}>{busy?'Обработка…':'Загрузить и обработать'}</button></form></dialog>

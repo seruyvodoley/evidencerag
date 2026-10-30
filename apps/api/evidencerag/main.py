@@ -320,6 +320,7 @@ if WEB.exists():
     @app.get('/documents', include_in_schema=False)
     @app.get('/compare', include_in_schema=False)
     @app.get('/method', include_in_schema=False)
+    @app.get('/cookies', include_in_schema=False)
     def web_page():
         return FileResponse(WEB/'index.html')
 

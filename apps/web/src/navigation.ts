@@ -1,6 +1,6 @@
-export type View = 'home' | 'work' | 'compare' | 'research';
+export type View = 'home' | 'work' | 'compare' | 'research' | 'cookies';
 export const paths: Record<View, string> = {
-  home: '/', work: '/documents', compare: '/compare', research: '/method'
+  home: '/', work: '/documents', compare: '/compare', research: '/method', cookies: '/cookies'
 };
 export function routeFromPath(pathname: string): View {
   const path = pathname.replace(/\/+$/, '') || '/';

@@ -6,6 +6,8 @@
 
 TTL 24 часа, фоновое удаление каждые 60 секунд, истёкший cookie немедленно перестаёт давать доступ. Каскадное удаление originals/chunks, триггеры FTS, SQLite secure_delete и FTS5 secure-delete. WAL checkpoint при очистке. Не обещается физическое уничтожение копий на SSD/в резервных копиях. Приватные документы не включать в долгосрочные backup.
 
+Посетителю показывается cookie-уведомление со ссылкой на [политику cookie](COOKIE_POLICY.md). В приложении используется только необходимый first-party `evidence_session` сроком до 24 часов; аналитики, рекламы, сторонних cookie и browser storage нет. Кнопка уведомления скрывает его только до перезагрузки и не изображает согласие на необязательное отслеживание.
+
 Upload: до 10 МБ, общий запрос до 10.1 МБ (ограничение потока до multipart), allowlist расширений и проверка фактического формата, ZIP до 1000 элементов/25 МБ распакованных данных, до 300 PDF-страниц и 180000 символов. Один парсер за раз, отдельный процесс 15 секунд; Linux RLIMIT CPU/AS. Original только attachment octet-stream; пользовательский HTML/PDF не исполняется inline. Файловые пути не берутся от клиента.
 
 Защита UI: Svelte escaping, отсутствие raw HTML, CSP self с object-src none/frame-ancestors none, nosniff/no-referrer/no-store, запрет cross-site Origin/Sec-Fetch-Site для мутаций, SQL placeholders и очистка FTS-терминов. Ошибки парсера и неожиданные ошибки не печатают текст документов. Uvicorn access log отключён. Reverse proxy тоже не должен писать cookie, тела запросов или IP посетителей.
