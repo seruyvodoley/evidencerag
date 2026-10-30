@@ -305,6 +305,10 @@ def test_experiment_reproducibility(tmp_path):
     for rows in (a,b):
         for row in rows:row.pop('latency_ms')
     assert a==b
+    assert all(row['metric_denominators']['evidence_precision_recall_queries']==14 for row in a)
+    assert all(row['metric_denominators']['same_edition_conflict_positive_queries']==4 for row in a)
+    assert all(row['metric_denominators']['dated_version_change_positive_queries']==1 for row in a)
+    assert all(row['metric_denominators']['answer_and_semantic_metrics_queries']==0 for row in a)
     assert all(row['answer_correctness'] is None for row in a)
     assert all(row['false_abstention_rate'] is None for row in a)
     assert all(row['semantic_sufficiency_accuracy'] is None for row in a)

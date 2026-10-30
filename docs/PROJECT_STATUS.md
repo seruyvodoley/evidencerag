@@ -8,9 +8,10 @@
 - Изолированные временные пространства, upload/delete, закрытый cookie и TTL 24 часа.
 - Русский FTS5/BM25 поиск, ограничение по версии/дате, текстовый diff, отдельные состояния изменения между редакциями и буквального расхождения внутри одной редакции.
 - Пять авторских демо-наборов и offline экспериментальный runner: fixed-k, score-gap adaptive-k, retrieval без judge и прототип EvidenceRAG с абляциями.
+- Отдельный local-only stage-006 pipeline для структурированной достаточности, gap/version-directed поиска, ограничений и JSON-трассы; публичное приложение его не вызывает.
 - Навигация между `/`, `/documents`, `/compare`, `/method`, favicon SVG/PNG/ICO и мобильная раскладка.
 
-Совпадение слов не доказывает поддержку утверждения. Свободная генерация ответов и смысловой judge отключены; один формальный демонстрационный вывод выдаётся только по заранее заданному правилу с цитатой. OCR, embeddings и публичный LLM endpoint отсутствуют.
+Совпадение слов не доказывает поддержку утверждения. Свободная генерация ответов и semantic judge в публичном приложении отключены. Локальный исследовательский pipeline остаётся `uncertain` без подключённого evaluator; его ограниченный literal answerer может только вернуть точные цитаты по авторскому формальному правилу. OCR, embeddings и публичный LLM endpoint отсутствуют.
 
 ## Научная проверка
 
@@ -18,7 +19,7 @@
 
 ## Проверки релиза
 
-- 39 Python unit/integration тестов прошли; Svelte check — 0 ошибок и 0 предупреждений; production build успешен.
+- Текущая локальная suite: 61 Python unit/integration test прошёл; Svelte check — 0 ошибок и 0 предупреждений; production build успешен для последнего UI-релиза.
 - 8 Playwright E2E против публичного HTTPS, включая desktop/mobile: все прошли.
 - Серверный smoke: 17/17; public health сообщает `lexical-controller-v2`, семантического judge нет.
 - Снимки VPN/Xray-служб, интерфейсов, маршрутов, firewall и Docker networks совпали с предыдущим опубликованным снимком. Caddy не перезапускали и не перенастраивали.
@@ -30,6 +31,14 @@
 Другие эксплуатационные задачи: собственный домен, долгосрочный мониторинг диска и rate limiting за proxy, редактирование метаданных после загрузки, английская локализация и проверка реального Safari. Duck DNS — бесплатная внешняя зависимость.
 
 Подробности: [передача контекста](HANDOFF_FOR_CHATGPT.md), [тесты](TESTING.md), [аудит VPS](VPS_AUDIT.md), [литература](RESEARCH_LITERATURE.md).
+
+## Исследовательский этап 006 — local-only
+
+Проверены ошибки run-003: `false_abstention=1.0` и `answer_exact_match=0` посчитаны при отсутствии answerer и null ответах; конфигурация также включала AppleDouble metadata и dirty checkout. Файл `experiments/pytest-final.txt` обновлён с исторических 32 на фактические 58 актуальных тестов.
+
+Добавлены [исследовательский статус](RESEARCH_STATUS.md), [аудит run-003/run-004](RESEARCH_AUDIT_006.md), [протокол будущего корпуса и разметки](CORPUS_ANNOTATION_PROTOCOL_006.md), модуль `apps/api/evidencerag/research_rag.py` и runner `packages/research/trace_runner.py`. Сохранён исполнившийся trace `experiments/research-rag-pilot-004/`: в одном synthetic случае второй targeted version search дал 1 новый фрагмент и 1 новое формально поддержанное утверждение; всего 2 поисковых вызова, 2 редакции, один literal-citation extract. Ответное качество и семантическая достаточность не измерялись. В run-004 предложенный итеративный метод не добавил новых evidence IDs на 21/21 запросе и уступил score-gap BM25 по evidence precision/среднему размеру контекста.
+
+Подключение semantic/NLI модели, реального versioned corpus, двойная экспертная разметка, парное сравнение обновлённого pipeline с baseline и публичная интеграция остаются незавершёнными. Никакого развёртывания этапа 006 не было; VPS, Caddy, VPN и TunnelDeck не затрагивались. Подробности — [RESEARCH_STATUS.md](RESEARCH_STATUS.md).
 
 ## Cookie-уведомление — release-006
 

@@ -20,3 +20,13 @@ Query: до 1000 символов, первые 32 уникальных норм
 Состояния API: `no_results`, `insufficient`, `unverified`, `versioned_difference`, `potential_conflict`, `confirmed_formal`. `confirmed_formal` доступен только авторским демоправилам с точным нормализованным вопросом, явно выбранной версией и обязательным текстом. Приватный upload не принимает правила от клиента. Семантических уточнений query и свободной генерации нет.
 
 Сигналы полей работают только на строках `ключ: значение`. Они не определяют entailment, истинность, редакционное намерение или правовой эффект поправки. UI показывает разные даты и не выбирает правильный ответ вместо пользователя.
+
+## Stage-006 research pipeline (не подключён к публичному API)
+
+`apps/api/evidencerag/research_rag.py` вводит отдельный экспериментальный контракт: `SufficiencyAssessment`, типизированные `EvidenceGap`, `SufficiencyEvaluator`, `SearchBackend`, `AnswerGenerator` и `run_pipeline`. Контроллер фиксирует каждое retrieval-действие, запрашивает новый текст по явному gap, передаёт целевую версию/дату в следующий поиск, растит top-k при отсутствии actionable gap и останавливается по sufficiency, конфликту, отсутствию новых chunks, повтору запроса или лимиту. В trace раздельно указаны новые редакции документов, chunks и claims.
+
+`UnavailableSemanticEvaluator` возвращает `uncertain`; ни lexical coverage, ни пустое поле не превращаются в `insufficient/sufficient`. `FormalRuleEvaluator` разрешает положительный вывод только по авторскому exact-quote rule и заданной области версии/даты. `InjectedSemanticEvaluator` валидирует structured response и IDs, не вызывает backend без `consent=True`, а недоступность backend трактует как `uncertain`. Реального semantic/NLI backend нет. Для использованного callback владелец backend обязан сам обеспечить credential/budget controls; в этом этапе callback не подключался и API не вызывались.
+
+`LiteralExtractAnswerGenerator` формирует только дословные выдержки, одобренные evaluator-ом. Проверка ID и точного текста цитаты не равна entailment. Неизвестный evaluator или контекст, конфликт, отказ/ошибка answerer дают отказ без свободного ответа. `EvidenceStoreBackend` ограничивает запрос workspace-ом и добавляет стабильные content-derived IDs.
+
+Фактически исполнившийся synthetic diagnostic trace сохранён в `experiments/research-rag-pilot-004/`. Он демонстрирует один целевой version search, но не является сравнением baseline или измерением semantic QA. Существующие `/api/search`, UI и VPS не менялись.

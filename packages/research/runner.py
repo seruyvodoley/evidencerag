@@ -271,6 +271,15 @@ def run(output, split='test'):
             'strategy': name,
             'n_queries': len(subset),
             'n_evaluation_clusters': len({row['evaluation_cluster'] for row in subset}),
+            'metric_denominators': {
+                'evidence_precision_recall_queries': sum(row['evidence_precision'] is not None for row in subset),
+                'required_span_coverage_queries': sum(row['required_span_coverage'] is not None for row in subset),
+                'same_edition_conflict_positive_queries': sum(row['gold_same_edition_conflict'] == 1 for row in subset),
+                'same_edition_conflict_negative_queries': sum(row['gold_same_edition_conflict'] == 0 for row in subset),
+                'dated_version_change_positive_queries': sum(row['gold_version_change'] == 1 for row in subset),
+                'dated_version_change_negative_queries': sum(row['gold_version_change'] == 0 for row in subset),
+                'answer_and_semantic_metrics_queries': 0,
+            },
             'evidence_precision': mean(subset, 'evidence_precision'),
             'evidence_recall': mean(subset, 'evidence_recall'),
             'required_span_coverage': mean(subset, 'required_span_coverage'),
@@ -318,6 +327,7 @@ def run(output, split='test'):
     report.extend([
         '',
         'No semantic sufficiency judge or answer generator ran. Answer correctness, false abstention, unsupported answers and faithfulness are null by design; the previous False Abstention=1.0 was an artifact of treating an absent formal-rule answer as a generated answer refusal.',
+        'Metrics report their denominators in summary.json: evidence precision/recall and required-span coverage use only queries with a defined gold evidence/span set; conflict and version scores include their positive/negative query counts; answer/semantic metrics have denominator zero.',
         'The score-gap top-k is an FTS5 BM25 heuristic inspired by adaptive context sizing; it is not a replication of Adaptive-k, which uses dense similarity thresholds. The sufficiency-guided configuration records UNKNOWN because no judge is installed, then expands retrieval within the common budget.',
         'The proposed controller is an engineering prototype that preserves dated version differences and same-edition literal disagreement separately. It is not a validated new method. There are only a few independent synthetic evaluation clusters; no confidence interval or significance claim is reported.',
         'Every trace includes content-derived evidence IDs, source position, version/date, retrieval score, chosen evidence and controller reasons. Variable wall-clock measurements are retained in raw outputs.',

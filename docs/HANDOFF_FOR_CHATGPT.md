@@ -84,3 +84,18 @@ Run-004 и payload релиза построены из commit `8e3e704`; пос
 ## Cookie notice
 
 В release-006 опубликованы cookie-уведомление и маршрут `/cookies`; они описывают `evidence_session` сроком до 24 часов, атрибуты HttpOnly/Secure/SameSite=Strict и отсутствие аналитики/трекеров. Дата редакции политики — 31.10.2026. Локальные `npm run check` и `npm run build` прошли. Публичные HTTPS GET `/`, `/cookies`, `/api/health` вернули 200; чтение страницы не установило cookie. Upload/search не запускались. При публикации перезапущен только собственный `evidencerag.service`; Caddy, VPN, firewall и маршруты не менялись. Политика не расширяет аудит на прочие правовые требования.
+
+## Stage 006: bounded research RAG pipeline (local-only)
+
+Актуальная незакоммиченная работа в этой итерации — `apps/api/evidencerag/research_rag.py`, `packages/research/trace_runner.py`, `tests/test_research_rag.py` и документы ниже. Публичное приложение и production bundle не менялись, deployment не выполнялся.
+
+- `SufficiencyAssessment`: `sufficient / insufficient / conflicting / uncertain`, exact evidence IDs, structured gaps, version/date constraints, no confidence пока не подключён калиброванный evaluator.
+- `FormalRuleEvaluator` положителен только по authored exact quote + allowed version/date. `UnavailableSemanticEvaluator` остаётся `uncertain`; `InjectedSemanticEvaluator` требует `consent=True`, проверяет схему и IDs, при network/model failure или malformed response fail-closed в `uncertain`. Ни NLI weights, ни provider semantic adapter не подключены.
+- `run_pipeline`: `retrieve_gap`, `check_version`, `expand_top_k`, stop on sufficient/conflict/no results/no new evidence chunks/no new supported claims/repeated query/iteration, chunk or time budget. Trace separates newly seen source revisions, evidence chunks and supported claims. `EvidenceStoreBackend` is workspace-scoped and uses stable IDs.
+- `LiteralExtractAnswerGenerator` emits only a direct source quote after formal sufficiency; `validate_answer` checks source ID and exact quote and rejects paraphrase. This is not general-purpose answer generation or semantic verification.
+- Reproducible actual execution: `experiments/research-rag-pilot-004/`. Synthetic service revisions 2024/2025; two SQLite/FTS5 calls; second call found one new revision and evidence chunk and one formal-rule supported claim; final answer is the literal “Срок возврата: 30 дней”. No API calls. This is one diagnostic trace, no comparative result.
+- Audit verified run-003's false-abstention/exact-match metrics invalid without an answerer, dirty source, and AppleDouble hashes; run-004 proposed produced no new evidence IDs in its second round on all 21 cases. Full detail: `docs/RESEARCH_AUDIT_006.md`.
+- Current full tests: 61 passed, 0 failed, 0 skipped, one Starlette deprecation warning. `experiments/pytest-final.txt` is updated. Frontend, E2E, production API and VPS were not retested for this backend-only stage.
+- Status, known literature, gaps and publication criteria: `docs/RESEARCH_STATUS.md`. Source and manual double-annotation protocol: `docs/CORPUS_ANNOTATION_PROTOCOL_006.md`; candidate Python official docs were reviewed for provenance/license but not imported or annotated.
+
+Do not claim semantic sufficiency, correctness of generated answers, better retrieval, or novelty. Next required work is a small immutable real-document corpus, double annotation, an evaluated semantic/NLI backend, and paired baseline/ablation runs with denominators and family-aware uncertainty.
