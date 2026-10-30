@@ -1,0 +1,46 @@
+{
+  "experiment": "single_question_controller_diagnostic",
+  "dataset_kind": "authored_synthetic_fixture",
+  "split": "diagnostic_only_no_statistical_split",
+  "created_utc": "2026-10-30T19:39:48.279124+00:00",
+  "git_commit": "c826cf81b4fc854e3681d8b7278a99801d8958db",
+  "git_dirty_before_run": false,
+  "source_hashes": {
+    "apps/api/evidencerag/research_rag.py": "8e66aac75c6e48c38ac58783737a4bd8df7df863d325789b730daf58dae1e817",
+    "apps/api/evidencerag/retrieval.py": "869155ec5f9e8ec3a6032578ac94abc439a35f5bc7a4bbc7c18be61fd8c270a8",
+    "apps/api/evidencerag/parser.py": "f9e91da7104b0120bf46f14f62374b013b62f6f7971008427f729de5c183fd66",
+    "apps/api/evidencerag/store.py": "9689026c39f4f1f6c1ac01f5878e1e53755e60f0b48b3369b22530adc352abea",
+    "packages/research/trace_runner.py": "91ff1c7fca95fcfdecdc6887d3f8c74071502321c254fa834fb2a7ce1e1ddb0b",
+    "datasets/demo/catalog.json": "8ecb28d6f0e84f934e8605d32b59122d07d270270da63cfa4a9c174e55ce45d8",
+    "datasets/demo/LICENSE": "055f465f62b767822910b7c048cd60e78127c6de66f3a6dd85b7e1d50342fea0",
+    "datasets/demo/service-2024.md": "ff433041d09dfb27a502e0b34094c1e3d34158488a0e85d20f64d736cffd4dfc",
+    "datasets/demo/service-2025.md": "feaef8cf631e355355db7a92afa66e79fe96de82e7a898617683a6c151e78260"
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "sqlite": "3.54.1",
+    "processor": "arm"
+  },
+  "retrieval": "SQLite FTS5 BM25 through EvidenceStoreBackend; query terms normalized by current project code",
+  "indexing": {
+    "parser": "apps/api/evidencerag/parser.py, Markdown extraction",
+    "chunk_size_chars": 1100,
+    "overlap_chars": 0,
+    "normalization": "apps/api/evidencerag/retrieval.py::terms (Russian morphology)"
+  },
+  "sufficiency_evaluator": "authored exact-quote rule; not semantic NLI or LLM",
+  "answer_generator": "literal extract only; no paraphrase or free-form generation",
+  "external_model": null,
+  "seed": null,
+  "seed_use": "No random sampling or randomized model operation is used.",
+  "budget": {
+    "max_iterations": 3,
+    "max_chunks": 10,
+    "time_budget_ms": 500,
+    "initial_top_k": 1
+  },
+  "question": "Какой срок возврата после изменений?",
+  "answer_quality_metrics": null,
+  "statistical_inference": null
+}

@@ -1,0 +1,213 @@
+{
+  "answer": {
+    "claims": [
+      {
+        "citations": [
+          {
+            "id": "ev-41add056a43bfc6defe132db",
+            "quote": "Срок возврата: 30 дней"
+          }
+        ],
+        "text": "Срок возврата: 30 дней"
+      }
+    ],
+    "refusal_reason": null,
+    "status": "answered",
+    "unresolved_conflicts": [],
+    "verification": "literal_citation_checked"
+  },
+  "answer_generator": "literal_extract_only",
+  "assessment": {
+    "confidence": null,
+    "confidence_method": null,
+    "conflicting_claims": [],
+    "evaluator": "authored_exact_quote_rule",
+    "evidence_ids": [
+      "ev-2bbd7dc589bed1462b6f4b49",
+      "ev-41add056a43bfc6defe132db"
+    ],
+    "missing_information": [],
+    "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+    "recommended_action": "stop",
+    "status": "sufficient",
+    "supported_claims": [
+      {
+        "claim_id": "return-term-2025",
+        "evidence_ids": [
+          "ev-41add056a43bfc6defe132db"
+        ],
+        "text": "Срок возврата: 30 дней"
+      }
+    ],
+    "version_constraints": {
+      "as_of": null,
+      "required_versions": [
+        "2025"
+      ],
+      "version": null
+    }
+  },
+  "budget": {
+    "initial_top_k": 1,
+    "max_chunks": 10,
+    "max_iterations": 3,
+    "time_budget_ms": 500
+  },
+  "elapsed_ms": 3.491,
+  "evaluator": "authored_exact_quote_rule",
+  "question": "Какой срок возврата после изменений?",
+  "request": {
+    "as_of": null,
+    "family": "service",
+    "question": "Какой срок возврата после изменений?",
+    "version": null
+  },
+  "schema_version": "research-rag-trace-v1",
+  "selected_evidence": [
+    {
+      "date": "2024-01-01",
+      "evidence_id": "ev-2bbd7dc589bed1462b6f4b49",
+      "family": "service",
+      "locator": "Ремонт",
+      "page": null,
+      "source_revision_id": "doc-7e2f33d11186d4902517b090",
+      "text": "Срок диагностики: 3 рабочих дня\nГарантия ремонта: 90 дней\nДиагностика начинается после регистрации устройства. При отсутствии деталей срок ремонта согласовывается отдельно.",
+      "version": "2024"
+    },
+    {
+      "date": "2025-01-01",
+      "evidence_id": "ev-41add056a43bfc6defe132db",
+      "family": "service",
+      "locator": "Возврат",
+      "page": null,
+      "source_revision_id": "doc-487cf89cdb2a706e870a1af8",
+      "text": "Срок возврата: 30 дней\nДокумент для возврата: чек или подтверждение оплаты\nНовые правила применяются к заказам с 1 января 2025 года. Сохраняйте упаковку и комплектность.",
+      "version": "2025"
+    }
+  ],
+  "strategy": "sufficiency_gap_controller_v1",
+  "termination": "sufficient",
+  "trace": [
+    {
+      "action": "check_version",
+      "as_of": null,
+      "assessment": {
+        "confidence": null,
+        "confidence_method": null,
+        "conflicting_claims": [],
+        "evaluator": "authored_exact_quote_rule",
+        "evidence_ids": [
+          "ev-2bbd7dc589bed1462b6f4b49"
+        ],
+        "missing_information": [
+          {
+            "as_of": null,
+            "description": "Не найден дословно заданный обязательный фрагмент.",
+            "gap_id": "return-term-2025",
+            "kind": "evidence_span",
+            "search_query": "редакция 2025 срок возврата 30 дней",
+            "target_version": "2025"
+          }
+        ],
+        "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+        "recommended_action": "retrieve_gap",
+        "status": "insufficient",
+        "supported_claims": [],
+        "version_constraints": {
+          "as_of": null,
+          "required_versions": [
+            "2025"
+          ],
+          "version": null
+        }
+      },
+      "elapsed_ms": 1.962,
+      "family": "service",
+      "iteration": 1,
+      "new_document_count": 1,
+      "new_document_ids": [
+        "doc-7e2f33d11186d4902517b090"
+      ],
+      "new_evidence_chunk_count": 1,
+      "new_evidence_claim_count": 0,
+      "new_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "new_supported_claim_ids": [],
+      "next_query": "Какой срок возврата после изменений? редакция 2025 срок возврата 30 дней",
+      "query": "Какой срок возврата после изменений?",
+      "query_fingerprint": "8daa9bc5f0835140da52b6e65b1750bb117f2c1066f58f8a52c0fc923fab4b2f",
+      "reason": "targeted_gap:return-term-2025",
+      "requested_limit": 1,
+      "returned_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "selected_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "version": null
+    },
+    {
+      "action": "stop_sufficient",
+      "as_of": null,
+      "assessment": {
+        "confidence": null,
+        "confidence_method": null,
+        "conflicting_claims": [],
+        "evaluator": "authored_exact_quote_rule",
+        "evidence_ids": [
+          "ev-2bbd7dc589bed1462b6f4b49",
+          "ev-41add056a43bfc6defe132db"
+        ],
+        "missing_information": [],
+        "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+        "recommended_action": "stop",
+        "status": "sufficient",
+        "supported_claims": [
+          {
+            "claim_id": "return-term-2025",
+            "evidence_ids": [
+              "ev-41add056a43bfc6defe132db"
+            ],
+            "text": "Срок возврата: 30 дней"
+          }
+        ],
+        "version_constraints": {
+          "as_of": null,
+          "required_versions": [
+            "2025"
+          ],
+          "version": null
+        }
+      },
+      "elapsed_ms": 1.411,
+      "family": "service",
+      "iteration": 2,
+      "new_document_count": 1,
+      "new_document_ids": [
+        "doc-487cf89cdb2a706e870a1af8"
+      ],
+      "new_evidence_chunk_count": 1,
+      "new_evidence_claim_count": 1,
+      "new_evidence_ids": [
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "new_supported_claim_ids": [
+        "return-term-2025"
+      ],
+      "next_query": null,
+      "query": "Какой срок возврата после изменений? редакция 2025 срок возврата 30 дней",
+      "query_fingerprint": "3e61355f0ff27889a30f181dc9166a4118e75efaa2152ddad2a59fcbd3b1ae97",
+      "reason": "explicit_evaluator_sufficient",
+      "requested_limit": 1,
+      "returned_evidence_ids": [
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "selected_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49",
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "version": "2025"
+    }
+  ]
+}
