@@ -42,7 +42,7 @@ LLM API фактически не вызывались. Адаптер пров�
 
 ## VPS без секретов
 
-Ubuntu 24.04.5, x86_64, 1 vCPU, RAM 1963 MiB, свободное место около 13 GiB при последнем обновлении. Собственный user/unit `evidencerag`, backend `127.0.0.1:8077`, release `/opt/evidencerag/releases/20261031-005`, текущий symlink `/opt/evidencerag/current`, приватная SQLite `/var/lib/evidencerag/evidence.sqlite3`. CPUQuota 60%, MemoryMax 640M. Enabled startup; реальный reboot не делался. Память после smoke около 64 MiB.
+Ubuntu 24.04.5, x86_64, 1 vCPU, RAM 1963 MiB, свободное место около 13 GiB при последнем обновлении. Собственный user/unit `evidencerag`, backend `127.0.0.1:8077`, release `/opt/evidencerag/releases/20261031-006`, текущий symlink `/opt/evidencerag/current`, приватная SQLite `/var/lib/evidencerag/evidence.sqlite3`. CPUQuota 60%, MemoryMax 640M. Enabled startup; реальный reboot не делался. Память последнего измерения около 64 MiB (из release-005).
 
 Публичный трафик идёт через существующий Docker Caddy `ma-alice-https` в host network; новых контейнеров/сетей не создавали. Владелец явно разрешил в этом чате добавление конкретного временного hostname и graceful reload. Только новый route добавлен к `/root/ma-voice-https/Caddyfile`, backup root-only `/opt/evidencerag/proxy-proposal/Caddyfile.before-publication`. Existing routes сохранены. `bind` нового site совпадает с адресом старого listener: initial wildcard listener давал пустой HTTP 200, это найдено внешним E2E и исправлено. Сертификаты проверялись без отключения TLS verification.
 
@@ -68,7 +68,7 @@ Ubuntu 24.04.5, x86_64, 1 vCPU, RAM 1963 MiB, свободное место ок
 
 ## Короткий бесплатный адрес подключён
 
-Владелец выбрал бесплатный поддомен, самостоятельно вошёл в Duck DNS через GitHub и прошёл CAPTCHA. Имя osnovanie.duckdns.org успешно добавлено в его аккаунт и указывает на VPS. Token не экспортировался и не сохранялся: использована UI-форма. В Caddy к собственному блоку EvidenceRAG добавлен hostname при публикации более ранней версии; backup Caddyfile сохранён. Для release-005 Caddy не изменялся. Внешний HTTPS-клиент проверил сертификат, главную и health HTTP 200. Старое имя osnovanie.91-196-32-58.sslip.io оставлено рабочим. Cookies между hostname не переносятся; старые рабочие пространства доступны по старому имени. Подробности — DOMAIN_PLAN.md.
+Владелец выбрал бесплатный поддомен, самостоятельно вошёл в Duck DNS через GitHub и прошёл CAPTCHA. Имя osnovanie.duckdns.org успешно добавлено в его аккаунт и указывает на VPS. Token не экспортировался и не сохранялся: использована UI-форма. В Caddy к собственному блоку EvidenceRAG добавлен hostname при публикации более ранней версии; backup Caddyfile сохранён. Для release-005 и release-006 Caddy не изменялся. Внешний HTTPS-клиент проверил сертификат, главную, `/cookies` и health HTTP 200. Старое имя osnovanie.91-196-32-58.sslip.io оставлено рабочим. Cookies между hostname не переносятся; старые рабочие пространства доступны по старому имени. Подробности — DOMAIN_PLAN.md.
 
 ## Итерация научного ядра и release-005
 
@@ -83,4 +83,4 @@ Run-004 и payload релиза построены из commit `8e3e704`; пос
 
 ## Cookie notice
 
-Локально добавлены cookie-уведомление и маршрут `/cookies`; они описывают только необходимый `evidence_session` сроком 24 часа, атрибуты HttpOnly/Secure/SameSite=Strict и отсутствие аналитики/трекеров. Дата редакции политики — 31.10.2026. При публикации проверьте прямое открытие `/cookies`, скрытие плашки до перезагрузки, мобильную раскладку и отсутствие лишних cookie в браузере. Изменения не затрагивают VPS и остальные правовые страницы.
+В release-006 опубликованы cookie-уведомление и маршрут `/cookies`; они описывают `evidence_session` сроком до 24 часов, атрибуты HttpOnly/Secure/SameSite=Strict и отсутствие аналитики/трекеров. Дата редакции политики — 31.10.2026. Локальные `npm run check` и `npm run build` прошли. Публичные HTTPS GET `/`, `/cookies`, `/api/health` вернули 200; чтение страницы не установило cookie. Upload/search не запускались. При публикации перезапущен только собственный `evidencerag.service`; Caddy, VPN, firewall и маршруты не менялись. Политика не расширяет аудит на прочие правовые требования.

@@ -4,7 +4,7 @@
 
 ## Реальная архитектура VPS
 
-Код: `/opt/evidencerag/releases/20261031-005`, symlink `/opt/evidencerag/current`. Системный пользователь/группа `evidencerag`, unit `/etc/systemd/system/evidencerag.service`, БД в `/var/lib/evidencerag/evidence.sqlite3`. Backend только `127.0.0.1:8077`, один worker, лимит CPU 60%, MemoryMax 640M. HTTPS обслуживает существующий Docker Caddy `ma-alice-https` с host networking. Новых контейнеров/сетей не создавали.
+Код: `/opt/evidencerag/releases/20261031-006`, symlink `/opt/evidencerag/current`. Системный пользователь/группа `evidencerag`, unit `/etc/systemd/system/evidencerag.service`, БД в `/var/lib/evidencerag/evidence.sqlite3`. Backend только `127.0.0.1:8077`, один worker, лимит CPU 60%, MemoryMax 640M. HTTPS обслуживает существующий Docker Caddy `ma-alice-https` с host networking. Новых контейнеров/сетей не создавали.
 
 Изменён только новый собственный systemd-unit и согласованное дополнение `/root/ma-voice-https/Caddyfile`. Приложение запускается после reboot через enabled unit; фактическую перезагрузку VPS не делали. Root/systemd и Docker Caddy владелец инфраструктуры сохраняет под своим управлением. Ключи в проект не копировались.
 
