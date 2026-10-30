@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
+  import { paths, routeFromPath } from './navigation';
+  import type { View } from './navigation';
   type Doc = {id:string;title:string;filename:string;family:string;version:string;date:string;status:string;chunk_count:number};
   type Hit = {id:number;document:string;text:string;locator:string;page:number|null;title:string;version:string;date:string;family:string};
   type Demo = {id:string;name:string;description:string;questions:string[];count:number};
   type Result = {status:string;answer:{text:string;citations:number[]}|null;hits:Hit[];conflicts:any[];gaps:string[];trace:any[];elapsed_ms:number;limitations:string;lexical_coverage:number};
-  let view = $state('home');
+  let view = $state<View>(routeFromPath(window.location.pathname));
   let demos = $state<Demo[]>([]), docs = $state<Doc[]>([]);
   let question = $state(''), family = $state(''), version = $state(''), asOf = $state(''), strategy = $state('versioned');
   let result = $state<Result|null>(null), source = $state<any>(null), comparison = $state<any>(null);
@@ -24,6 +26,27 @@
   const suggestions = $derived(demos.find(d=>d.id===selectedCorpus)?.questions || []);
   const selectedStatus = $derived(result ? statuses[result.status] || statuses.unverified : null);
 
+  function prepareComparison() {
+    if(!docs.some(d=>d.id===left)) left=docs[0]?.id||'';
+    if(!docs.some(d=>d.id===right)) right=docs.find(d=>d.id!==left)?.id||'';
+  }
+  async function navigate(target: View) {
+    if(window.location.pathname!==paths[target]) {
+      history.replaceState({...history.state,scrollY:window.scrollY},'',window.location.href);
+      history.pushState({scrollY:0},'',paths[target]);
+    }
+    view=target;
+    if(target==='compare') prepareComparison();
+    await tick();
+    window.scrollTo({top:0,behavior:'instant'});
+    document.getElementById('main')?.focus({preventScroll:true});
+  }
+  function followLink(event: MouseEvent, target: View) {
+    // Preserve native new-tab, context-menu and modified-click behavior.
+    if(event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+    event.preventDefault();error='';notice='';
+    void navigate(target);
+  }
   async function api(path:string, options:RequestInit = {}) {
     const response = await fetch('/api'+path, options);
     let payload;
@@ -47,7 +70,7 @@
   async function openDemo(id:string) {
     await run(async()=>{
       await ensureSession(); await api('/demos/'+id+'/import',{method:'POST'}); await refresh();
-      selectedCorpus=id;family=docs.some(d=>d.family===id)?id:'';version='';asOf='';result=null;source=null;view='work';
+      selectedCorpus=id;family=docs.some(d=>d.family===id)?id:'';version='';asOf='';result=null;source=null;await navigate('work');
       question=demos.find(d=>d.id===id)?.questions[0]||'';
       notice='Демонстрационные документы добавлены в ваше временное пространство.';
     });
@@ -74,7 +97,7 @@
       const file=form.get('file') as File;
       if(file.size>10_000_000)throw new Error('Файл должен быть не больше 10 МБ');
       const doc=await api('/documents',{method:'POST',body:form});await refresh();
-      view='work';result=null;source=doc;uploadDialog.close();uploadForm.reset();
+      result=null;source=doc;uploadDialog.close();uploadForm.reset();await navigate('work');
       notice=doc.status==='needs_ocr'?'В PDF нет текстового слоя. Требуется распознавание; OCR пока не подключён.':'Документ обработан. Можно искать по его содержимому.';
     });
   }
@@ -83,19 +106,50 @@
   }
   async function clearWorkspace() {
     if(!confirm('Удалить всё рабочее пространство и все загруженные документы?'))return;
-    await run(async()=>{await api('/workspace',{method:'DELETE'});hasSession=false;docs=[];source=null;result=null;comparison=null;view='home';notice='Рабочее пространство удалено.';});
+    await run(async()=>{await api('/workspace',{method:'DELETE'});hasSession=false;docs=[];source=null;result=null;comparison=null;await navigate('home');notice='Рабочее пространство удалено.';});
   }
-  onMount(()=>{run(async()=>{demos=await api('/demos');try{const s=await api('/session');docs=s.documents;hasSession=true;}catch{hasSession=false;}});});
+  onMount(()=>{
+    const previousRestoration=history.scrollRestoration;
+    history.scrollRestoration='manual';
+    let restoring=false, frame=0;
+    const saveScroll=()=>{
+      if(!restoring)history.replaceState({...history.state,scrollY:window.scrollY},'',window.location.href);
+    };
+    const restoreRoute=async()=>{
+      restoring=true;
+      const position=history.state?.scrollY||0;
+      view=routeFromPath(window.location.pathname);
+      if(view==='compare')prepareComparison();
+      error='';notice='';
+      await tick();
+      window.scrollTo({top:position,behavior:'instant'});
+      document.getElementById('main')?.focus({preventScroll:true});
+      frame=requestAnimationFrame(()=>{restoring=false;});
+    };
+    window.addEventListener('popstate',restoreRoute);
+    window.addEventListener('scroll',saveScroll,{passive:true});
+    void run(async()=>{
+      demos=await api('/demos');
+      try{const s=await api('/session');docs=s.documents;hasSession=true;}catch{hasSession=false;}
+      if(view==='compare')prepareComparison();
+    });
+    return ()=>{
+      window.removeEventListener('popstate',restoreRoute);
+      window.removeEventListener('scroll',saveScroll);
+      cancelAnimationFrame(frame);
+      history.scrollRestoration=previousRestoration;
+    };
+  });
 </script>
 
 <svelte:head><title>{view==='home'?'Основание — ответы начинаются с источников':view==='compare'?'Сравнение редакций — Основание':view==='research'?'Метод и ограничения — Основание':'Работа с документами — Основание'}</title></svelte:head>
 <a class="skip" href="#main">Перейти к содержимому</a>
 <header class="topbar">
-  <button class="brand" onclick={()=>view='home'} aria-label="Основание, главная"><svg viewBox="0 0 36 36" width="34" height="34" fill="none" aria-hidden="true"><path d="M13 5H5v26h8M23 5h8v26h-8M12 24l6-13 6 13M14 20h8" stroke="currentColor" stroke-width="2"/></svg><span>Основание<small>Документы. Источники. Выводы.</small></span></button>
+  <a class="brand" href="/" onclick={(e)=>followLink(e,'home')} aria-label="Основание, главная"><svg viewBox="0 0 36 36" width="34" height="34" fill="none" aria-hidden="true"><path d="M13 5H5v26h8M23 5h8v26h-8M12 24l6-13 6 13M14 20h8" stroke="currentColor" stroke-width="2"/></svg><span>Основание<small>Документы. Источники. Выводы.</small></span></a>
   <nav aria-label="Главная навигация">
-    <button class:active={view==='work'} onclick={()=>view='work'}>Документы <span class="count">{docs.length}</span></button>
-    <button class:active={view==='compare'} onclick={()=>{view='compare';left=docs[0]?.id||'';right=docs[1]?.id||'';comparison=null;}}>Сравнение редакций</button>
-    <button class:active={view==='research'} onclick={()=>view='research'}>О методе</button>
+    <a href="/documents" class:active={view==='work'} aria-current={view==='work'?'page':undefined} onclick={(e)=>followLink(e,'work')}>Документы <span class="count">{docs.length}</span></a>
+    <a href="/compare" class:active={view==='compare'} aria-current={view==='compare'?'page':undefined} onclick={(e)=>followLink(e,'compare')}>Сравнение редакций</a>
+    <a href="/method" class:active={view==='research'} aria-current={view==='research'?'page':undefined} onclick={(e)=>followLink(e,'research')}>О методе</a>
   </nav>
   <span class="mode"><span class="dot"></span>Без внешней модели</span>
 </header>
@@ -163,5 +217,5 @@
   <section class="wrap research-page"><p class="breadcrumb">Метод и ограничения</p><h1>Проверяемость начинается<br/>с честных границ.</h1><p class="lead">«Основание» — инструмент поиска и исследовательский прототип адаптивного формирования контекста. Текущий режим не выполняет смысловую верификацию произвольных утверждений.</p><div class="method-grid"><article><h2>Что происходит с вопросом</h2><ol><li>Слова нормализуются, фрагменты ранжируются по текстовому совпадению.</li><li>При нехватке терминов поиск расширяется в пределах бюджета.</li><li>Редакции сопоставляются по группе, версии и дате.</li><li>Разные значения явно подписанных полей становятся сигналами для проверки.</li></ol></article><article><h2>Что считается подтверждением</h2><p>Совпадение слов и высокая позиция в поиске — не доказательство. В этом режиме подтверждение возможно только для авторского формального правила, когда все его условия и цитаты присутствуют.</p><p>Без такого правила система показывает источники и отказывается от свободного вывода.</p></article><article><h2>Исследовательская гипотеза</h2><p>Проверяем, помогает ли учёт редакций уменьшить ошибки выбора источников при фиксированном бюджете поиска. Новизна и преимущество метода не установлены.</p><p>Реализованы четыре стратегии: первые 5 и 10 фрагментов, адаптивный поиск и поиск с учётом редакций. Демонстрационные корпуса синтетические.</p></article><article><h2>Приватность</h2><p>Пространство доступно по закрытому cookie текущего браузера. Срок хранения — 24 часа от создания. До 20 документов, до 10 МБ на файл и 40 МБ суммарно.</p><p>Внешняя модель отключена. Данные не используются для обучения. Для удаления откройте раздел «Документы».</p></article></div><h2>На какие исследования опираемся</h2><ul class="reading"><li><a href="https://research.google/pubs/sufficient-context-a-new-lens-on-retrieval-augmented-generation-systems/" target="_blank" rel="noreferrer">Sufficient Context (2025)</a> — различие релевантности и достаточности.</li><li><a href="https://aclanthology.org/2025.acl-long.319/" target="_blank" rel="noreferrer">Adaptive Retrieval Without Self-Knowledge? (2025)</a> — качество и стоимость адаптивного поиска.</li><li><a href="https://aclanthology.org/2026.acl-long.1185/" target="_blank" rel="noreferrer">S2G-RAG (2026)</a> — явное управление достаточностью и пробелами.</li><li><a href="https://arxiv.org/abs/2609.37469" target="_blank" rel="noreferrer">RINSE (2026)</a> — проверка недостающих свидетельств до генерации.</li><li><a href="https://doi.org/10.1145/3774904.3792289" target="_blank" rel="noreferrer">Conflict-Aware RAG (2026)</a> — обучение с сигналами конфликтов.</li></ul></section>
 {/if}
 </main>
-<footer class="footer wrap"><span>Основание <span class="muted">/ EvidenceRAG</span></span><span>Исследовательский прототип · источники важнее уверенного тона</span><button class="text-button" onclick={()=>view='research'}>Метод и ограничения</button></footer>
+<footer class="footer wrap"><span>Основание <span class="muted">/ EvidenceRAG</span></span><span>Исследовательский прототип · источники важнее уверенного тона</span><a class="text-button" href="/method" onclick={(e)=>followLink(e,'research')}>Метод и ограничения</a></footer>
 <dialog bind:this={uploadDialog} class="upload-dialog"><div class="dialog-heading"><h2>Добавить документ</h2><button class="secondary" onclick={()=>uploadDialog.close()} aria-label="Закрыть окно загрузки">Закрыть</button></div><p>Только в ваше временное пространство. Внешняя модель отключена.</p><form bind:this={uploadForm} onsubmit={upload}><label>Файл<input name="file" type="file" required accept=".pdf,.docx,.txt,.md"/></label><p class="fine">PDF с текстом, DOCX, TXT или Markdown. До 10 МБ, 300 страниц, 180 000 символов. Для сканов потребуется OCR.</p><label>Название<input name="title" maxlength="160" placeholder="Например, инструкция к устройству…"/></label><label>Группа редакций<input name="family" maxlength="100" placeholder="Одинаковое имя для версий одного документа…"/></label><div class="form-pair"><label>Версия<input name="version" maxlength="40" placeholder="Например, 2.0…"/></label><label>Действует с<input name="date" type="date"/></label></div><p class="fine">Если дата не указана, система не будет предполагать её по времени загрузки. Версия может быть определена из имени вида v2.0.</p>{#if error}<p class="message error" role="alert">{error}</p>{/if}<button class="primary full" disabled={busy}>{busy?'Обработка…':'Загрузить и обработать'}</button></form></dialog>

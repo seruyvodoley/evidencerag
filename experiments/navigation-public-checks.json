@@ -1,0 +1,56 @@
+[
+  {
+    "path": "/",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "bytes": 912
+  },
+  {
+    "path": "/documents",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "bytes": 912
+  },
+  {
+    "path": "/compare",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "bytes": 912
+  },
+  {
+    "path": "/method",
+    "status": 200,
+    "type": "text/html; charset=utf-8",
+    "bytes": 912
+  },
+  {
+    "path": "/favicon.svg",
+    "status": 200,
+    "type": "image/svg+xml",
+    "bytes": 279
+  },
+  {
+    "path": "/favicon.ico",
+    "status": 200,
+    "type": "image/vnd.microsoft.icon",
+    "bytes": 4536
+  },
+  {
+    "path": "/favicon-16.png",
+    "status": 200,
+    "type": "image/png",
+    "bytes": 734
+  },
+  {
+    "path": "/favicon-32.png",
+    "status": 200,
+    "type": "image/png",
+    "bytes": 1491
+  },
+  {
+    "path": "/apple-touch-icon.png",
+    "status": 200,
+    "type": "image/png",
+    "bytes": 7370
+  }
+]

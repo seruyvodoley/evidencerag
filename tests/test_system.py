@@ -223,3 +223,11 @@ def test_rate_limit(store,monkeypatch):
     with TestClient(main.app,client=('rate-test-only',12345)) as c:
         statuses=[c.post('/api/workspaces').status_code for _ in range(91)]
     assert statuses[:90]==[200]*90 and statuses[-1]==429
+
+
+@pytest.mark.parametrize('path',['/documents','/compare','/method'])
+def test_direct_page_requests(client,path):
+    response=client.get(path)
+    assert response.status_code==200
+    assert 'text/html' in response.headers['content-type']
+    assert 'Основание' in response.text

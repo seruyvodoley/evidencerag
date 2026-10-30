@@ -1,0 +1,27 @@
+{
+  "services": {
+    "wg-quick@wg0": "ActiveState=active\nInvocationID=44801f2860bb495ab2a99af160a0a364\n",
+    "wg-quick@homeexit": "ActiveState=active\nInvocationID=4c0da2e9b76d4f30b17da833c8f9b26b\n",
+    "xray": "ActiveState=active\nInvocationID=d363601c817c4dd38f6e43aef7212e72\n",
+    "tunneldeck-xray-xhttp": "ActiveState=active\nInvocationID=a22a4c0d7b7144c984b5017adae85d4b\n",
+    "tunneldeck-xray-xhttp-tls": "ActiveState=active\nInvocationID=4ff304171d8d42e099f4790bd3bb7dc2\n"
+  },
+  "interfaces": [
+    "awgtd0",
+    "wg0",
+    "homeexit",
+    "awgfriend0"
+  ],
+  "routes_sha256": "fa0efbe058a687d76ae7a60bfc1d5c99c97b0bb26c96fa28f635955819555a77",
+  "rules_sha256": "bd8e0b7e674d6f37596d435dfc6abc53515f231718c5fd85bd4144d53b09e366",
+  "firewall_sha256": "17203df67a366af63f72e19f921080c2f26f386714a86263e57f710ad50347ed",
+  "docker_networks_sha256": "f79ac5cc4e81128db1edaf80d21d2619a54bc64fd05ee6ff7b8b8740afb7f2ed",
+  "wg": {
+    "peers_with_handshake": 7,
+    "recent_180_seconds": 1
+  },
+  "awg": {
+    "peers_with_handshake": 2,
+    "recent_180_seconds": 1
+  }
+}

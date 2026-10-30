@@ -1,0 +1,8 @@
+{
+  "services": true,
+  "interfaces": true,
+  "routes_sha256": true,
+  "rules_sha256": true,
+  "firewall_sha256": true,
+  "docker_networks_sha256": true
+}

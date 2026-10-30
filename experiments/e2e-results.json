@@ -75,7 +75,7 @@
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
         "timeout": 30000,
         "use": {
-          "baseURL": "http://127.0.0.1:8000",
+          "baseURL": "https://osnovanie.91-196-32-58.sslip.io",
           "trace": "retain-on-failure",
           "channel": "chrome",
           "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
@@ -112,7 +112,7 @@
         "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
         "timeout": 30000,
         "use": {
-          "baseURL": "http://127.0.0.1:8000",
+          "baseURL": "https://osnovanie.91-196-32-58.sslip.io",
           "trace": "retain-on-failure",
           "channel": "chrome",
           "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
@@ -182,12 +182,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 8608,
+                  "duration": 4675,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:19.622Z",
+                  "startTime": "2026-10-30T18:12:27.807Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -216,12 +216,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3875,
+                  "duration": 3670,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:42.223Z",
+                  "startTime": "2026-10-30T18:12:34.790Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -250,12 +250,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1296,
+                  "duration": 2695,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:46.111Z",
+                  "startTime": "2026-10-30T18:12:38.475Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -266,6 +266,40 @@
           "id": "921e070f285a8b470d11-59d3efebb4ed1789faf5",
           "file": "workbench.spec.ts",
           "line": 40,
+          "column": 1
+        },
+        {
+          "title": "page links, direct addresses, reload, history and new tab",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3401,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:12:41.181Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "921e070f285a8b470d11-0aeb562d54b2382ec48f",
+          "file": "workbench.spec.ts",
+          "line": 52,
           "column": 1
         },
         {
@@ -284,12 +318,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4455,
+                  "duration": 3876,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:48.584Z",
+                  "startTime": "2026-10-30T18:12:46.691Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -318,12 +352,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1507,
+                  "duration": 3829,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:55.305Z",
+                  "startTime": "2026-10-30T18:12:52.911Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -352,12 +386,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1005,
+                  "duration": 3109,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-30T17:48:56.825Z",
+                  "startTime": "2026-10-30T18:12:56.764Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -369,15 +403,49 @@
           "file": "workbench.spec.ts",
           "line": 40,
           "column": 1
+        },
+        {
+          "title": "page links, direct addresses, reload, history and new tab",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-30T18:12:59.888Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "921e070f285a8b470d11-becd386c41a11ed073b2",
+          "file": "workbench.spec.ts",
+          "line": 52,
+          "column": 1
         }
       ]
     }
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-30T17:48:19.146Z",
-    "duration": 39025.407,
-    "expected": 6,
+    "startTime": "2026-10-30T18:12:27.350Z",
+    "duration": 35018.25399999999,
+    "expected": 8,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

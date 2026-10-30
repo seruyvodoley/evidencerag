@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg
+  PUBLIC '-//W3C//DTD SVG 1.0//EN'
+  'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>
+<svg width="640" height="330" preserveAspectRatio="xMinYMin meet" viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg" version="1.0" fill-rule="evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<title>...</title>
+	<desc>...</desc>
+	<clipPath id="clip">
+		<rect x="0" y="0" width="640" height="330"/>
+	</clipPath>
+	<g id="group" transform="scale(1,-1) translate(0,-330)" style="clip-path: url(#clip)">
+		<g transform="">
+			<text x="30" y="306" style="font-family: Times-Roman; font-size: 16px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,612) scale(1,-1)">Synthetic fixture check: evidence recall / conflict F1</text>
+			<text x="30" y="286" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,572) scale(1,-1)">Small authored corpus; no claim of scientific superiority</text>
+			<g transform="">
+				<g transform="">
+					<rect x="78.25" y="55.0" width="53.0" height="205.0" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,40%,32%); fill-rule: evenodd;"/>
+					<rect x="210.75" y="55.0" width="53.0" height="205.0" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,40%,32%); fill-rule: evenodd;"/>
+					<rect x="343.25" y="55.0" width="53.0" height="205.0" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,40%,32%); fill-rule: evenodd;"/>
+					<rect x="475.75" y="55.0" width="53.0" height="205.0" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(9%,40%,32%); fill-rule: evenodd;"/>
+					<rect x="131.25" y="55.0" width="53.0" height="186.36363636363635" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(74%,51%,12%); fill-rule: evenodd;"/>
+					<rect x="263.75" y="55.0" width="53.0" height="186.36363636363635" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(74%,51%,12%); fill-rule: evenodd;"/>
+					<rect x="396.25" y="55.0" width="53.0" height="186.36363636363635" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(74%,51%,12%); fill-rule: evenodd;"/>
+					<rect x="528.75" y="55.0" width="53.0" height="186.36363636363635" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1; fill: rgb(74%,51%,12%); fill-rule: evenodd;"/>
+					<g transform=""/>
+				</g>
+				<g transform="">
+					<g transform="">
+						<path d="M 65,55 L 595,55 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 65,55 L 65,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 197.5,55 L 197.5,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 330,55 L 330,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 462.5,55 L 462.5,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 595,55 L 595,50 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,131.25,50)">
+							<text x="-12.775" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">fixed5</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,263.75,50)">
+							<text x="-15.275" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">fixed10</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,396.25,50)">
+							<text x="-16.939999999999998" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">adaptive</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,528.75,50)">
+							<text x="-19.439999999999998" y="-10.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-20) scale(1,-1)">versioned</text>
+						</g>
+					</g>
+				</g>
+				<g transform="">
+					<g transform="">
+						<path d="M 65,55 L 65,260 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<path d="M 65,55 L 60,55 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,96 L 60,96 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,137 L 60,137 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,178 L 60,178 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,219 L 60,219 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+						<path d="M 65,260 L 60,260 Z" style="stroke: rgb(0%,0%,0%); stroke-linecap: butt; stroke-width: 1;"/>
+					</g>
+					<g transform="">
+						<g transform=" matrix(1,0,0,1,60,55)">
+							<text x="-5.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,96)">
+							<text x="-12.5" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0.2</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,137)">
+							<text x="-12.5" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0.4</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,178)">
+							<text x="-12.5" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0.6</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,219)">
+							<text x="-12.5" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">0.8</text>
+						</g>
+						<g transform=" matrix(1,0,0,1,60,260)">
+							<text x="-5.0" y="-4.0" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,-8) scale(1,-1)">1</text>
+						</g>
+					</g>
+				</g>
+			</g>
+			<text x="65" y="16" style="font-family: Times-Roman; font-size: 10px;fill: rgb(0%,0%,0%); stroke:none;" transform="translate(0,32) scale(1,-1)">Green: evidence recall. Amber: literal conflict-signal F1. No generation.</text>
+		</g>
+	</g>
+</svg>

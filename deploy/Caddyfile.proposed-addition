@@ -2,6 +2,7 @@
 
 # EvidenceRAG: isolated upstream; original routes above remain unchanged.
 osnovanie.91-196-32-58.sslip.io {
+    bind 91.196.32.58
     request_body {
         max_size 11MB
     }

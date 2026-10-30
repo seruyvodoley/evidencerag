@@ -14,7 +14,7 @@ test('demo search, version rule, source and comparison',async({page})=>{
   await page.locator('.formal-answer .source-link').click();
   await expect(page.locator('.source-panel article.selected')).toContainText('3600');
   await expect(page.getByRole('link',{name:/Скачать оригинал/})).toHaveAttribute('href',/\/api\/documents\/.*\/original/);
-  await page.getByRole('button',{name:'Сравнение редакций',exact:true}).click();
+  await page.getByRole('link',{name:'Сравнение редакций',exact:true}).click();
   await page.getByRole('button',{name:'Сравнить',exact:true}).click();
   await expect(page.locator('.diff-new').filter({hasText:'3600'})).toBeVisible();
   expect(errors).toEqual([]);
@@ -46,4 +46,32 @@ test('missing information is not confirmed and layout fits',async({page})=>{
     await page.setViewportSize({width,height:844});
     expect(await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}))).toEqual({width,scroll:width});
   }
+});
+
+
+test('page links, direct addresses, reload, history and new tab',async({page,context})=>{
+  await page.goto('/');
+  const navigation=page.getByRole('navigation',{name:'Главная навигация'});
+  await navigation.getByRole('link',{name:'О методе',exact:true}).click();
+  await expect(page).toHaveURL(/\/method$/);
+  await expect(page.getByRole('heading',{name:/Проверяемость начинается/})).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole('heading',{name:/Проверяемость начинается/})).toBeVisible();
+  await navigation.getByRole('link',{name:'Документы',exact:false}).click();
+  await expect(page).toHaveURL(/\/documents$/);
+  await expect(page.getByRole('heading',{name:'Что говорят документы?'})).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/method$/);
+  await expect(page.getByRole('heading',{name:/Проверяемость начинается/})).toBeVisible();
+  await page.goForward();
+  await expect(page).toHaveURL(/\/documents$/);
+  await navigation.getByRole('link',{name:'Сравнение редакций',exact:true}).click();
+  await expect(page).toHaveURL(/\/compare$/);
+  await expect(page.getByRole('heading',{name:'Что изменилось в документе?'})).toBeVisible();
+  const extra=await context.newPage();await extra.goto('/compare');
+  await expect(extra.getByRole('heading',{name:'Что изменилось в документе?'})).toBeVisible();
+  await extra.close();
+  await page.getByRole('link',{name:'Основание, главная',exact:true}).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole('heading',{name:/У каждого вывода/})).toBeVisible();
 });

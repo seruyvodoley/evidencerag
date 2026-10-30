@@ -44,6 +44,6 @@ PYTHONPATH=apps/api .venv/bin/python -m packages.research.runner --output experi
 
 ## Документация
 
-Начните с [состояния проекта](docs/PROJECT_STATUS.md), [передачи контекста](docs/HANDOFF_FOR_CHATGPT.md), [результатов тестов](docs/TESTING.md), [литературы](docs/RESEARCH_LITERATURE.md) и [развёртывания](docs/DEPLOYMENT.md). Результаты локального синтетического запуска: [experiments/run-001/REPORT.md](experiments/run-001/REPORT.md).
+Начните с [состояния проекта](docs/PROJECT_STATUS.md), [передачи контекста](docs/HANDOFF_FOR_CHATGPT.md), [результатов тестов](docs/TESTING.md), [литературы](docs/RESEARCH_LITERATURE.md) и [развёртывания](docs/DEPLOYMENT.md). Результаты локального синтетического запуска: [experiments/run-003/REPORT.md](experiments/run-003/REPORT.md).
 
 Публичное развёртывание и фактические изменения VPS указаны только в docs/VPS_AUDIT.md. Наличие готовых конфигураций не означает, что сайт опубликован.

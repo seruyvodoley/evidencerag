@@ -1,0 +1,2 @@
+{"rollback_test": [{"release": "20261031-002", "rollback_healthy": true}, {"release": "20261031-003", "restored_healthy": true}]}
+{"proxy_reload": true, "backup_created": true, "original_routes_preserved": true, "current_release": "/opt/evidencerag/releases/20261031-003"}
