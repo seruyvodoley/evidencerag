@@ -6,7 +6,8 @@ test('demo search, version rule, source and comparison',async({page})=>{
   await page.getByRole('button',{name:'Открыть демонстрацию',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Что говорят документы?'})).toBeVisible();
   await page.getByRole('button',{name:'Найти основания',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Есть различия, влияющие на проверку'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Значения менялись между редакциями'})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Изменения между редакциями'})).toBeVisible();
   await expect(page.locator('.hit blockquote').filter({hasText:'3600'})).toBeVisible();
   await page.locator('.filters select').nth(1).selectOption('2.0');
   await page.getByRole('button',{name:'Найти основания',exact:true}).click();

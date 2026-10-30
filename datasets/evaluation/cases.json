@@ -13,7 +13,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-0-1",
@@ -29,7 +31,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-0-2",
@@ -45,7 +49,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-1-0",
@@ -61,7 +67,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-1-1",
@@ -77,7 +85,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-1-2",
@@ -93,7 +103,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-2-0",
@@ -109,7 +121,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-2-1",
@@ -125,7 +139,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-2-2",
@@ -141,7 +157,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-1.0-3-0",
@@ -157,7 +175,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-0-0",
@@ -173,7 +193,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-0-1",
@@ -189,7 +211,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-0-2",
@@ -205,7 +229,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-1-0",
@@ -221,7 +247,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-1-1",
@@ -237,7 +265,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-1-2",
@@ -253,7 +283,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-2-0",
@@ -269,7 +301,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-2-1",
@@ -285,7 +319,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-2-2",
@@ -301,7 +337,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-2.0-3-0",
@@ -317,7 +355,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "device-missing",
@@ -336,7 +376,9 @@
       "no_results",
       "unverified",
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "device",
+    "expected_resolution": "insufficient"
   },
   {
     "id": "device-versions",
@@ -348,11 +390,13 @@
     "gold_answer": null,
     "required": [],
     "sufficient": false,
-    "conflict": true,
+    "conflict": false,
     "category": "version_change",
     "abstention_reasons": [
-      "potential_conflict"
-    ]
+      "versioned_difference"
+    ],
+    "evaluation_cluster": "device",
+    "expected_resolution": "versioned_difference"
   },
   {
     "id": "device-date",
@@ -361,12 +405,16 @@
     "family": "device",
     "version": null,
     "as_of": "2025-06-15",
-    "gold_answer": null,
-    "required": [],
+    "gold_answer": "3600 мА·ч",
+    "required": [
+      "Ёмкость аккумулятора: 3600 мА·ч"
+    ],
     "sufficient": true,
     "conflict": false,
     "category": "date_scope",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "device",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-0-0",
@@ -382,7 +430,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-0-1",
@@ -398,7 +448,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-0-2",
@@ -414,7 +466,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-1-0",
@@ -430,7 +484,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-1-1",
@@ -446,7 +502,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-2-0",
@@ -462,7 +520,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-2-1",
@@ -478,7 +538,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-1.0-2-2",
@@ -494,7 +556,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-0-0",
@@ -510,7 +574,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-0-1",
@@ -526,7 +592,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-0-2",
@@ -542,7 +610,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-1-0",
@@ -558,7 +628,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-1-1",
@@ -574,7 +646,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-2-0",
@@ -590,7 +664,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-2-1",
@@ -606,7 +682,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-2.0-2-2",
@@ -622,7 +700,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "api-missing",
@@ -641,7 +721,9 @@
       "no_results",
       "unverified",
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "api",
+    "expected_resolution": "insufficient"
   },
   {
     "id": "api-versions",
@@ -653,11 +735,13 @@
     "gold_answer": null,
     "required": [],
     "sufficient": false,
-    "conflict": true,
+    "conflict": false,
     "category": "version_change",
     "abstention_reasons": [
-      "potential_conflict"
-    ]
+      "versioned_difference"
+    ],
+    "evaluation_cluster": "api",
+    "expected_resolution": "versioned_difference"
   },
   {
     "id": "api-date",
@@ -666,12 +750,16 @@
     "family": "api",
     "version": null,
     "as_of": "2025-10-01",
-    "gold_answer": null,
-    "required": [],
+    "gold_answer": "120 в минуту",
+    "required": [
+      "Лимит запросов: 120 в минуту"
+    ],
     "sufficient": true,
     "conflict": false,
     "category": "date_scope",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "api",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-0-0",
@@ -687,7 +775,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-0-1",
@@ -703,7 +793,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-1-0",
@@ -719,7 +811,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-1-1",
@@ -735,7 +829,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-2-0",
@@ -751,7 +847,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2024-2-1",
@@ -767,7 +865,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-0-0",
@@ -783,7 +883,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-0-1",
@@ -799,7 +901,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-1-0",
@@ -815,7 +919,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-1-1",
@@ -831,7 +937,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-2-0",
@@ -847,7 +955,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-2025-2-1",
@@ -863,7 +973,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "explicit_field",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "service-missing",
@@ -882,7 +994,9 @@
       "no_results",
       "unverified",
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "service",
+    "expected_resolution": "insufficient"
   },
   {
     "id": "service-versions",
@@ -894,11 +1008,13 @@
     "gold_answer": null,
     "required": [],
     "sufficient": false,
-    "conflict": true,
+    "conflict": false,
     "category": "version_change",
     "abstention_reasons": [
-      "potential_conflict"
-    ]
+      "versioned_difference"
+    ],
+    "evaluation_cluster": "service",
+    "expected_resolution": "versioned_difference"
   },
   {
     "id": "service-date",
@@ -907,12 +1023,16 @@
     "family": "service",
     "version": null,
     "as_of": "2025-01-01",
-    "gold_answer": null,
-    "required": [],
+    "gold_answer": "30 дней",
+    "required": [
+      "Срок возврата: 30 дней"
+    ],
     "sufficient": true,
     "conflict": false,
     "category": "date_scope",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "service",
+    "expected_resolution": "supported"
   },
   {
     "id": "conflict-draft-0-0",
@@ -921,16 +1041,16 @@
     "family": "conflict",
     "version": "draft",
     "as_of": null,
-    "gold_answer": "30 дней",
-    "required": [
-      "Срок хранения: 30 дней"
-    ],
+    "gold_answer": null,
+    "required": [],
     "sufficient": false,
     "conflict": true,
     "category": "same_version_conflict",
     "abstention_reasons": [
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "conflict",
+    "expected_resolution": "within_edition_conflict"
   },
   {
     "id": "conflict-draft-0-1",
@@ -939,16 +1059,16 @@
     "family": "conflict",
     "version": "draft",
     "as_of": null,
-    "gold_answer": "администратор",
-    "required": [
-      "Ответственный за архив: администратор"
-    ],
+    "gold_answer": null,
+    "required": [],
     "sufficient": false,
     "conflict": true,
     "category": "same_version_conflict",
     "abstention_reasons": [
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "conflict",
+    "expected_resolution": "within_edition_conflict"
   },
   {
     "id": "conflict-draft-1-0",
@@ -957,16 +1077,16 @@
     "family": "conflict",
     "version": "draft",
     "as_of": null,
-    "gold_answer": "90 дней",
-    "required": [
-      "Срок хранения: 90 дней"
-    ],
+    "gold_answer": null,
+    "required": [],
     "sufficient": false,
     "conflict": true,
     "category": "same_version_conflict",
     "abstention_reasons": [
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "conflict",
+    "expected_resolution": "within_edition_conflict"
   },
   {
     "id": "conflict-draft-1-1",
@@ -975,16 +1095,16 @@
     "family": "conflict",
     "version": "draft",
     "as_of": null,
-    "gold_answer": "оператор",
-    "required": [
-      "Ответственный за архив: оператор"
-    ],
+    "gold_answer": null,
+    "required": [],
     "sufficient": false,
     "conflict": true,
     "category": "same_version_conflict",
     "abstention_reasons": [
       "potential_conflict"
-    ]
+    ],
+    "evaluation_cluster": "conflict",
+    "expected_resolution": "within_edition_conflict"
   },
   {
     "id": "bundle-multisource",
@@ -993,7 +1113,7 @@
     "family": null,
     "version": "1.0",
     "as_of": null,
-    "gold_answer": null,
+    "gold_answer": "4800 мА·ч; 7 рабочих дней",
     "required": [
       "Аккумулятор комплекта Полюс: 4800 мА·ч",
       "Срок доставки комплекта Полюс: 7 рабочих дней"
@@ -1001,7 +1121,9 @@
     "sufficient": true,
     "conflict": false,
     "category": "multi_document",
-    "abstention_reasons": []
+    "abstention_reasons": [],
+    "evaluation_cluster": "bundle",
+    "expected_resolution": "supported"
   },
   {
     "id": "bundle-lexical-gap",
@@ -1018,6 +1140,8 @@
     "abstention_reasons": [
       "insufficient",
       "unverified"
-    ]
+    ],
+    "evaluation_cluster": "bundle",
+    "expected_resolution": "insufficient"
   }
 ]

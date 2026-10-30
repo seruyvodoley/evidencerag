@@ -7,7 +7,7 @@ from fastapi.testclient import TestClient
 from evidencerag import main
 from evidencerag.llm import CompatibleModel, validate_citations
 from evidencerag.parser import parse
-from evidencerag.retrieval import retrieve, terms
+from evidencerag.retrieval import adaptive_k, analyze_field_changes, retrieve, stable_evidence_id, terms
 from evidencerag.store import EvidenceStore
 
 
@@ -80,13 +80,17 @@ def test_real_upload(client):
     result=client.post('/api/search',json={'question':'Аккумулятор 9876'}).json()
     assert '9876' in result['hits'][0]['text']
     assert result['status']!='confirmed_formal'
+    assert result['hits'][0]['evidence_id'].startswith('ev-')
+    assert result['hits'][0]['provenance']['position']['locator']
+    assert 'digest' not in result['hits'][0]
 
 
 def test_version_conflict_and_formal_answer(client):
     demo(client)
     a=client.post('/api/search',json={'question':'Какая ёмкость аккумулятора?','family':'device'}).json()
-    assert a['status']=='potential_conflict'
-    assert {s['version'] for c in a['conflicts'] for s in c['sources']}=={'1.0','2.0'}
+    assert a['status']=='versioned_difference'
+    assert a['conflicts']==[]
+    assert {s['version'] for c in a['version_differences'] for s in c['sources']}=={'1.0','2.0'}
     b=client.post('/api/search',json={'question':'Какая ёмкость аккумулятора?','family':'device','version':'2.0'}).json()
     assert b['status']=='confirmed_formal'
     assert '3600' in b['answer']['text']
@@ -135,7 +139,92 @@ def test_compare_real_changes(client):
     docs=demo(client)
     r=client.post('/api/compare',json={'left':docs[0]['id'],'right':docs[1]['id']}).json()
     assert any('3600' in '\n'.join(c['new']) for c in r['changes'])
-    assert r['conflicts'] and r['affected_questions']
+    assert r['conflicts']==[]
+    assert r['version_differences'] and r['affected_questions']
+
+
+def test_same_edition_conflicts_and_version_changes_are_distinct():
+    same_edition=[
+        {'id':1,'document':'one','family':'archive','version':'draft','date':'2025-03-01','text':'Срок хранения: 30 дней'},
+        {'id':2,'document':'one','family':'archive','version':'draft','date':'2025-03-01','text':'Срок хранения: 90 дней'},
+    ]
+    conflicts,changes=analyze_field_changes(same_edition)
+    assert len(conflicts)==1 and conflicts[0]['kind']=='same_edition_value_disagreement'
+    assert changes==[]
+
+    editions=[
+        {'id':3,'document':'old','family':'archive','version':'1.0','date':'2024-01-01','text':'Срок хранения: 30 дней'},
+        {'id':4,'document':'new','family':'archive','version':'2.0','date':'2025-01-01','text':'Срок хранения: 90 дней'},
+    ]
+    conflicts,changes=analyze_field_changes(editions)
+    assert conflicts==[]
+    assert len(changes)==1 and changes[0]['kind']=='dated_edition_change'
+    unscoped_conflicts,unscoped_changes=analyze_field_changes(editions,version_aware=False)
+    assert unscoped_conflicts[0]['kind']=='unscoped_literal_field_difference'
+    assert unscoped_changes==[]
+
+    editions[0]['date']=''
+    editions[1]['date']=''
+    _,changes=analyze_field_changes(editions)
+    assert changes[0]['kind']=='applicability_unknown'
+
+
+def test_field_signals_are_scoped_to_question():
+    hits=[
+        {'id':1,'document':'old','family':'service','version':'2024','date':'2024-01-01',
+         'text':'Срок возврата: 14 дней\nСрок диагностики: 3 рабочих дня'},
+        {'id':2,'document':'new','family':'service','version':'2025','date':'2025-01-01',
+         'text':'Срок возврата: 30 дней\nСрок диагностики: 2 рабочих дня'},
+    ]
+    conflicts,changes=analyze_field_changes(hits,'Какой срок возврата?')
+    assert conflicts==[]
+    assert [item['field'] for item in changes]==['срок возврата']
+
+
+def test_adaptive_k_stops_at_a_large_bm25_score_drop():
+    hits=[{'id':i,'score':score} for i,score in enumerate([-0.10,-0.06,-0.01,-0.005])]
+    assert [hit['id'] for hit in adaptive_k(hits,20)]==[0,1]
+
+
+def test_evidence_id_is_stable_without_database_row_ids():
+    source={'id':1,'document':'random-a','digest':'abc','family':'manual','version':'2.0','date':'2025-01-01',
+            'locator':'§2','page':3,'offset':120,'text':'Ёмкость: 900'}
+    copy={**source,'id':99,'document':'random-b'}
+    changed={**copy,'text':'Ёмкость: 901'}
+    assert stable_evidence_id(source)==stable_evidence_id(copy)
+    assert stable_evidence_id(copy)!=stable_evidence_id(changed)
+
+
+def test_sufficiency_guided_unknown_is_not_reported_as_sufficient(client,store):
+    demo(client)
+    ws=store.workspace(client.cookies.get('evidence_session'))
+    result=retrieve(store,ws,'аккумулятор',strategy='sufficiency_guided',max_iterations=2,max_chunks=10)
+    assert result['answer'] is None
+    assert all(step['sufficiency_judgement'] is None for step in result['trace'])
+    assert all(step['reason']=='judge_unknown_expand' for step in result['trace'])
+
+
+def test_sufficiency_judge_gap_is_bounded_and_used_for_next_search(client,store):
+    demo(client)
+    ws=store.workspace(client.cookies.get('evidence_session'))
+    result=retrieve(store,ws,'аккумулятор',strategy='sufficiency_guided',max_iterations=2,max_chunks=10,
+                    sufficiency_judge=lambda question,hits:{'sufficient':False,'gaps':['цена ремонта']})
+    assert result['trace'][0]['judge_gaps']
+    assert result['trace'][1]['query']==result['trace'][0]['judge_gaps']
+    with pytest.raises(ValueError):
+        retrieve(store,ws,'аккумулятор',strategy='sufficiency_guided',max_iterations=1,
+                 sufficiency_judge=lambda question,hits:{'sufficient':'yes'})
+
+
+def test_evaluation_annotations_have_temporal_gold():
+    from pathlib import Path
+    cases=json.loads(Path('datasets/evaluation/cases.json').read_text())
+    by_id={case['id']:case for case in cases}
+    assert by_id['device-date']['gold_answer']=='3600 мА·ч'
+    assert by_id['device-date']['required']==['Ёмкость аккумулятора: 3600 мА·ч']
+    assert by_id['service-versions']['expected_resolution']=='versioned_difference'
+    assert by_id['service-versions']['conflict'] is False
+    assert by_id['conflict-draft-0-0']['expected_resolution']=='within_edition_conflict'
 
 
 def test_expiry_cascade(client,store):
@@ -172,7 +261,7 @@ def test_document_quota(store):
 
 def test_controller_budgets(client,store):
     demo(client);ws=store.workspace(client.cookies.get('evidence_session'))
-    for strategy in ['fixed5','fixed10','adaptive','versioned']:
+    for strategy in ['fixed5','fixed10','adaptive','versioned','sufficiency_guided','evidencerag']:
         r=retrieve(store,ws,'аккумулятор температура неизвестный',strategy,max_iterations=2,max_chunks=3)
         assert len(r['hits'])<=3 and len(r['trace'])<=2
 
@@ -211,10 +300,21 @@ def test_session_delete(client,store):
 
 def test_experiment_reproducibility(tmp_path):
     from packages.research.runner import run
+    import json
     a=run(tmp_path/'first','test');b=run(tmp_path/'second','test')
     for rows in (a,b):
         for row in rows:row.pop('latency_ms')
     assert a==b
+    assert all(row['answer_correctness'] is None for row in a)
+    assert all(row['false_abstention_rate'] is None for row in a)
+    assert all(row['semantic_sufficiency_accuracy'] is None for row in a)
+    traces_a=json.loads((tmp_path/'first'/'traces.json').read_text())
+    traces_b=json.loads((tmp_path/'second'/'traces.json').read_text())
+    projection=lambda traces:[(t['strategy'],t['case_id'],
+        [h['evidence_id'] for h in t['result']['hits']],
+        [step['selected_evidence_ids'] for step in t['result']['trace']]) for t in traces]
+    assert projection(traces_a)==projection(traces_b)
+    assert all('evidence_id' in hit and 'id' not in hit for t in traces_a for hit in t['result']['hits'])
     with pytest.raises(FileExistsError):run(tmp_path/'first','test')
 
 

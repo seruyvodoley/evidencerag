@@ -2,7 +2,9 @@
 
 Пять авторских корпусов CC0 в datasets/demo: две редакции инструкции «Север», две версии API «Лист», два регламента «Контур», один несогласованный архивный регламент и три документа комплекта «Полюс». Всего 10 документов. Это небольшие качественные fixtures, а не репрезентативный benchmark.
 
-Генератор: scripts/create_demo.py. Разметка: datasets/evaluation/cases.json, 63 случая, из них 21 test. Есть явные факты, отсутствие информации, изменения версий/дат, внутренний конфликт, лексически похожий текст без цены и вопрос по нескольким документам. Поля: id, split, question, family, version, as_of, gold_answer, required, sufficient, conflict, category, abstention_reasons.
+Генератор: scripts/create_demo.py. Разметка: `datasets/evaluation/cases.json`, 63 случая, из них 21 test. Есть явные факты, отсутствие информации, изменения версий/дат, внутренний конфликт, лексически похожий текст без цены и вопрос по нескольким документам. Поля включают id, split, evaluation_cluster, question, family, version, as_of, gold_answer, required, `expected_resolution`, sufficient, conflict, category, abstention_reasons. Все редакции одного семейства помещены в один split; bundle задачи также образуют один кластер.
+
+Датированные примеры `device-date`, `api-date` и `service-date` размечены точными ожидаемыми значениями и строками источников. Прежняя версия данных задавала `sufficient=true`, но оставляла `gold_answer` и `required` пустыми; эта разметка не годилась для retrieval-recall. Исторические run-001—run-003 сохранены неизменными и отражают эту старую схему. Новая оценка не использует `sufficient` для вычисления answer quality: без генератора/semantic judge answer metrics null.
 
 | Внешний набор | Пригодность и лицензия по первичному источнику | Статус |
 |---|---|---|

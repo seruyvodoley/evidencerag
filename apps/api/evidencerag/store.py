@@ -130,6 +130,6 @@ class EvidenceStore:
             if deadline is not None:
                 db.set_progress_handler(lambda: int(time.perf_counter() >= deadline), 1000)
             return [dict(r) for r in db.execute(f'''SELECT c.id,c.document,c.text,c.locator,c.page,c.offset,
-            d.title,d.family,d.version,d.date,d.metadata,bm25(search) AS score
+            d.title,d.family,d.version,d.date,d.digest,d.metadata,bm25(search) AS score
             FROM search JOIN chunks c ON c.id=search.rowid JOIN documents d ON d.id=c.document
             WHERE search MATCH ? AND {' AND '.join(filters)} ORDER BY score,c.id LIMIT ?''', args)]

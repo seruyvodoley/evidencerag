@@ -145,7 +145,8 @@ def valid_date(value):
 
 @app.get('/api/health')
 def health():
-    return {'status':'ok','mode':'lexical','llm_public':False,'algorithm':'lexical-controller-v1'}
+    return {'status':'ok','mode':'lexical','llm_public':False,'algorithm':'lexical-controller-v2',
+            'semantic_sufficiency_judge':False}
 
 
 @app.post('/api/workspaces')
@@ -304,11 +305,13 @@ def compare(body: Compare, request: Request):
     b = '\n\n'.join(c['text'] for c in right['chunks']).splitlines()
     matcher = difflib.SequenceMatcher(None, a, b, autojunk=False)
     changes = [{'kind':tag, 'old':a[i:j], 'new':b[k:l]} for tag,i,j,k,l in matcher.get_opcodes() if tag != 'equal']
-    from .retrieval import conflicts
-    hits = [{**c, 'family':d['family'], 'document':d['id'], 'version':d['version']} for d in [left,right] for c in d['chunks']]
-    signals = conflicts(hits)
+    from .retrieval import analyze_field_changes
+    hits = [{**c, 'family':d['family'], 'document':d['id'], 'version':d['version'], 'date':d['date']} for d in [left,right] for c in d['chunks']]
+    signals, version_differences = analyze_field_changes(hits)
+    related = signals + version_differences
     return {'left':left['title'], 'right':right['title'], 'changes':changes, 'conflicts':signals,
-            'affected_questions':[f'Какое значение поля «{c["field"]}» применимо к нужной дате и редакции?' for c in signals],
+            'version_differences':version_differences,
+            'affected_questions':[f'Какое значение поля «{c["field"]}» применимо к нужной дате и редакции?' for c in related],
             'limitation':'Текстовые изменения и различия полей. Смысловые противоречия автоматически не доказаны.'}
 
 
