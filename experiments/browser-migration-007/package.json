@@ -1,0 +1,13 @@
+{
+  "name": "evidencerag-browser-migration-audit-007",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit": "node run_pyodide.mjs",
+    "browser-audit": "node browser-e2e.mjs"
+  },
+  "devDependencies": {
+    "@sqlite.org/sqlite-wasm": "3.54.1-build1",
+    "pyodide": "314.0.7"
+  }
+}

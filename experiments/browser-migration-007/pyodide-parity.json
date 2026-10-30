@@ -1,0 +1,273 @@
+Loading micropip
+Loaded micropip
+Loading lxml, pyparsing, setuptools, typing-extensions
+Loaded lxml, pyparsing, setuptools, typing-extensions
+{
+  "pyodide": "314.0.7",
+  "sqlite_versions": {
+    "native": "3.54.1",
+    "pyodide": "3.39.0"
+  },
+  "parser_morphology_controller_parity": true,
+  "sqlite_fts5_store": {
+    "error_type": "OperationalError",
+    "fts5_match_works": true,
+    "fts5_secure_delete_works": false,
+    "message": "SQL logic error",
+    "sqlite_version": "3.39.0",
+    "status": "blocked"
+  },
+  "probe": {
+    "adaptive_k": {
+      "decision": {
+        "candidate_count": 3,
+        "cutoff": "relative_score_below_threshold",
+        "first_excluded_relative_score": 0.1,
+        "last_included_relative_score": 0.8,
+        "selected_count": 2,
+        "threshold": 0.55
+      },
+      "selected_ids": [
+        "a",
+        "b"
+      ]
+    },
+    "parser": {
+      "docx": {
+        "parts": [
+          {
+            "locator": "Питание · блок 1",
+            "offset": 0,
+            "page": null,
+            "text": "Питание"
+          },
+          {
+            "locator": "Питание · блок 2",
+            "offset": 0,
+            "page": null,
+            "text": "Батарея 3600 мАч"
+          },
+          {
+            "locator": "Питание · блок 3",
+            "offset": 0,
+            "page": null,
+            "text": "USB | 5V"
+          }
+        ],
+        "status": "ready"
+      },
+      "markdown": {
+        "parts": [
+          {
+            "locator": "Договор",
+            "offset": 0,
+            "page": null,
+            "text": "# Договор"
+          },
+          {
+            "locator": "Договор",
+            "offset": 0,
+            "page": null,
+            "text": "Срок возврата: 30 дней"
+          }
+        ],
+        "status": "ready"
+      },
+      "pdf": {
+        "parts": [
+          {
+            "locator": "Страница 1",
+            "offset": 0,
+            "page": 1,
+            "text": "First battery page"
+          },
+          {
+            "locator": "Страница 2",
+            "offset": 0,
+            "page": 2,
+            "text": "Second charging page"
+          }
+        ],
+        "status": "ready"
+      },
+      "scanned_pdf": {
+        "parts": [],
+        "status": "needs_ocr"
+      }
+    },
+    "research_controller": {
+      "answer": {
+        "claims": [
+          {
+            "citations": [
+              {
+                "id": "ev-contract-v2",
+                "quote": "Срок возврата: 14 дней"
+              }
+            ],
+            "text": "Срок возврата: 14 дней"
+          }
+        ],
+        "refusal_reason": null,
+        "status": "answered",
+        "unresolved_conflicts": [],
+        "verification": "literal_citation_checked"
+      },
+      "answer_generator": "literal_extract_only",
+      "assessment": {
+        "confidence": null,
+        "confidence_method": null,
+        "conflicting_claims": [],
+        "evaluator": "authored_exact_quote_rule",
+        "evidence_ids": [
+          "ev-contract-v2"
+        ],
+        "missing_information": [],
+        "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+        "recommended_action": "stop",
+        "status": "sufficient",
+        "supported_claims": [
+          {
+            "claim_id": "return-period",
+            "evidence_ids": [
+              "ev-contract-v2"
+            ],
+            "text": "Срок возврата: 14 дней"
+          }
+        ],
+        "version_constraints": {
+          "as_of": null,
+          "required_versions": [
+            "2.0"
+          ],
+          "version": "2.0"
+        }
+      },
+      "budget": {
+        "initial_top_k": 2,
+        "max_chunks": 8,
+        "max_iterations": 3,
+        "time_budget_ms": 1000
+      },
+      "evaluator": "authored_exact_quote_rule",
+      "question": "Какой срок возврата?",
+      "request": {
+        "as_of": null,
+        "family": "contract",
+        "question": "Какой срок возврата?",
+        "version": "2.0"
+      },
+      "schema_version": "research-rag-trace-v1",
+      "selected_evidence": [
+        {
+          "date": "2025-01-01",
+          "evidence_id": "ev-contract-v2",
+          "family": "contract",
+          "locator": "Условия",
+          "page": 2,
+          "source_revision_id": "doc-contract-v2",
+          "text": "Условия\nСрок возврата: 14 дней",
+          "version": "2.0"
+        }
+      ],
+      "strategy": "sufficiency_gap_controller_v1",
+      "termination": "sufficient",
+      "trace": [
+        {
+          "action": "stop_sufficient",
+          "as_of": null,
+          "assessment": {
+            "confidence": null,
+            "confidence_method": null,
+            "conflicting_claims": [],
+            "evaluator": "authored_exact_quote_rule",
+            "evidence_ids": [
+              "ev-contract-v2"
+            ],
+            "missing_information": [],
+            "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+            "recommended_action": "stop",
+            "status": "sufficient",
+            "supported_claims": [
+              {
+                "claim_id": "return-period",
+                "evidence_ids": [
+                  "ev-contract-v2"
+                ],
+                "text": "Срок возврата: 14 дней"
+              }
+            ],
+            "version_constraints": {
+              "as_of": null,
+              "required_versions": [
+                "2.0"
+              ],
+              "version": "2.0"
+            }
+          },
+          "family": "contract",
+          "iteration": 1,
+          "new_document_count": 1,
+          "new_document_ids": [
+            "doc-contract-v2"
+          ],
+          "new_evidence_chunk_count": 1,
+          "new_evidence_claim_count": 1,
+          "new_evidence_ids": [
+            "ev-contract-v2"
+          ],
+          "new_supported_claim_ids": [
+            "return-period"
+          ],
+          "next_query": null,
+          "query": "Какой срок возврата?",
+          "query_fingerprint": "0bec02021641b8ffbbae0fa876c1b28d1e1a987f14baa88a3ca27549da2d44b9",
+          "reason": "explicit_evaluator_sufficient",
+          "requested_limit": 2,
+          "returned_evidence_ids": [
+            "ev-contract-v2"
+          ],
+          "selected_evidence_ids": [
+            "ev-contract-v2"
+          ],
+          "version": "2.0"
+        }
+      ]
+    },
+    "stable_evidence_ids": [
+      "ev-4e8b33b4416b6bc8f4b434a4",
+      "ev-8f98dfe6ec158e01c6b3351f"
+    ],
+    "terms": [
+      "договор",
+      "услуга"
+    ],
+    "version_signals": [
+      [],
+      [
+        {
+          "family": "contract",
+          "field": "срок возврата",
+          "kind": "dated_edition_change",
+          "label": "Значения различаются между редакциями; порядок применения не установлен",
+          "sources": [
+            {
+              "date": "2024-01-01",
+              "document": "document-a",
+              "id": "chunk-a",
+              "value": "30 дней",
+              "version": "1.0"
+            },
+            {
+              "date": "2025-01-01",
+              "document": "document-a",
+              "id": "chunk-a",
+              "value": "14 дней",
+              "version": "2.0"
+            }
+          ]
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "result": {
+    "sqliteVersion": "3.54.1",
+    "secureDelete": true,
+    "persistedAcrossWorkerRestart": true,
+    "rowsAfterDelete": 0
+  },
+  "pageErrors": [],
+  "networkRequests": [
+    "http://127.0.0.1:4179/",
+    "http://127.0.0.1:4179/@vite/client",
+    "http://127.0.0.1:4179/main.js",
+    "http://127.0.0.1:4179/@fs/Volumes/RisingSail/%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F/EvidenceRAG/apps/web/node_modules/vite/dist/client/env.mjs",
+    "http://127.0.0.1:4179/sqlite-worker.js",
+    "http://127.0.0.1:4179/@fs/Volumes/RisingSail/%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F/EvidenceRAG/experiments/browser-migration-007/node_modules/@sqlite.org/sqlite-wasm/dist/index.mjs?v=121dc49b",
+    "http://127.0.0.1:4179/@fs/Volumes/RisingSail/%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F/EvidenceRAG/experiments/browser-migration-007/node_modules/@sqlite.org/sqlite-wasm/dist/sqlite3.wasm",
+    "http://127.0.0.1:4179/sqlite-worker.js",
+    "http://127.0.0.1:4179/@fs/Volumes/RisingSail/%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F/EvidenceRAG/experiments/browser-migration-007/node_modules/@sqlite.org/sqlite-wasm/dist/index.mjs?v=121dc49b",
+    "http://127.0.0.1:4179/@fs/Volumes/RisingSail/%D0%BE%D1%81%D0%BD%D0%BE%D0%B2%D1%8B%20%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F/EvidenceRAG/experiments/browser-migration-007/node_modules/@sqlite.org/sqlite-wasm/dist/sqlite3.wasm"
+  ],
+  "externalRequests": []
+}

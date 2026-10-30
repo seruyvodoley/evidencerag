@@ -75,3 +75,9 @@
 5. Реализовать сравнение Fixed-k, точной/явно адаптированной Adaptive-k, sufficiency-guided и proposed при одинаковых корпусе, query, evidence budgets и процедуре оценки; добавить ablations.
 6. Проводить paired analysis по query и учитывать family clusters. Пререгистрировать метрики/правила обработки `uncertain` и отказов; CI/проверки публиковать только с достаточным количеством независимых семейств.
 7. Разобрать ошибки и негативные исходы. Новизну формулировать только после анализа первичной литературы и результата сравнения.
+
+## Stage 007 browser migration status
+
+The product now contains an opt-in browser-local build. It runs the existing Python parser, morphology, FTS/retrieval and research controller in Pyodide inside a Worker, backed by SQLite WASM 3.54.1 and local OPFS/IndexedDB storage. Selected desktop Chromium product flows and one narrow Python/Pyodide synthetic parity probe pass. Results and coverage limits are in `MIGRATION_REPORT_007.md`, `PYTHON_BROWSER_PARITY.md`, and `BROWSER_PRIVACY_AUDIT.md`.
+
+The browser migration is a product/runtime study and does not change scientific claims above. Full parity is not established; the public app remains server-backed because no static host/repository is configured, and there is no published browser-local URL. No local semantic model, OCR, or general answer generation exists. The VPS service, stored data, backups, Caddy, TunnelDeck and VPN were not changed. These product tests are not evidence of semantic quality, answer correctness, retrieval superiority or scientific novelty.

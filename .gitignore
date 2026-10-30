@@ -7,5 +7,7 @@ __pycache__/
 var/
 .DS_Store
 ._*
+apps/web/public/vendor/
+apps/web/dist-browser/
 playwright-report/
 test-results/

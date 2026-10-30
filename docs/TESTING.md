@@ -22,3 +22,15 @@
 ## Cookie notice (31.10.2026)
 
 Добавлены информационная плашка и прямая страница `/cookies`. Поведение плашки: закрытие хранится только в состоянии страницы и сбрасывается после перезагрузки; новых cookie или browser storage для этого не создаётся. `npm run check` — 0 ошибок и предупреждений; `npm run build` — успешно. Локальная browser-проверка подтвердила маршрут, текст политики и доступные ссылки. После публикации release-006 запросы по HTTPS к `/`, `/cookies` и `/api/health` вернули 200; GET страниц не установил cookie. Upload/search к публичному сайту не запускались, отдельный Playwright E2E для этой правки не проводился.
+
+## Browser migration — product build and tests (31.10.2026)
+
+- `npm run check --prefix apps/web`: **0 errors, 0 warnings**.
+- `VITE_BASE_PATH=/evidencerag/ npm run build:local --prefix apps/web`: succeeded; builds self-hosted runtime/wheels into separate `apps/web/dist-browser/` and generates `404.html` fallback without replacing the tracked server bundle. Output is about 34 MB; build has not been published.
+- Production build under a local static mount at `/evidencerag/`: **4 passed (53.4 s)** in Chromium 156 desktop. Covers app flows plus base-path navigation, favicon, assets, and direct-route reload through the 404 fallback. Assertions reject cross-origin requests, `/api/*`, missing assets and page errors. Full report: `experiments/browser-migration-007/product-e2e-subpath-results.json`.
+- `.venv/bin/pytest -q`: **61 passed**, one Starlette `httpx` deprecation warning.
+- `npm run audit --prefix experiments/browser-migration-007`: successful CPython/Pyodide synthetic parity probe; JSON artifact `hybrid-parity.json`, BM25 max absolute delta `2.117582368135751e-22` versus tolerance `1e-18`.
+- `npm run browser-audit --prefix experiments/browser-migration-007`: successful isolated Chromium OPFS test; SQLite 3.54.1, `secureDelete: true`, persisted across worker restart, 0 rows after delete, no page errors or external requests. Artifact `browser-opfs-e2e.json`.
+- The existing release artifact `experiments/e2e-results.json` was restored unchanged after product E2E; new browser-migration result is kept separately.
+
+These are selected local tests, not full parity, load, malicious input, quota, recovery, cross-browser, public hosting, or security audit. The public server-backed service remains active. Only Chromium desktop was used; Firefox, Safari/iOS and mobile devices are untested.

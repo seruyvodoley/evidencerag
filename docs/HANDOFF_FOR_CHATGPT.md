@@ -98,4 +98,16 @@ Run-004 и payload релиза построены из commit `8e3e704`; пос
 - Current full tests: 61 passed, 0 failed, 0 skipped, one Starlette deprecation warning. `experiments/pytest-final.txt` is updated. Frontend, E2E, production API and VPS were not retested for this backend-only stage.
 - Status, known literature, gaps and publication criteria: `docs/RESEARCH_STATUS.md`. Source and manual double-annotation protocol: `docs/CORPUS_ANNOTATION_PROTOCOL_006.md`; candidate Python official docs were reviewed for provenance/license but not imported or annotated.
 
+## Stage 007: partial browser migration
+
+User requested browser-local execution, free static hosting and—after all gates pass—safe EvidenceRAG decommission while preserving TunnelDeck. The product now has an opt-in local build (`VITE_LOCAL_EXECUTION=true`), an actual Worker integration, Pyodide running existing Python parser/retrieval/research modules, SQLite WASM 3.54.1 FTS5 + OPFS, IndexedDB workspace pointer, local CRUD, import/export and trace UI. Default build and currently public `osnovanie.duckdns.org` remain server-backed.
+
+- `apps/web/e2e/local-migration.spec.ts` and `base-path.spec.ts`: four passed Chromium desktop scenarios against the production static output mounted at `/evidencerag/` (demo/search/source/version comparison/research trace; upload/reload/search/export/delete/import; DOCX/PDF/scan; project-prefix route, favicon and direct-route fallback). Same-origin/no `/api` assertions pass. Report: `experiments/browser-migration-007/product-e2e-subpath-results.json`.
+- `.venv/bin/pytest -q`: 61 passed; `npm run check --prefix apps/web`: clean; `VITE_BASE_PATH=/evidencerag/ npm run build:local --prefix apps/web`: successful (`dist-browser` ~34 MB; vendor ~29 MB). Output is a sample project path and must be rebuilt using the actual GitVerse repo path before publication.
+- Narrow CPython/Pyodide synthetic parity probe passes; maximum FTS BM25 absolute delta `2.117582368135751e-22` at tolerance `1e-18`. Separate Chromium OPFS harness passes persistence and deletion checks. Neither constitutes full parity/coverage.
+- Static hosting is not configured: this checkout has no Git remote, GitVerse repository/workflow, or deployed URL. Local static mount checked MIME/WASM and the 404 fallback, but actual host response headers, TLS/cache and network privacy remain untested; mobile/Firefox/Safari, quotas, fuzz/crash recovery and large corpus are untested. No local neural model or OCR is present.
+- No SSH connection or VPS/Caddy/DNS/firewall/Docker/TunnelDeck/VPN changes occurred; service and data remain untouched. Do not disable VPS until a verified static deployment and acceptance gates pass.
+
+Use `docs/BROWSER_ARCHITECTURE.md`, `docs/MIGRATION_REPORT_007.md`, `docs/PYTHON_BROWSER_PARITY.md`, `docs/BROWSER_PRIVACY_AUDIT.md`, `docs/STATIC_HOSTING.md`, and `docs/VPS_DECOMMISSION_REPORT.md` for detailed coverage. Stage 007 does not establish semantic quality or scientific novelty.
+
 Do not claim semantic sufficiency, correctness of generated answers, better retrieval, or novelty. Next required work is a small immutable real-document corpus, double annotation, an evaluated semantic/NLI backend, and paired baseline/ablation runs with denominators and family-aware uncertainty.
