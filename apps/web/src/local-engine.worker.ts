@@ -9,7 +9,6 @@ import catalogSource from '../../../datasets/demo/catalog.json?raw';
 const demoModules = import.meta.glob('../../../datasets/demo/*.md', { query: '?raw', import: 'default', eager: true });
 import { getWorkspaceToken } from './browser-vault';
 
-const BASE_URL = import.meta.env.BASE_URL;
 const encoder = new TextEncoder();
 let initialization: Promise<void> | undefined;
 let pyodide: any;
@@ -76,12 +75,15 @@ async function initialize(id: number) {
   if (initialization) return initialization;
   initialization = (async () => {
     postProgress(id, 'Загружаем локальное ядро обработки…');
-    const pyodideUrl = new URL(`${BASE_URL}vendor/pyodide/pyodide.mjs`, self.location.origin).href;
+    // Vite emits this worker under /assets. Resolving from its own URL keeps
+    // Pyodide and wheel requests under the project prefix with a relative base.
+    const runtimeBaseUrl = new URL('../', self.location.href);
+    const pyodideUrl = new URL('vendor/pyodide/pyodide.mjs', runtimeBaseUrl).href;
     const pyodideModule = await import(/* @vite-ignore */ pyodideUrl);
-    pyodide = await pyodideModule.loadPyodide({ indexURL: new URL(`${BASE_URL}vendor/pyodide/`, self.location.origin).href });
+    pyodide = await pyodideModule.loadPyodide({ indexURL: new URL('vendor/pyodide/', runtimeBaseUrl).href });
     await pyodide.loadPackage('micropip');
     postProgress(id, 'Подключаем зафиксированные библиотеки PDF, DOCX и русского языка…');
-    const wheelDirectory = new URL(`${BASE_URL}vendor/wheels/`, self.location.origin);
+    const wheelDirectory = new URL('vendor/wheels/', runtimeBaseUrl);
     const wheels = [
       'dawg2_python-0.9.0-py3-none-any.whl',
       'defusedxml-0.7.1-py2.py3-none-any.whl',

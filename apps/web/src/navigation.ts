@@ -1,6 +1,9 @@
 export type View = 'home' | 'work' | 'compare' | 'research' | 'cookies';
 
-const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
+// Resolve Vite's relative `./` base against the current route. This keeps the
+// app inside the repository prefix on static hosts such as GitVerse Pages.
+const resolvedBasePath = new URL(import.meta.env.BASE_URL, window.location.href).pathname;
+const basePath = resolvedBasePath.endsWith('/') ? resolvedBasePath : `${resolvedBasePath}/`;
 const localPaths: Record<View, string> = {
   home: '/', work: '/documents', compare: '/compare', research: '/method', cookies: '/cookies'
 };
