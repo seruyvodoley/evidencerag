@@ -1,0 +1,27 @@
+name: evidencerag
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    ports:
+      - "127.0.0.1:8077:8000"
+    volumes:
+      - evidence_data:/data
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 640m
+    cpus: 0.6
+    pids_limit: 64
+    restart: unless-stopped
+    environment:
+      COOKIE_SECURE: "true"
+      LLM_ENABLED: "false"
+    logging:
+      driver: json-file
+      options: {max-size: "5m", max-file: "2"}
+volumes:
+  evidence_data:

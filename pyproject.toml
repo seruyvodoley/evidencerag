@@ -1,0 +1,11 @@
+[project]
+name = "evidencerag"
+version = "0.1.0"
+description = "Version-aware document evidence workbench"
+requires-python = ">=3.12"
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "python-multipart>=0.0.20", "pypdf>=5,<7", "python-docx>=1.1,<2", "httpx>=0.28,<1", "defusedxml>=0.7", "pymorphy3>=2,<3"]
+[dependency-groups]
+dev = ["pytest>=8,<10", "pip-audit>=2,<3", "reportlab>=4,<5"]
+[tool.pytest.ini_options]
+pythonpath = ["apps/api", "."]
+testpaths = ["tests"]

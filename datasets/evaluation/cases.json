@@ -1,0 +1,1023 @@
+[
+  {
+    "id": "device-1.0-0-0",
+    "split": "train",
+    "question": "Ёмкость аккумулятора?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "2400 мА·ч",
+    "required": [
+      "Ёмкость аккумулятора: 2400 мА·ч"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-0-1",
+    "split": "train",
+    "question": "Разъём питания?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "Micro-USB",
+    "required": [
+      "Разъём питания: Micro-USB"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-0-2",
+    "split": "train",
+    "question": "Напряжение питания?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "5 В",
+    "required": [
+      "Напряжение питания: 5 В"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-1-0",
+    "split": "train",
+    "question": "Рабочая температура?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "от −10 до +40 °C",
+    "required": [
+      "Рабочая температура: от −10 до +40 °C"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-1-1",
+    "split": "train",
+    "question": "Защита от воды?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "IP54",
+    "required": [
+      "Защита от воды: IP54"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-1-2",
+    "split": "train",
+    "question": "Погружение в воду?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "запрещено",
+    "required": [
+      "Погружение в воду: запрещено"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-2-0",
+    "split": "train",
+    "question": "Интервал измерений?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "60 секунд",
+    "required": [
+      "Интервал измерений: 60 секунд"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-2-1",
+    "split": "train",
+    "question": "Точность температуры?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "±0,5 °C",
+    "required": [
+      "Точность температуры: ±0,5 °C"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-2-2",
+    "split": "train",
+    "question": "Радиус связи?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "30 метров",
+    "required": [
+      "Радиус связи: 30 метров"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-1.0-3-0",
+    "split": "train",
+    "question": "Гарантия?",
+    "family": "device",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "12 месяцев",
+    "required": [
+      "Гарантия: 12 месяцев"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-0-0",
+    "split": "train",
+    "question": "Ёмкость аккумулятора?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "3600 мА·ч",
+    "required": [
+      "Ёмкость аккумулятора: 3600 мА·ч"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-0-1",
+    "split": "train",
+    "question": "Разъём питания?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "USB-C",
+    "required": [
+      "Разъём питания: USB-C"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-0-2",
+    "split": "train",
+    "question": "Напряжение питания?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "5 В",
+    "required": [
+      "Напряжение питания: 5 В"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-1-0",
+    "split": "train",
+    "question": "Рабочая температура?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "от −20 до +50 °C",
+    "required": [
+      "Рабочая температура: от −20 до +50 °C"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-1-1",
+    "split": "train",
+    "question": "Защита от воды?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "IP67",
+    "required": [
+      "Защита от воды: IP67"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-1-2",
+    "split": "train",
+    "question": "Погружение в воду?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "допускается до 1 метра на 30 минут при закрытой заглушке",
+    "required": [
+      "Погружение в воду: допускается до 1 метра на 30 минут при закрытой заглушке"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-2-0",
+    "split": "train",
+    "question": "Интервал измерений?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "30 секунд",
+    "required": [
+      "Интервал измерений: 30 секунд"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-2-1",
+    "split": "train",
+    "question": "Точность температуры?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "±0,3 °C",
+    "required": [
+      "Точность температуры: ±0,3 °C"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-2-2",
+    "split": "train",
+    "question": "Радиус связи?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "50 метров",
+    "required": [
+      "Радиус связи: 50 метров"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-2.0-3-0",
+    "split": "train",
+    "question": "Гарантия?",
+    "family": "device",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "24 месяца",
+    "required": [
+      "Гарантия: 24 месяца"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "device-missing",
+    "split": "train",
+    "question": "Сколько стоит замена дисплея?",
+    "family": "device",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": false,
+    "category": "missing_information",
+    "abstention_reasons": [
+      "insufficient",
+      "no_results",
+      "unverified",
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "device-versions",
+    "split": "train",
+    "question": "Какая ёмкость аккумулятора?",
+    "family": "device",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": true,
+    "category": "version_change",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "device-date",
+    "split": "train",
+    "question": "Какая ёмкость аккумулятора?",
+    "family": "device",
+    "version": null,
+    "as_of": "2025-06-15",
+    "gold_answer": null,
+    "required": [],
+    "sufficient": true,
+    "conflict": false,
+    "category": "date_scope",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-0-0",
+    "split": "dev",
+    "question": "Лимит запросов?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "60 в минуту",
+    "required": [
+      "Лимит запросов: 60 в минуту"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-0-1",
+    "split": "dev",
+    "question": "Максимальный размер страницы?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "50 записей",
+    "required": [
+      "Максимальный размер страницы: 50 записей"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-0-2",
+    "split": "dev",
+    "question": "Формат ответа?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "JSON",
+    "required": [
+      "Формат ответа: JSON"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-1-0",
+    "split": "dev",
+    "question": "Способ авторизации?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "заголовок X-API-Key",
+    "required": [
+      "Способ авторизации: заголовок X-API-Key"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-1-1",
+    "split": "dev",
+    "question": "Срок действия ключа?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "30 дней",
+    "required": [
+      "Срок действия ключа: 30 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-2-0",
+    "split": "dev",
+    "question": "Метод списка?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "GET /v1/leaves",
+    "required": [
+      "Метод списка: GET /v1/leaves"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-2-1",
+    "split": "dev",
+    "question": "Удаление записи?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "DELETE /v1/leaves/{id}",
+    "required": [
+      "Удаление записи: DELETE /v1/leaves/{id}"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-1.0-2-2",
+    "split": "dev",
+    "question": "Поле времени?",
+    "family": "api",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": "created_at",
+    "required": [
+      "Поле времени: created_at"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-0-0",
+    "split": "dev",
+    "question": "Лимит запросов?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "120 в минуту",
+    "required": [
+      "Лимит запросов: 120 в минуту"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-0-1",
+    "split": "dev",
+    "question": "Максимальный размер страницы?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "100 записей",
+    "required": [
+      "Максимальный размер страницы: 100 записей"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-0-2",
+    "split": "dev",
+    "question": "Формат ответа?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "JSON",
+    "required": [
+      "Формат ответа: JSON"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-1-0",
+    "split": "dev",
+    "question": "Способ авторизации?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "заголовок Authorization Bearer",
+    "required": [
+      "Способ авторизации: заголовок Authorization Bearer"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-1-1",
+    "split": "dev",
+    "question": "Срок действия ключа?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "90 дней",
+    "required": [
+      "Срок действия ключа: 90 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-2-0",
+    "split": "dev",
+    "question": "Метод списка?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "GET /v2/leaves",
+    "required": [
+      "Метод списка: GET /v2/leaves"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-2-1",
+    "split": "dev",
+    "question": "Удаление записи?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "DELETE /v2/leaves/{id}",
+    "required": [
+      "Удаление записи: DELETE /v2/leaves/{id}"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-2.0-2-2",
+    "split": "dev",
+    "question": "Поле времени?",
+    "family": "api",
+    "version": "2.0",
+    "as_of": null,
+    "gold_answer": "createdAt",
+    "required": [
+      "Поле времени: createdAt"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "api-missing",
+    "split": "dev",
+    "question": "Какой SLA гарантирует API?",
+    "family": "api",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": false,
+    "category": "missing_information",
+    "abstention_reasons": [
+      "insufficient",
+      "no_results",
+      "unverified",
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "api-versions",
+    "split": "dev",
+    "question": "Какой лимит запросов в минуту?",
+    "family": "api",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": true,
+    "category": "version_change",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "api-date",
+    "split": "dev",
+    "question": "Какой лимит запросов в минуту?",
+    "family": "api",
+    "version": null,
+    "as_of": "2025-10-01",
+    "gold_answer": null,
+    "required": [],
+    "sufficient": true,
+    "conflict": false,
+    "category": "date_scope",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-0-0",
+    "split": "test",
+    "question": "Срок возврата?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "14 дней",
+    "required": [
+      "Срок возврата: 14 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-0-1",
+    "split": "test",
+    "question": "Документ для возврата?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "чек или подтверждение оплаты",
+    "required": [
+      "Документ для возврата: чек или подтверждение оплаты"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-1-0",
+    "split": "test",
+    "question": "Срок диагностики?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "3 рабочих дня",
+    "required": [
+      "Срок диагностики: 3 рабочих дня"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-1-1",
+    "split": "test",
+    "question": "Гарантия ремонта?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "90 дней",
+    "required": [
+      "Гарантия ремонта: 90 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-2-0",
+    "split": "test",
+    "question": "Самовывоз?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "по будням с 10:00 до 18:00",
+    "required": [
+      "Самовывоз: по будням с 10:00 до 18:00"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2024-2-1",
+    "split": "test",
+    "question": "Документы для выдачи?",
+    "family": "service",
+    "version": "2024",
+    "as_of": null,
+    "gold_answer": "номер заказа и удостоверение личности",
+    "required": [
+      "Документы для выдачи: номер заказа и удостоверение личности"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-0-0",
+    "split": "test",
+    "question": "Срок возврата?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "30 дней",
+    "required": [
+      "Срок возврата: 30 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-0-1",
+    "split": "test",
+    "question": "Документ для возврата?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "чек или подтверждение оплаты",
+    "required": [
+      "Документ для возврата: чек или подтверждение оплаты"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-1-0",
+    "split": "test",
+    "question": "Срок диагностики?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "2 рабочих дня",
+    "required": [
+      "Срок диагностики: 2 рабочих дня"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-1-1",
+    "split": "test",
+    "question": "Гарантия ремонта?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "180 дней",
+    "required": [
+      "Гарантия ремонта: 180 дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-2-0",
+    "split": "test",
+    "question": "Самовывоз?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "ежедневно с 10:00 до 20:00",
+    "required": [
+      "Самовывоз: ежедневно с 10:00 до 20:00"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-2025-2-1",
+    "split": "test",
+    "question": "Документы для выдачи?",
+    "family": "service",
+    "version": "2025",
+    "as_of": null,
+    "gold_answer": "номер заказа и удостоверение личности",
+    "required": [
+      "Документы для выдачи: номер заказа и удостоверение личности"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "explicit_field",
+    "abstention_reasons": []
+  },
+  {
+    "id": "service-missing",
+    "split": "test",
+    "question": "Есть ли доставка в Норильск?",
+    "family": "service",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": false,
+    "category": "missing_information",
+    "abstention_reasons": [
+      "insufficient",
+      "no_results",
+      "unverified",
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "service-versions",
+    "split": "test",
+    "question": "Какой срок возврата?",
+    "family": "service",
+    "version": null,
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": true,
+    "category": "version_change",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "service-date",
+    "split": "test",
+    "question": "Какой срок возврата?",
+    "family": "service",
+    "version": null,
+    "as_of": "2025-01-01",
+    "gold_answer": null,
+    "required": [],
+    "sufficient": true,
+    "conflict": false,
+    "category": "date_scope",
+    "abstention_reasons": []
+  },
+  {
+    "id": "conflict-draft-0-0",
+    "split": "test",
+    "question": "Срок хранения?",
+    "family": "conflict",
+    "version": "draft",
+    "as_of": null,
+    "gold_answer": "30 дней",
+    "required": [
+      "Срок хранения: 30 дней"
+    ],
+    "sufficient": false,
+    "conflict": true,
+    "category": "same_version_conflict",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "conflict-draft-0-1",
+    "split": "test",
+    "question": "Ответственный за архив?",
+    "family": "conflict",
+    "version": "draft",
+    "as_of": null,
+    "gold_answer": "администратор",
+    "required": [
+      "Ответственный за архив: администратор"
+    ],
+    "sufficient": false,
+    "conflict": true,
+    "category": "same_version_conflict",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "conflict-draft-1-0",
+    "split": "test",
+    "question": "Срок хранения?",
+    "family": "conflict",
+    "version": "draft",
+    "as_of": null,
+    "gold_answer": "90 дней",
+    "required": [
+      "Срок хранения: 90 дней"
+    ],
+    "sufficient": false,
+    "conflict": true,
+    "category": "same_version_conflict",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "conflict-draft-1-1",
+    "split": "test",
+    "question": "Ответственный за архив?",
+    "family": "conflict",
+    "version": "draft",
+    "as_of": null,
+    "gold_answer": "оператор",
+    "required": [
+      "Ответственный за архив: оператор"
+    ],
+    "sufficient": false,
+    "conflict": true,
+    "category": "same_version_conflict",
+    "abstention_reasons": [
+      "potential_conflict"
+    ]
+  },
+  {
+    "id": "bundle-multisource",
+    "split": "test",
+    "question": "Какой аккумулятор и срок доставки у комплекта Полюс?",
+    "family": null,
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": null,
+    "required": [
+      "Аккумулятор комплекта Полюс: 4800 мА·ч",
+      "Срок доставки комплекта Полюс: 7 рабочих дней"
+    ],
+    "sufficient": true,
+    "conflict": false,
+    "category": "multi_document",
+    "abstention_reasons": []
+  },
+  {
+    "id": "bundle-lexical-gap",
+    "split": "test",
+    "question": "Какова цена аккумулятора комплекта Полюс?",
+    "family": "bundle-notes",
+    "version": "1.0",
+    "as_of": null,
+    "gold_answer": null,
+    "required": [],
+    "sufficient": false,
+    "conflict": false,
+    "category": "high_overlap_gap",
+    "abstention_reasons": [
+      "insufficient",
+      "unverified"
+    ]
+  }
+]

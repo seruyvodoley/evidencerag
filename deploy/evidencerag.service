@@ -1,0 +1,36 @@
+[Unit]
+Description=EvidenceRAG document evidence workbench
+After=network.target
+
+[Service]
+Type=simple
+User=evidencerag
+Group=evidencerag
+WorkingDirectory=/opt/evidencerag/current
+Environment=PYTHONPATH=/opt/evidencerag/current/apps/api
+Environment=DATA_DIR=/var/lib/evidencerag
+Environment=COOKIE_SECURE=true
+Environment=LLM_ENABLED=false
+ExecStart=/opt/evidencerag/current/.venv/bin/uvicorn evidencerag.main:app --host 127.0.0.1 --port 8077 --workers 1 --limit-concurrency 8 --no-access-log --no-proxy-headers
+Restart=on-failure
+RestartSec=5
+UMask=0077
+StateDirectory=evidencerag
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+NoNewPrivileges=true
+PrivateDevices=true
+RestrictSUIDSGID=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ReadWritePaths=/var/lib/evidencerag
+MemoryMax=640M
+CPUQuota=60%
+TasksMax=64
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
