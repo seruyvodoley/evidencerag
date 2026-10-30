@@ -207,3 +207,19 @@ def test_session_delete(client,store):
     assert client.delete('/api/workspace').json()['deleted']
     assert client.get('/api/session').status_code==401
     with store.connect() as db:assert db.execute('SELECT count(*) FROM chunks').fetchone()[0]==0
+
+
+def test_experiment_reproducibility(tmp_path):
+    from packages.research.runner import run
+    a=run(tmp_path/'first','test');b=run(tmp_path/'second','test')
+    for rows in (a,b):
+        for row in rows:row.pop('latency_ms')
+    assert a==b
+    with pytest.raises(FileExistsError):run(tmp_path/'first','test')
+
+
+def test_rate_limit(store,monkeypatch):
+    monkeypatch.setattr(main,'STORE',store)
+    with TestClient(main.app,client=('rate-test-only',12345)) as c:
+        statuses=[c.post('/api/workspaces').status_code for _ in range(91)]
+    assert statuses[:90]==[200]*90 and statuses[-1]==429

@@ -1,0 +1,216 @@
+{
+  "target": "local loopback",
+  "requests": 40,
+  "concurrency": 4,
+  "valid_responses": 40,
+  "duration_seconds": 0.2845606670016423,
+  "throughput_requests_per_second": 140.56756480602834,
+  "p50_ms": 27.545624994672835,
+  "p95_ms": 37.88516600616276,
+  "statuses": {
+    "200": 40
+  },
+  "samples": [
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 36.61783394636586
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 37.88516600616276
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 39.99125002883375
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 36.63695801515132
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 22.994959028437734
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 22.508124995511025
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 21.273165999446064
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 24.06091702869162
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 32.50483301235363
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 21.339041995815933
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 22.2827079705894
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 16.415583027992398
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 31.5428749890998
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 42.81241603894159
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 28.533582983072847
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 24.25562497228384
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 17.783624993171543
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 13.784542039502412
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 11.007374967448413
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 34.85062497202307
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 37.88195800734684
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 16.77133300108835
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 19.580000021960586
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 34.321875020395964
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 31.701041967608035
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 26.627042039763182
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 30.742374947294593
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 19.198582973331213
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 15.533790981862694
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 13.343375001568347
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 31.994416960515082
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 32.894167001359165
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 30.748166027478874
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 32.05220901872963
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 27.81325002433732
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 28.26829202240333
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 27.27799996500835
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 22.77562499511987
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 21.542459027841687
+    },
+    {
+      "status": 200,
+      "valid": true,
+      "ms": 28.028542001266032
+    }
+  ],
+  "limitation": "Short local test on developer Mac, not a VPS capacity estimate. Includes real FTS search over a tiny demo corpus."
+}

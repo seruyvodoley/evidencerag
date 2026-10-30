@@ -1,0 +1,2 @@
+import { defineConfig, devices } from '@playwright/test';
+export default defineConfig({testDir:'./e2e',testIgnore:'**/._*',workers:1,retries:0,reporter:[['list'],['json',{outputFile:'../../experiments/e2e-results.json'}]],use:{baseURL:process.env.E2E_URL||'http://127.0.0.1:8000',trace:'retain-on-failure',channel:process.env.E2E_BROWSER_CHANNEL},projects:[{name:'desktop',use:{...devices['Desktop Chrome']}},{name:'mobile',use:{...devices['iPhone 13'],defaultBrowserType:'chromium'}}]});

@@ -40,7 +40,7 @@ cd ../..
 PYTHONPATH=apps/api .venv/bin/python -m packages.research.runner --output experiments/my-run --split test
 ```
 
-Для E2E нужен локальный сервер и браузер Playwright (`npx playwright install chromium`). Не запускайте E2E против чужого сервиса. Каталог результатов должен быть новым; никакие пороги по тестовому срезу не подбирались. Корпус слишком мал для научного сравнения.
+Для E2E нужен локальный сервер и браузер Playwright (`npx playwright install chromium`). С установленным Google Chrome можно выполнить `E2E_BROWSER_CHANNEL=chrome npm run test:e2e`; именно этот вариант проверен локально. Не запускайте E2E против чужого сервиса. Каталог результатов должен быть новым; никакие пороги по тестовому срезу не подбирались. Корпус слишком мал для научного сравнения.
 
 ## Документация
 

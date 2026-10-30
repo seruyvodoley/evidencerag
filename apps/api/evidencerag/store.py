@@ -33,6 +33,8 @@ class EvidenceStore:
         Path(path).parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
             db.executescript(SCHEMA)
+            # FTS5 secure-delete requires SQLite 3.42+. It clears replaced index entries.
+            db.execute("INSERT INTO search(search,rank) VALUES('secure-delete',1)")
 
     @contextmanager
     def connect(self):
@@ -107,7 +109,7 @@ class EvidenceStore:
         with self.connect() as db:
             return db.execute('DELETE FROM documents WHERE workspace=? AND id=?', (ws, ident)).rowcount
 
-    def search(self, ws, terms, limit=10, family=None, version=None, as_of=None):
+    def search(self, ws, terms, limit=10, family=None, version=None, as_of=None, deadline=None):
         if not terms:
             return []
         expression = ' OR '.join('"' + t.replace('"', '') + '"' for t in terms)
@@ -124,6 +126,9 @@ class EvidenceStore:
             args.append(as_of)
         args.append(limit)
         with self.connect() as db:
+            db.execute('PRAGMA busy_timeout=50')
+            if deadline is not None:
+                db.set_progress_handler(lambda: int(time.perf_counter() >= deadline), 1000)
             return [dict(r) for r in db.execute(f'''SELECT c.id,c.document,c.text,c.locator,c.page,c.offset,
             d.title,d.family,d.version,d.date,d.metadata,bm25(search) AS score
             FROM search JOIN chunks c ON c.id=search.rowid JOIN documents d ON d.id=c.document

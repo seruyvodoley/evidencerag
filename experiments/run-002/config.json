@@ -1,0 +1,79 @@
+{
+  "algorithm": "lexical-controller-v1",
+  "split": "test",
+  "seed": 0,
+  "max_iterations": 3,
+  "max_chunks": 20,
+  "time_budget_ms": 500,
+  "created_utc": "2026-10-30T17:56:51.843572+00:00",
+  "input_hashes": {
+    "datasets/evaluation/cases.json": "0791c7fcf0cca1a5b9e7139b143635f8545699266ea6255a14e11387bfa902f9",
+    "datasets/demo/catalog.json": "8ecb28d6f0e84f934e8605d32b59122d07d270270da63cfa4a9c174e55ce45d8",
+    "datasets/demo/._api-1.0.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._api-2.0.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._bundle-notes.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._bundle-passport.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._bundle-shipping.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._conflict-draft.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._device-1.0.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._device-2.0.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._service-2024.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/._service-2025.md": "88c6f391f3c7dc8115f3fbb17c22dedaa6f2fe1591b7328997cebdfe2cb41418",
+    "datasets/demo/api-1.0.md": "e6750ba31670c46eefefa7412719c400a3142d741ddca1fe85dcdcc825445b28",
+    "datasets/demo/api-2.0.md": "359cbee3714d1b9bab847c268dbaab1528c292216003b254cf5a183f3f3afee4",
+    "datasets/demo/bundle-notes.md": "b9a0d095823a1836a41eae85349166add18c2fc187ed26f65c4c0ef08199a068",
+    "datasets/demo/bundle-passport.md": "d2ce915b031d1e8827df1fce644778934990e721bf7b3e5fd486421f410e0d2e",
+    "datasets/demo/bundle-shipping.md": "ba065bcb751d6c6f2743a25dd4f2c9d64aefe8d6e9bb1acfd6afb9b75640dec4",
+    "datasets/demo/conflict-draft.md": "b9bd968e0856f989edc6f85c128d3781abb5722b1582471e5f45589307caacf3",
+    "datasets/demo/device-1.0.md": "54e0eaf8d8109d06fac2435bd8a72368a60f4a67dec4eccc52a0f49f99864aaf",
+    "datasets/demo/device-2.0.md": "ac919b7ae7517ba5902d8ac42f3f847298e829f0203e7b4b8719c7cd75e24046",
+    "datasets/demo/service-2024.md": "ff433041d09dfb27a502e0b34094c1e3d34158488a0e85d20f64d736cffd4dfc",
+    "datasets/demo/service-2025.md": "feaef8cf631e355355db7a92afa66e79fe96de82e7a898617683a6c151e78260"
+  },
+  "python": "3.12.13",
+  "sqlite": "3.54.1",
+  "semantic_evaluator": null,
+  "dataset_kind": "authored_synthetic",
+  "strategies": {
+    "fixed5": [
+      "fixed5",
+      {}
+    ],
+    "fixed10": [
+      "fixed10",
+      {}
+    ],
+    "adaptive": [
+      "adaptive",
+      {}
+    ],
+    "versioned": [
+      "versioned",
+      {}
+    ],
+    "without_sufficiency": [
+      "versioned",
+      {
+        "sufficiency": false
+      }
+    ],
+    "without_versions": [
+      "adaptive",
+      {}
+    ],
+    "without_conflicts": [
+      "versioned",
+      {
+        "detect_conflicts": false
+      }
+    ],
+    "without_adaptation": [
+      "versioned",
+      {
+        "max_iterations": 1
+      }
+    ]
+  },
+  "git_commit": "d356bdef291cd97f551711bc0d118df17e0b0ba6",
+  "morphology_warmed": true
+}

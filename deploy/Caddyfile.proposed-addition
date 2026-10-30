@@ -1,0 +1,11 @@
+
+
+# EvidenceRAG: isolated upstream; original routes above remain unchanged.
+osnovanie.91-196-32-58.sslip.io {
+    request_body {
+        max_size 11MB
+    }
+    encode gzip
+    header Strict-Transport-Security "max-age=31536000"
+    reverse_proxy 127.0.0.1:8077
+}

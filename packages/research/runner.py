@@ -82,6 +82,8 @@ def run(output, split='test'):
     config={'algorithm':'lexical-controller-v1','split':split,'seed':0,'max_iterations':3,'max_chunks':20,'time_budget_ms':500,
             'created_utc':datetime.now(timezone.utc).isoformat(),'input_hashes':hashes,'python':platform.python_version(),'sqlite':sqlite3.sqlite_version,
             'semantic_evaluator':None,'dataset_kind':'authored_synthetic','strategies':STRATEGIES}
+    config['source_hashes']={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in [*sorted((ROOT/'apps/api/evidencerag').glob('*.py')), Path(__file__).resolve()]}
+    config['git_dirty']=bool(subprocess.run(['git','status','--porcelain'],capture_output=True,text=True,cwd=ROOT).stdout.strip())
     config['git_commit']=subprocess.run(['git','rev-parse','HEAD'],capture_output=True,text=True,cwd=ROOT).stdout.strip() or None
     morphology() # Explicit warm-up, excluded from per-query latency and recorded here.
     config['morphology_warmed']=True

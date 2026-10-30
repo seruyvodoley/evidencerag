@@ -1,4 +1,5 @@
 """Deterministic lexical controller. Coverage is a heuristic, never entailment."""
+import sqlite3
 import json
 import re
 import time
@@ -53,18 +54,34 @@ def retrieve(store, ws, question, strategy='versioned', family=None, version=Non
     if not (1 <= max_iterations <= 5 and 1 <= max_chunks <= 50 and 1 <= time_budget_ms <= 5000):
         raise ValueError('Некорректный бюджет поиска')
     trace, selected, seen = [], [], set()
+    deadline = started + time_budget_ms / 1000
+    termination = 'complete'
+    def search_terms(active, limit, fam):
+        nonlocal termination
+        if time.perf_counter() >= deadline:
+            termination = 'time_budget'
+            return []
+        try:
+            return store.search(ws, active, limit, fam, version, as_of, deadline=deadline)
+        except sqlite3.OperationalError as exc:
+            if 'interrupted' in str(exc) or 'locked' in str(exc):
+                termination = 'time_or_database_budget'
+                return []
+            raise
     max_rounds = 1 if strategy.startswith('fixed') else max_iterations
     target = 5 if strategy == 'fixed5' else 10 if strategy == 'fixed10' else 4
     gaps = query[:]
     for iteration in range(max_rounds):
-        if not query or (time.perf_counter() - started) * 1000 >= time_budget_ms:
+        if not query or time.perf_counter() >= deadline:
+            termination = 'empty_query' if not query else 'time_budget'
             break
         # The accumulated budget applies to distinct processed chunks.
         remaining = max_chunks - len(selected)
         if remaining <= 0:
+            termination = 'chunk_budget'
             break
         active = query if iteration == 0 else (gaps or query)
-        candidates = store.search(ws, active, min(max_chunks, target), family, version, as_of)
+        candidates = search_terms(active, min(max_chunks, target), family)
         new = [h for h in candidates if h['id'] not in seen][:remaining]
         selected.extend(new)
         seen.update(h['id'] for h in new)
@@ -75,7 +92,7 @@ def retrieve(store, ws, question, strategy='versioned', family=None, version=Non
                 remaining = max_chunks - len(selected)
                 if remaining <= 0:
                     break
-                for h in store.search(ws, query, max_chunks, fam, version, as_of):
+                for h in search_terms(query, max_chunks, fam):
                     if h['id'] not in seen:
                         selected.append(h)
                         seen.add(h['id'])
@@ -85,7 +102,7 @@ def retrieve(store, ws, question, strategy='versioned', family=None, version=Non
         covered = set().union(*(set(terms(h['text'])) for h in selected)) if selected else set()
         gaps = [t for t in query if t not in covered]
         reason = 'lexical_coverage_reached' if not gaps and sufficiency else 'expand_missing_terms'
-        trace.append({'iteration': iteration + 1, 'query': active, 'new_chunks': len(seen), 'gaps': gaps,
+        trace.append({'iteration': iteration + 1, 'query': active, 'selected_chunks': len(seen), 'gaps': gaps,
                       'reason': reason, 'elapsed_ms': round((time.perf_counter() - started) * 1000, 3)})
         if (not gaps and sufficiency) or not new or len(selected) >= max_chunks:
             break
@@ -107,5 +124,5 @@ def retrieve(store, ws, question, strategy='versioned', family=None, version=Non
         status = 'confirmed_formal'
     return {'status': status, 'question': question, 'mode': 'lexical', 'answer': formal,
             'hits': selected, 'conflicts': found_conflicts, 'gaps': gaps, 'lexical_coverage': round(coverage, 3),
-            'trace': trace, 'strategy': strategy, 'elapsed_ms': round((time.perf_counter() - started) * 1000, 3),
+            'termination': termination, 'trace': trace, 'strategy': strategy, 'elapsed_ms': round((time.perf_counter() - started) * 1000, 3),
             'limitations': 'Совпадение слов не доказывает утверждение. Без языковой модели показаны исходные фрагменты и формальные сигналы.'}
