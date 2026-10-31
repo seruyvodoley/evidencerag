@@ -1,0 +1,354 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node@24/24.22.2_1/bin/node",
+      "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/audit-008.spec.ts",
+      "--project=desktop",
+      "--workers=1"
+    ],
+    "configFile": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/playwright.config.ts",
+    "rootDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "snapshotDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": "**/._*",
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "http://127.0.0.1:5177/evidencerag/",
+          "trace": "retain-on-failure",
+          "channel": "chromium",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../experiments/final-audit-008/local-audit-desktop-final.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "audit-008.spec.ts",
+      "file": "audit-008.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "published route matrix, static assets, CSP and mobile viewport",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 8225,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:73:109",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                      "column": 109,
+                      "line": 73
+                    },
+                    "snippet": "  71 |   expect(outgoingOrigins).toEqual([new URL(base).origin]);\n  72 |   expect(responses.filter(item => item.status >= 400 && item.resourceType !== 'document')).toEqual([]);\n> 73 |   expect(routeStatuses.every(item => item.status === (new URL(base).hostname === '127.0.0.1' ? 404 : 200))).toBeTruthy();\n     |                                                                                                             ^\n  74 |   expect(responses.some(item => item.setsCookie)).toBeFalsy();\n  75 |   expect(responses.some(item => item.url.endsWith('.wasm') && item.contentType?.includes('application/wasm'))).toBeTruthy();\n  76 |   expect(icons.length).toBeGreaterThanOrEqual(3);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                        "column": 109,
+                        "line": 73
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBeTruthy\u001b[2m()\u001b[22m\n\nReceived: \u001b[31mfalse\u001b[39m\n\n  71 |   expect(outgoingOrigins).toEqual([new URL(base).origin]);\n  72 |   expect(responses.filter(item => item.status >= 400 && item.resourceType !== 'document')).toEqual([]);\n> 73 |   expect(routeStatuses.every(item => item.status === (new URL(base).hostname === '127.0.0.1' ? 404 : 200))).toBeTruthy();\n     |                                                                                                             ^\n  74 |   expect(responses.some(item => item.setsCookie)).toBeFalsy();\n  75 |   expect(responses.some(item => item.url.endsWith('.wasm') && item.contentType?.includes('application/wasm'))).toBeTruthy();\n  76 |   expect(icons.length).toBeGreaterThanOrEqual(3);\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:73:109"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:01:02.693Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-published-route--5fd1e-ets-CSP-and-mobile-viewport-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-published-route--5fd1e-ets-CSP-and-mobile-viewport-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                    "column": 109,
+                    "line": 73
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8ee18fc4f02db1b17977-11d6767c0a737238ebad",
+          "file": "audit-008.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "browser reproduces the stage-006 version-directed second retrieval",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 58812,
+                  "error": {
+                    "message": "TimeoutError: page.waitForEvent: Timeout 45000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================",
+                    "stack": "TimeoutError: page.waitForEvent: Timeout 45000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:110:10",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                      "column": 10,
+                      "line": 110
+                    },
+                    "snippet": "  108 |   await page.locator('.research-trace summary').click();\n  109 |   await page.locator('.research-trace summary').click();\n> 110 |   const [download] = await Promise.all([\n      |          ^\n  111 |     page.waitForEvent('download'),\n  112 |     page.getByRole('button', { name: 'Скачать JSON-трассу' }).click(),\n  113 |   ]);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                        "column": 10,
+                        "line": 110
+                      },
+                      "message": "TimeoutError: page.waitForEvent: Timeout 45000ms exceeded while waiting for event \"download\"\n=========================== logs ===========================\nwaiting for event \"download\"\n============================================================\n\n  108 |   await page.locator('.research-trace summary').click();\n  109 |   await page.locator('.research-trace summary').click();\n> 110 |   const [download] = await Promise.all([\n      |          ^\n  111 |     page.waitForEvent('download'),\n  112 |     page.getByRole('button', { name: 'Скачать JSON-трассу' }).click(),\n  113 |   ]);\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:110:10"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:01:15.712Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-browser-reproduc-3ba45-n-directed-second-retrieval-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-browser-reproduc-3ba45-n-directed-second-retrieval-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                    "column": 10,
+                    "line": 110
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8ee18fc4f02db1b17977-49cb34ba5f15a2f8151e",
+          "file": "audit-008.spec.ts",
+          "line": 96,
+          "column": 1
+        },
+        {
+          "title": "local processing and privacy survive disabling network after core assets are warmed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 25679,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.document-item')\nExpected substring: \u001b[32m\"Offline acceptance\"\u001b[39m\nError: strict mode violation: locator('.document-item') resolved to 2 elements:\n    1) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 1.010 фрагментов · 2024-02-01×')\n    2) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 2.010 фрагментов · 2025-06-15×')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.document-item') with timeout 90000ms\u001b[22m\n\u001b[2m  - waiting for locator('.document-item')\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.document-item')\nExpected substring: \u001b[32m\"Offline acceptance\"\u001b[39m\nError: strict mode violation: locator('.document-item') resolved to 2 elements:\n    1) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 1.010 фрагментов · 2024-02-01×')\n    2) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 2.010 фрагментов · 2025-06-15×')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.document-item') with timeout 90000ms\u001b[22m\n\u001b[2m  - waiting for locator('.document-item')\u001b[22m\n\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:162:47",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                      "column": 47,
+                      "line": 162
+                    },
+                    "snippet": "  160 |   const uploadStart = Date.now();\n  161 |   await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();\n> 162 |   await check(page.locator('.document-item')).toContainText('Offline acceptance', { timeout: 90_000 });\n      |                                               ^\n  163 |   const uploadMs = Date.now() - uploadStart;\n  164 |   await page.locator('#question').fill('amberoffline908');\n  165 |   const searchStart = Date.now();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                        "column": 47,
+                        "line": 162
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoContainText\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nLocator: locator('.document-item')\nExpected substring: \u001b[32m\"Offline acceptance\"\u001b[39m\nError: strict mode violation: locator('.document-item') resolved to 2 elements:\n    1) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 1.010 фрагментов · 2024-02-01×')\n    2) <div class=\"document-item\">…</div> aka getByText('MDМетеостанция «Север»Редакция 2.010 фрагментов · 2025-06-15×')\n\nCall log:\n\u001b[2m  - Expect \"toContainText\" locator('.document-item') with timeout 90000ms\u001b[22m\n\u001b[2m  - waiting for locator('.document-item')\u001b[22m\n\n\n  160 |   const uploadStart = Date.now();\n  161 |   await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();\n> 162 |   await check(page.locator('.document-item')).toContainText('Offline acceptance', { timeout: 90_000 });\n      |                                               ^\n  163 |   const uploadMs = Date.now() - uploadStart;\n  164 |   await page.locator('#question').fill('amberoffline908');\n  165 |   const searchStart = Date.now();\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:162:47"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:02:19.227Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-local-processing-69282-fter-core-assets-are-warmed-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-local-processing-69282-fter-core-assets-are-warmed-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                    "column": 47,
+                    "line": 162
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8ee18fc4f02db1b17977-b668980761fec154347f",
+          "file": "audit-008.spec.ts",
+          "line": 127,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T05:01:02.119Z",
+    "duration": 110625.418,
+    "expected": 0,
+    "skipped": 0,
+    "unexpected": 3,
+    "flaky": 0
+  }
+}

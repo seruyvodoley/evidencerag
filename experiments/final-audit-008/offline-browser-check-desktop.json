@@ -1,0 +1,183 @@
+{
+  "status": "passed",
+  "runtimeReadyMs": 4610,
+  "uploadMs": 97,
+  "searchMs": 99,
+  "offline": true,
+  "workerUrls": [
+    "http://127.0.0.1:5177/evidencerag/assets/local-engine.worker-C1nzC10V.js"
+  ],
+  "requestUrls": [
+    "http://127.0.0.1:5177/evidencerag/",
+    "http://127.0.0.1:5177/evidencerag/assets/index-IlX9GifG.js",
+    "http://127.0.0.1:5177/evidencerag/assets/index-BbSSEvdv.css",
+    "http://127.0.0.1:5177/evidencerag/assets/local-engine.worker-C1nzC10V.js",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.mjs",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide-lock.json",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/python_stdlib.zip",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.asm.wasm",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.asm.mjs",
+    "http://127.0.0.1:5177/evidencerag/vendor/pyodide/micropip-0.11.1-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/dawg2_python-0.9.0-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/defusedxml-0.7.1-py2.py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/lxml-6.1.3-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/pymorphy3-2.0.6-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/pymorphy3_dicts_ru-2.4.417150.4580142-py2.py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/pypdf-6.21.4-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/python_docx-1.2.0-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/pyparsing-3.3.2-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/setuptools-82.0.1-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/vendor/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+    "http://127.0.0.1:5177/evidencerag/assets/sqlite3-k2cTanUO.wasm"
+  ],
+  "responses": [
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/assets/index-BbSSEvdv.css",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/assets/index-IlX9GifG.js",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/assets/local-engine.worker-C1nzC10V.js",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.mjs",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide-lock.json",
+      "status": 200,
+      "contentType": "application/json; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.asm.mjs",
+      "status": 200,
+      "contentType": "text/javascript; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/python_stdlib.zip",
+      "status": 200,
+      "contentType": "application/zip",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/pyodide.asm.wasm",
+      "status": 200,
+      "contentType": "application/wasm",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/pyodide/micropip-0.11.1-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/defusedxml-0.7.1-py2.py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/dawg2_python-0.9.0-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/pymorphy3-2.0.6-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/pypdf-6.21.4-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/python_docx-1.2.0-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/pyparsing-3.3.2-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/lxml-6.1.3-cp314-cp314-pyemscripten_2026_0_wasm32.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/setuptools-82.0.1-py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/vendor/wheels/pymorphy3_dicts_ru-2.4.417150.4580142-py2.py3-none-any.whl",
+      "status": 200,
+      "contentType": "application/octet-stream",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/assets/sqlite3-k2cTanUO.wasm",
+      "status": 200,
+      "contentType": "application/wasm",
+      "contentLength": null,
+      "setsCookie": false
+    }
+  ],
+  "pageErrors": []
+}

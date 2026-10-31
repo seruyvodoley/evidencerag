@@ -1,3 +1,11 @@
+# Актуальное состояние — этап 008 (31.10.2026)
+
+Текущий код содержит браузерную сборку, работающую локально через Pyodide/SQLite WASM; публичный адрес GitVerse Pages — https://seruyvodoley.gitverse.site/evidencerag/ . Проект не следует описывать только как прежний VPS MVP. Актуальная приёмка и ограничения приведены в [FINAL_BROWSER_AUDIT_008.md](FINAL_BROWSER_AUDIT_008.md). Stage 008 изменения пока не подтверждены GitVerse CI deployment, поэтому live URL следует считать Stage 007 до проверки новой версии. Старые разделы ниже сохраняют историю предыдущих этапов.
+
+Проверки на 31.10.2026: pytest 61 passed; Svelte check 0 ошибок/предупреждений; browser-local build successful; Playwright desktop 4/4 на опубликованном Stage 007. Stage 008 новые acceptance-сценарии пройдены локально в Chromium: desktop 3/3 и mobile emulation 3/3; публичное повторение после публикации впереди. Production npm audit: 0; полный npm audit: 3 low dev dependency findings.
+
+SSH к `91.196.32.58:22` завершился timeout. Текущее состояние сервера и TunnelDeck не подтверждено; согласно сообщению владельца серверное приложение было отключено им вручную. На сервере в этапе 008 изменений не выполнялось.
+
 # Состояние проекта — 31.10.2026
 
 **Публичный прототип доступен по адресу [osnovanie.duckdns.org](https://osnovanie.duckdns.org).** На VPS работает release `20261031-006`, HTTPS обслуживает уже существующий Caddy. Развёртывание меняло только собственный `evidencerag.service`; Caddy-маршрут и TunnelDeck не менялись.

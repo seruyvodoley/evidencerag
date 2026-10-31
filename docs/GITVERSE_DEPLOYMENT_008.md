@@ -1,0 +1,9 @@
+# Развёртывание GitVerse Pages — этап 008
+
+Текущий публичный адрес: https://seruyvodoley.gitverse.site/evidencerag/ . Pages выпускает workflow `.gitverse/workflows/build-and-deploy-pages.yaml` из branch `master:/public`. Последний ранее подтверждённый успешный run: `1971460`, deploy job `3892937`, commit `dd84bb1` (Stage 007). Локальный исходный commit этапа: `904b96a7c3238af522744ebbabf6e65868fac170`.
+
+В checkout не настроен remote. Ранее созданный staging clone `/tmp/evidencerag-pages-staging-20261031` содержит статический Pages artifact от старого commit. Локально stage 008 изменил research top-k и демонстрационное правило; текущую browser bundle нужно пересобрать, безопасно синхронизировать в Pages source и опубликовать. `git@gitverse.ru` с доступным на машине default SSH key вернул `Permission denied (publickey)`. Repo-scoped deploy key требуется для пуша; не помещать приватную часть в repository, Pages artifact, отчёт или zip.
+
+Пользователь разрешил оставить deploy key для этого проекта. Ключ `EvidenceRAG` добавлен в настройки именно репозитория `seruyvodoley/evidencerag` с правом записи; GitVerse показывает fingerprint `SHA256:Z9ISJ/jtmwIesL7uyQP9t9yGcl/ZhJ9Fmec+RRXyPbs`. SSH alias `gitverse-evidencerag` прошёл `ssh -T`; приватная часть хранится в `~/.ssh/evidencerag_gitverse_deploy` с mode 600, вне рабочей копии. После отправки проверьте CI build+deploy success, SHA опубликованного JS/CSS, `200` на всех маршрутах и прогон Playwright на HTTPS. До такой проверки URL остаётся предыдущим успешным релизом.
+
+GitVerse response headers в предыдущем snapshot: 200, `Cache-Control: no-store`; отсутствовали security response headers и root GET/HEAD metadata были неидеальны. Повторить измерения после обновления. GitVerse Pages не даёт репозиторию полного контроля над HTTP response headers; CSP meta действует только внутри HTML.

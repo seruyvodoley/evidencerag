@@ -1,3 +1,11 @@
+# Актуальная передача — этап 008 (31.10.2026)
+
+Публичная browser версия: https://seruyvodoley.gitverse.site/evidencerag/ . Исходный HEAD перед этапом: `904b96a7c3238af522744ebbabf6e65868fac170`; рабочее дерево изначально содержало изменённый пользователем `experiments/e2e-results.json` — сохранять его локальные изменения. Код Stage 008 исправляет стартовый top-k в browser research запросе и добавляет авторское synthetic rule; расширяет e2e audit. Отчёты: [приёмка](FINAL_BROWSER_AUDIT_008.md), [parity](BROWSER_PARITY_008.md), [deployment](GITVERSE_DEPLOYMENT_008.md), [VPS](VPS_DECOMMISSION_008.md), [экспериментальный план](NEXT_EXPERIMENT_PLAN.md).
+
+Успешны: pytest 61, Svelte check, local production build, узкий synthetic Python/Pyodide parity runner, 4 desktop Playwright tests старой опубликованной Stage 007 версии. Stage008 e2e корректируется: ранее demo collection осталась выбранной, из-за чего offline test не искал загруженный документ. Повторить после фикса, затем публиковать и проверять public release. SSH на VPS timed out, нельзя подтвердить состояние VPS/TunnelDeck; без удаления/остановки сервисов. Deploy key GitVerse должен быть project-scoped и храниться вне checkout; владелец подтвердил оставить его для последующих deployment.
+
+---
+
 # Передача контекста: «Основание» / EvidenceRAG
 
 Актуально 31.10.2026. Проект полностью начат с пустой директории и доведён до публичного MVP. Владелец попросил использовать загруженные скиллы: применены frontend-design, sites (с приоритетом явно запрошенного VPS перед cloud hosting) и web-design-guidelines. Три дизайн-концепции и выбор цифрового архива задокументированы.

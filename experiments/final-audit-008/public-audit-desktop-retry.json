@@ -1,0 +1,250 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node@24/24.22.2_1/bin/node",
+      "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/audit-008.spec.ts",
+      "--project=desktop",
+      "--workers=1"
+    ],
+    "configFile": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/playwright.config.ts",
+    "rootDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "desktop",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "snapshotDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": "**/._*",
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "https://seruyvodoley.gitverse.site/evidencerag/",
+          "trace": "retain-on-failure",
+          "channel": "chromium",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "desktop"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../experiments/final-audit-008/public-audit-desktop-retry.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "audit-008.spec.ts",
+      "file": "audit-008.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "published route matrix, static assets, CSP and mobile viewport",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 19340,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T04:54:49.648Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "8ee18fc4f02db1b17977-11d6767c0a737238ebad",
+          "file": "audit-008.spec.ts",
+          "line": 9,
+          "column": 1
+        },
+        {
+          "title": "local processing and privacy survive disabling network after core assets are warmed",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 240000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "desktop",
+              "projectName": "desktop",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 67827,
+                  "error": {
+                    "message": "TimeoutError: locator.click: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Загрузить документ', exact: true })\u001b[22m\n",
+                    "stack": "TimeoutError: locator.click: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Загрузить документ', exact: true })\u001b[22m\n\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:95:79",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                      "column": 79,
+                      "line": 95
+                    },
+                    "snippet": "  93 |   await page.getByRole('button', { name: 'Открыть демонстрацию', exact: true }).click();\n  94 |   await check(page.getByRole('heading', { name: 'Что говорят документы?' })).toBeVisible();\n> 95 |   await page.getByRole('button', { name: 'Найти основания', exact: true }).click();\n     |                                                                               ^\n  96 |   await check(page.getByRole('heading', { name: 'Значения менялись между редакциями' })).toBeVisible();\n  97 |   const runtimeReadyMs = Date.now() - runtimeStart;\n  98 |   await expect.poll(() => workers.length).toBeGreaterThan(0);"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                        "column": 79,
+                        "line": 95
+                      },
+                      "message": "TimeoutError: locator.click: Timeout 45000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Загрузить документ', exact: true })\u001b[22m\n\n\n  93 |   await page.getByRole('button', { name: 'Открыть демонстрацию', exact: true }).click();\n  94 |   await check(page.getByRole('heading', { name: 'Что говорят документы?' })).toBeVisible();\n> 95 |   await page.getByRole('button', { name: 'Найти основания', exact: true }).click();\n     |                                                                               ^\n  96 |   await check(page.getByRole('heading', { name: 'Значения менялись между редакциями' })).toBeVisible();\n  97 |   const runtimeReadyMs = Date.now() - runtimeStart;\n  98 |   await expect.poll(() => workers.length).toBeGreaterThan(0);\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts:95:79"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T04:55:11.461Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-local-processing-69282-fter-core-assets-are-warmed-desktop/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/audit-008-local-processing-69282-fter-core-assets-are-warmed-desktop/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/audit-008.spec.ts",
+                    "column": 79,
+                    "line": 95
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "8ee18fc4f02db1b17977-b668980761fec154347f",
+          "file": "audit-008.spec.ts",
+          "line": 76,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T04:54:49.082Z",
+    "duration": 92840.14600000001,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}

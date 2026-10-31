@@ -34,3 +34,10 @@
 - The existing release artifact `experiments/e2e-results.json` was restored unchanged after product E2E; new browser-migration result is kept separately.
 
 These are selected local tests, not full parity, load, malicious input, quota, recovery, cross-browser, public hosting, or security audit. The public server-backed service remains active. Only Chromium desktop was used; Firefox, Safari/iOS and mobile devices are untested.
+
+## Stage 008 acceptance deltas (31.10.2026)
+
+- Rebuilt local browser static bundle with `VITE_BASE_PATH=./ VITE_PAGES_BASE_PATH=/evidencerag/ npm run build:local` in `apps/web/`: successful; Pyodide plus 10 pinned wheels, SQLite WASM, two local workers, Svelte JS/CSS.
+- New `apps/web/e2e/audit-008.spec.ts` covers route/assets/CSP/mobile-width, Stage 006 second retrieval trace, and offline local TXT upload/search with damaged-PDF and >10 MB rejection. Chromium desktop local preview passed **3/3** on the latest run; its report is `experiments/final-audit-008/local-audit-desktop-pass.json`. The emulated mobile run is recorded separately as `local-audit-mobile-pass.json` when complete.
+- The local preview serves direct nested routes with 404 and therefore does not model GitVerse Pages route behavior. Public version Stage 007 was separately tested by `public-e2e-desktop.json` (4/4); publish Stage 008 then repeat acceptance against the public URL before declaring deployment complete.
+- Static network audit verifies same-origin only, no `/api`, no marker transmission, no document cookie or browser local/session storage writes. Static hosting still receives request metadata/IP.

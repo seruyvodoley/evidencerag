@@ -97,7 +97,7 @@
     question=q;
     await run(async()=>{
       await ensureSession();
-      const body={question:q,strategy:strategy==='research'?'evidencerag':strategy,family:family||null,version:version||null,as_of:asOf||null};
+      const body={question:q,strategy:strategy==='research'?'evidencerag':strategy,family:family||null,version:version||null,as_of:asOf||null,initial_top_k:LOCAL_EXECUTION&&strategy==='research'?1:undefined};
       result=await api(LOCAL_EXECUTION&&strategy==='research'?'/research':'/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
       source=null;
     });
@@ -282,7 +282,7 @@
     <h1>{LOCAL_EXECUTION?'Локальное хранение':'Политика cookie'}</h1>
     {#if LOCAL_EXECUTION}
       <p class="lead">В локальном режиме сайт не создаёт cookie и не отправляет документы на сервер. Рабочее пространство хранится в OPFS, а указатель на него — в IndexedDB этого браузерного профиля.</p>
-      <section class="cookie-detail"><h2>Что важно знать</h2><p>Локальные данные доступны только в текущем браузере и на этом устройстве. Очистка данных сайта, удаление профиля или политика браузера могут удалить документы без возможности восстановления. Сохраняйте экспортную копию после добавления важных документов.</p><p>Сайт загружает статические файлы приложения и локальное ядро со своего адреса. В базовом режиме нет аналитики, рекламы, сторонних cookie, внешних моделей или запросов к API приложения.</p></section>
+      <section class="cookie-detail"><h2>Что важно знать</h2><p>Документы, индекс и поисковые запросы обрабатываются в браузере на этом устройстве. Они не отправляются приложением на backend или внешние API. Локальные данные доступны только в текущем браузерном профиле. Очистка данных сайта, удаление профиля или политика браузера могут удалить документы без возможности восстановления. Сохраняйте экспортную копию после добавления важных документов.</p><p>Для доставки статических файлов GitVerse технически получает IP-адрес и параметры HTTP-запроса. Их обработка на стороне хостинга регулируется <a href="https://gitverse.ru/files/politika-konfidencialnosti.pdf" target="_blank" rel="noreferrer">политикой конфиденциальности GitVerse</a>; проект не управляет журналами и сроками хранения хостинга. Приложение не использует аналитику, рекламу, сторонние cookie или внешние модели.</p></section>
       <section class="cookie-detail"><h2>Удаление</h2><p>Удалите отдельный документ или всё рабочее пространство через раздел «Документы». Для удаления резервных копий браузера также используйте настройки хранения самого браузера.</p></section>
       <p class="cookie-updated">Редакция от 31 октября 2026 года.</p>
     {:else}
