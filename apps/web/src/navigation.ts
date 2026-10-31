@@ -9,7 +9,10 @@ const localPaths: Record<View, string> = {
 };
 
 export const paths: Record<View, string> = Object.fromEntries(
-  Object.entries(localPaths).map(([view, path]) => [view, `${basePath.replace(/\/$/, '')}${path}` || '/'])
+  Object.entries(localPaths).map(([view, path]) => [
+    view,
+    path === '/' ? basePath : `${basePath.replace(/\/$/, '')}${path}/`
+  ])
 ) as Record<View, string>;
 
 export function routeFromPath(pathname: string): View {

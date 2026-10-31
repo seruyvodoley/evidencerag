@@ -18,7 +18,7 @@ test('static project base path keeps navigation, reload and favicon local to the
   expect(new URL(iconHref!, page.url()).pathname).toBe('/evidencerag/favicon.svg');
 
   await page.getByRole('link', { name: 'Сравнение редакций', exact: true }).click();
-  await expect(page).toHaveURL(/\/evidencerag\/compare$/);
+  await expect(page).toHaveURL(/\/evidencerag\/compare\/$/);
   await expect(page.getByRole('heading', { name: 'Что изменилось в документе?' })).toBeVisible();
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Что изменилось в документе?' })).toBeVisible();
