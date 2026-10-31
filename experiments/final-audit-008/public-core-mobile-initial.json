@@ -1,0 +1,362 @@
+{
+  "config": {
+    "argv": [
+      "/opt/homebrew/Cellar/node@24/24.22.2_1/bin/node",
+      "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/node_modules/.bin/playwright",
+      "test",
+      "e2e/base-path.spec.ts",
+      "e2e/local-migration.spec.ts",
+      "--project=mobile",
+      "--workers=1"
+    ],
+    "configFile": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/playwright.config.ts",
+    "rootDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "desktop",
+        "name": "desktop",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile",
+        "name": "mobile",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": [
+          "**/._*"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "mobile",
+        "testDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "snapshotDir": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e",
+        "testIgnore": "**/._*",
+        "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+        "timeout": 30000,
+        "use": {
+          "baseURL": "https://seruyvodoley.gitverse.site/evidencerag/",
+          "trace": "retain-on-failure",
+          "channel": "chromium",
+          "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Mobile/15E148 Safari/604.1",
+          "viewport": {
+            "width": 390,
+            "height": 664
+          },
+          "screen": {
+            "width": 390,
+            "height": 844
+          },
+          "deviceScaleFactor": 3,
+          "isMobile": true,
+          "hasTouch": true,
+          "defaultBrowserType": "chromium"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "mobile"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../../experiments/final-audit-008/public-core-mobile-pass.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "base-path.spec.ts",
+      "file": "base-path.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "static project base path keeps navigation, reload and favicon local to the repository",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6646,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/base-path.spec.ts:14:55",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/base-path.spec.ts",
+                      "column": 55,
+                      "line": 14
+                    },
+                    "snippet": "  12 |\n  13 |   await page.goto('./');\n> 14 |   await expect(page.getByText('Локально в браузере')).toBeVisible();\n     |                                                       ^\n  15 |   const brand = page.getByRole('link', { name: 'Основание, главная' });\n  16 |   await expect(brand).toHaveAttribute('href', '/evidencerag/');\n  17 |   const iconHref = await page.locator('link[rel=\"icon\"][type=\"image/svg+xml\"]').getAttribute('href');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/base-path.spec.ts",
+                        "column": 55,
+                        "line": 14
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    14 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  12 |\n  13 |   await page.goto('./');\n> 14 |   await expect(page.getByText('Локально в браузере')).toBeVisible();\n     |                                                       ^\n  15 |   const brand = page.getByRole('link', { name: 'Основание, главная' });\n  16 |   await expect(brand).toHaveAttribute('href', '/evidencerag/');\n  17 |   const iconHref = await page.locator('link[rel=\"icon\"][type=\"image/svg+xml\"]').getAttribute('href');\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/base-path.spec.ts:14:55"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:20:47.630Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/base-path-static-project-b-1f09d-con-local-to-the-repository-mobile/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/base-path-static-project-b-1f09d-con-local-to-the-repository-mobile/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/base-path.spec.ts",
+                    "column": 55,
+                    "line": 14
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "6b56eb6255e178e1b9fa-faf024a683cbc1003dd3",
+          "file": "base-path.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "local-migration.spec.ts",
+      "file": "local-migration.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "browser-local demo, search, source and version comparison use no API",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 31775,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    62 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    62 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/local-migration.spec.ts:15:54",
+                    "location": {
+                      "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/local-migration.spec.ts",
+                      "column": 54,
+                      "line": 15
+                    },
+                    "snippet": "  13 |\n  14 |   await page.goto('./');\n> 15 |   await check(page.getByText('Локально в браузере')).toBeVisible();\n     |                                                      ^\n  16 |   await check(page.locator('.cookie-notice')).toHaveCount(0);\n  17 |   await page.getByRole('button', { name: 'Открыть демонстрацию', exact: true }).click();\n  18 |   await check(page.getByRole('heading', { name: 'Что говорят документы?' })).toBeVisible();"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/local-migration.spec.ts",
+                        "column": 54,
+                        "line": 15
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  getByText('Локально в браузере')\nExpected: visible\nReceived: hidden\nTimeout:  30000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByText('Локально в браузере') with timeout 30000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Локально в браузере')\u001b[22m\n\u001b[2m    62 × locator resolved to <span class=\"mode\">…</span>\u001b[22m\n\u001b[2m       - unexpected value \"hidden\"\u001b[22m\n\n\n  13 |\n  14 |   await page.goto('./');\n> 15 |   await check(page.getByText('Локально в браузере')).toBeVisible();\n     |                                                      ^\n  16 |   await check(page.locator('.cookie-notice')).toHaveCount(0);\n  17 |   await page.getByRole('button', { name: 'Открыть демонстрацию', exact: true }).click();\n  18 |   await check(page.getByRole('heading', { name: 'Что говорят документы?' })).toBeVisible();\n    at /Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/local-migration.spec.ts:15:54"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:20:57.209Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/local-migration-browser-lo-38ea7-rsion-comparison-use-no-API-mobile/error-context.md"
+                    },
+                    {
+                      "name": "trace",
+                      "contentType": "application/zip",
+                      "path": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/test-results/local-migration-browser-lo-38ea7-rsion-comparison-use-no-API-mobile/trace.zip"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/RisingSail/основы программирования/EvidenceRAG/apps/web/e2e/local-migration.spec.ts",
+                    "column": 54,
+                    "line": 15
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "f3266d76f407b3f20247-3c64432ff0bdde6034fd",
+          "file": "local-migration.spec.ts",
+          "line": 6,
+          "column": 1
+        },
+        {
+          "title": "browser-local upload persists, searches and deletes without transmitting a marker",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 29578,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:21:30.907Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f3266d76f407b3f20247-2b1b62527e588775c98b",
+          "file": "local-migration.spec.ts",
+          "line": 51,
+          "column": 1
+        },
+        {
+          "title": "browser-local Python parser extracts DOCX tables and PDF pages, identifies scanned PDFs",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 180000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile",
+              "projectName": "mobile",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 22383,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-31T05:22:02.805Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f3266d76f407b3f20247-e77a145c036bac3d2652",
+          "file": "local-migration.spec.ts",
+          "line": 98,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-31T05:20:47.178Z",
+    "duration": 98394.46699999999,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

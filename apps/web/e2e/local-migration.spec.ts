@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const check = expect.configure({ timeout: 30_000 });
 
-test('browser-local demo, search, source and version comparison use no API', async ({ page }) => {
+test('browser-local demo, search, source and version comparison use no API', async ({ page }, testInfo) => {
   test.setTimeout(180_000);
   page.setDefaultTimeout(30_000);
   const errors: string[] = [];
@@ -12,7 +12,10 @@ test('browser-local demo, search, source and version comparison use no API', asy
   page.on('request', (request) => requests.push(request.url()));
 
   await page.goto('./');
-  await check(page.getByText('Локально в браузере')).toBeVisible();
+  const modeLabel = page.locator('.mode');
+  await check(modeLabel).toHaveText('Локально в браузере');
+  if (testInfo.project.name === 'mobile') await check(modeLabel).toBeHidden();
+  else await check(modeLabel).toBeVisible();
   await check(page.locator('.cookie-notice')).toHaveCount(0);
   await page.getByRole('button', { name: 'Открыть демонстрацию', exact: true }).click();
   await check(page.getByRole('heading', { name: 'Что говорят документы?' })).toBeVisible();

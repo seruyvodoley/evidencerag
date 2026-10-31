@@ -138,7 +138,7 @@
       "action": "check_version",
       "reason": "targeted_gap:service-2025.md-1",
       "next_query": "Какой срок возврата после изменений? Срок возврата: 30 дней",
-      "elapsed_ms": 7.1
+      "elapsed_ms": 6.2
     },
     {
       "iteration": 2,
@@ -200,7 +200,7 @@
       "action": "stop_sufficient",
       "reason": "explicit_evaluator_sufficient",
       "next_query": null,
-      "elapsed_ms": 2
+      "elapsed_ms": 2.8
     }
   ],
   "budget": {

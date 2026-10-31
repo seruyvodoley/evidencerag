@@ -89,7 +89,7 @@ test('published route matrix, static assets, CSP and mobile viewport', async ({ 
   expect(failedRequests).toEqual([]);
 
   await page.screenshot({ path: resolve(artifactDir, `${capturePrefix}-home-${testInfo.project.name}-320.png`), fullPage: true });
-  await writeFile(resolve(artifactDir, `browser-metrics-${testInfo.project.name}.json`), JSON.stringify({
+  await writeFile(resolve(artifactDir, `browser-metrics-${capturePrefix}-${testInfo.project.name}.json`), JSON.stringify({
     project: testInfo.project.name, routes: routeStatuses, metaCsp, icons,
     outgoingOrigins, responses, totalResponseBytes: responses.reduce((sum, item) => sum + (item.contentLength || 0), 0),
     browserStorage, pageErrors, consoleErrors, failedRequests,
@@ -124,7 +124,7 @@ test('browser reproduces the stage-006 version-directed second retrieval', async
   expect(trace.trace[1].selected_evidence_ids).not.toEqual(trace.trace[0].selected_evidence_ids);
   expect(trace.answer.claims[0].citations[0].quote).toBe('Срок возврата: 30 дней');
   await mkdir(artifactDir, { recursive: true });
-  await writeFile(resolve(artifactDir, 'stage-006-browser-trace.json'), JSON.stringify(trace, null, 2));
+  await writeFile(resolve(artifactDir, `stage-006-browser-trace-${capturePrefix}.json`), JSON.stringify(trace, null, 2));
 });
 
 test('local processing and privacy survive disabling network after core assets are warmed', async ({ page, context }, testInfo) => {
@@ -193,7 +193,7 @@ test('local processing and privacy survive disabling network after core assets a
   await check(page.locator('dialog[open] [role="alert"]')).toContainText('Файл должен быть не больше 10 МБ');
   expect(await page.locator('.document-item').count()).toBe(3);
   await mkdir(artifactDir, { recursive: true });
-  await writeFile(resolve(artifactDir, `offline-browser-check-${testInfo.project.name}.json`), JSON.stringify({
+  await writeFile(resolve(artifactDir, `offline-browser-check-${capturePrefix}-${testInfo.project.name}.json`), JSON.stringify({
     status: 'passed', runtimeReadyMs, uploadMs, searchMs, offline: true,
     workerUrls: workers,
     requestUrls: requests.map(url => {

@@ -114,18 +114,18 @@
       "setsCookie": false
     },
     {
-      "url": "http://127.0.0.1:5177/evidencerag/assets/index-BbSSEvdv.css",
-      "status": 200,
-      "resourceType": "stylesheet",
-      "contentType": "text/css; charset=utf-8",
-      "contentLength": null,
-      "setsCookie": false
-    },
-    {
       "url": "http://127.0.0.1:5177/evidencerag/assets/index-IlX9GifG.js",
       "status": 200,
       "resourceType": "script",
       "contentType": "text/javascript; charset=utf-8",
+      "contentLength": null,
+      "setsCookie": false
+    },
+    {
+      "url": "http://127.0.0.1:5177/evidencerag/assets/index-BbSSEvdv.css",
+      "status": 200,
+      "resourceType": "stylesheet",
+      "contentType": "text/css; charset=utf-8",
       "contentLength": null,
       "setsCookie": false
     },
@@ -357,33 +357,33 @@
   "consoleErrors": [],
   "failedRequests": [],
   "initialLoad": {
-    "domContentLoadedMs": 125.59999996423721,
-    "loadEventMs": 133.89999997615814,
+    "domContentLoadedMs": 25.19999998807907,
+    "loadEventMs": 27.80000001192093,
     "transferBytes": 445494,
     "resources": [
       {
         "name": "http://127.0.0.1:5177/evidencerag/assets/index-IlX9GifG.js",
-        "durationMs": 6.400000035762787,
+        "durationMs": 2.399999976158142,
         "transferSize": 94659
       },
       {
         "name": "http://127.0.0.1:5177/evidencerag/assets/index-BbSSEvdv.css",
-        "durationMs": 5.800000011920929,
+        "durationMs": 1.899999976158142,
         "transferSize": 22626
       },
       {
         "name": "http://127.0.0.1:5177/evidencerag/favicon.ico",
-        "durationMs": 2.599999964237213,
+        "durationMs": 1.5,
         "transferSize": 4836
       },
       {
         "name": "http://127.0.0.1:5177/evidencerag/assets/local-engine.worker-C1nzC10V.js",
-        "durationMs": -28.900000035762787,
+        "durationMs": -8.300000011920929,
         "transferSize": 318537
       },
       {
         "name": "http://127.0.0.1:5177/evidencerag/favicon.ico",
-        "durationMs": 6.100000023841858,
+        "durationMs": 11.699999988079071,
         "transferSize": 4836
       }
     ],

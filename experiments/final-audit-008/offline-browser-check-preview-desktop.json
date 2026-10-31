@@ -1,8 +1,8 @@
 {
   "status": "passed",
-  "runtimeReadyMs": 5936,
-  "uploadMs": 104,
-  "searchMs": 111,
+  "runtimeReadyMs": 8953,
+  "uploadMs": 149,
+  "searchMs": 212,
   "offline": true,
   "workerUrls": [
     "http://127.0.0.1:5177/evidencerag/assets/local-engine.worker-C1nzC10V.js"

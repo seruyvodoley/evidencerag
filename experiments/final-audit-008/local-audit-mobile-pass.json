@@ -148,12 +148,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 6640,
+                  "duration": 6063,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-31T05:11:41.617Z",
+                  "startTime": "2026-10-31T05:19:04.715Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -163,7 +163,7 @@
           ],
           "id": "8ee18fc4f02db1b17977-8391a5fb050d1d013b6b",
           "file": "audit-008.spec.ts",
-          "line": 9,
+          "line": 10,
           "column": 1
         },
         {
@@ -182,12 +182,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 6116,
+                  "duration": 4721,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-31T05:11:49.816Z",
+                  "startTime": "2026-10-31T05:19:12.688Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -197,7 +197,7 @@
           ],
           "id": "8ee18fc4f02db1b17977-250c5044160bc102121b",
           "file": "audit-008.spec.ts",
-          "line": 99,
+          "line": 100,
           "column": 1
         },
         {
@@ -216,12 +216,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 9649,
+                  "duration": 8478,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-31T05:11:55.947Z",
+                  "startTime": "2026-10-31T05:19:17.429Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -231,7 +231,7 @@
           ],
           "id": "8ee18fc4f02db1b17977-777df50826b04ad6850a",
           "file": "audit-008.spec.ts",
-          "line": 129,
+          "line": 130,
           "column": 1
         }
       ]
@@ -239,8 +239,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-31T05:11:41.141Z",
-    "duration": 24967.672,
+    "startTime": "2026-10-31T05:19:04.232Z",
+    "duration": 22341.374,
     "expected": 3,
     "skipped": 0,
     "unexpected": 0,

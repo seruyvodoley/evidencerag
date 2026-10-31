@@ -1,0 +1,213 @@
+{
+  "schema_version": "research-rag-trace-v1",
+  "question": "Какой срок возврата после изменений?",
+  "request": {
+    "question": "Какой срок возврата после изменений?",
+    "family": "service",
+    "version": null,
+    "as_of": null
+  },
+  "strategy": "sufficiency_gap_controller_v1",
+  "evaluator": "authored_exact_quote_rule",
+  "answer_generator": "literal_extract_only",
+  "termination": "sufficient",
+  "assessment": {
+    "status": "sufficient",
+    "supported_claims": [
+      {
+        "claim_id": "service-2025.md-1",
+        "text": "Срок возврата: 30 дней",
+        "evidence_ids": [
+          "ev-41add056a43bfc6defe132db"
+        ]
+      }
+    ],
+    "missing_information": [],
+    "conflicting_claims": [],
+    "evidence_ids": [
+      "ev-2bbd7dc589bed1462b6f4b49",
+      "ev-41add056a43bfc6defe132db"
+    ],
+    "version_constraints": {
+      "version": null,
+      "as_of": null,
+      "required_versions": [
+        "2025"
+      ]
+    },
+    "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+    "confidence": null,
+    "confidence_method": null,
+    "recommended_action": "stop",
+    "evaluator": "authored_exact_quote_rule"
+  },
+  "answer": {
+    "status": "answered",
+    "claims": [
+      {
+        "text": "Срок возврата: 30 дней",
+        "citations": [
+          {
+            "id": "ev-41add056a43bfc6defe132db",
+            "quote": "Срок возврата: 30 дней"
+          }
+        ]
+      }
+    ],
+    "verification": "literal_citation_checked",
+    "unresolved_conflicts": [],
+    "refusal_reason": null
+  },
+  "selected_evidence": [
+    {
+      "evidence_id": "ev-2bbd7dc589bed1462b6f4b49",
+      "source_revision_id": "doc-7e2f33d11186d4902517b090",
+      "text": "Срок диагностики: 3 рабочих дня\nГарантия ремонта: 90 дней\nДиагностика начинается после регистрации устройства. При отсутствии деталей срок ремонта согласовывается отдельно.",
+      "family": "service",
+      "version": "2024",
+      "date": "2024-01-01",
+      "locator": "Ремонт",
+      "page": null
+    },
+    {
+      "evidence_id": "ev-41add056a43bfc6defe132db",
+      "source_revision_id": "doc-487cf89cdb2a706e870a1af8",
+      "text": "Срок возврата: 30 дней\nДокумент для возврата: чек или подтверждение оплаты\nНовые правила применяются к заказам с 1 января 2025 года. Сохраняйте упаковку и комплектность.",
+      "family": "service",
+      "version": "2025",
+      "date": "2025-01-01",
+      "locator": "Возврат",
+      "page": null
+    }
+  ],
+  "trace": [
+    {
+      "iteration": 1,
+      "query": "Какой срок возврата после изменений?",
+      "query_fingerprint": "8daa9bc5f0835140da52b6e65b1750bb117f2c1066f58f8a52c0fc923fab4b2f",
+      "family": "service",
+      "version": null,
+      "as_of": null,
+      "requested_limit": 1,
+      "returned_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "new_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "new_document_ids": [
+        "doc-7e2f33d11186d4902517b090"
+      ],
+      "new_supported_claim_ids": [],
+      "new_document_count": 1,
+      "new_evidence_chunk_count": 1,
+      "new_evidence_claim_count": 0,
+      "selected_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49"
+      ],
+      "assessment": {
+        "status": "insufficient",
+        "supported_claims": [],
+        "missing_information": [
+          {
+            "gap_id": "service-2025.md-1",
+            "kind": "evidence_span",
+            "description": "Не найден дословно заданный обязательный фрагмент.",
+            "search_query": "Срок возврата: 30 дней",
+            "target_version": "2025",
+            "as_of": null
+          }
+        ],
+        "conflicting_claims": [],
+        "evidence_ids": [
+          "ev-2bbd7dc589bed1462b6f4b49"
+        ],
+        "version_constraints": {
+          "version": null,
+          "as_of": null,
+          "required_versions": [
+            "2025"
+          ]
+        },
+        "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+        "confidence": null,
+        "confidence_method": null,
+        "recommended_action": "retrieve_gap",
+        "evaluator": "authored_exact_quote_rule"
+      },
+      "action": "check_version",
+      "reason": "targeted_gap:service-2025.md-1",
+      "next_query": "Какой срок возврата после изменений? Срок возврата: 30 дней",
+      "elapsed_ms": 10
+    },
+    {
+      "iteration": 2,
+      "query": "Какой срок возврата после изменений? Срок возврата: 30 дней",
+      "query_fingerprint": "38c35579778766350408f6a777869c3c49e4a60c3b514293127577904837370c",
+      "family": "service",
+      "version": "2025",
+      "as_of": null,
+      "requested_limit": 1,
+      "returned_evidence_ids": [
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "new_evidence_ids": [
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "new_document_ids": [
+        "doc-487cf89cdb2a706e870a1af8"
+      ],
+      "new_supported_claim_ids": [
+        "service-2025.md-1"
+      ],
+      "new_document_count": 1,
+      "new_evidence_chunk_count": 1,
+      "new_evidence_claim_count": 1,
+      "selected_evidence_ids": [
+        "ev-2bbd7dc589bed1462b6f4b49",
+        "ev-41add056a43bfc6defe132db"
+      ],
+      "assessment": {
+        "status": "sufficient",
+        "supported_claims": [
+          {
+            "claim_id": "service-2025.md-1",
+            "text": "Срок возврата: 30 дней",
+            "evidence_ids": [
+              "ev-41add056a43bfc6defe132db"
+            ]
+          }
+        ],
+        "missing_information": [],
+        "conflicting_claims": [],
+        "evidence_ids": [
+          "ev-2bbd7dc589bed1462b6f4b49",
+          "ev-41add056a43bfc6defe132db"
+        ],
+        "version_constraints": {
+          "version": null,
+          "as_of": null,
+          "required_versions": [
+            "2025"
+          ]
+        },
+        "reasoning_summary": "Проверены только точные цитаты и заданные автором ограничения редакции.",
+        "confidence": null,
+        "confidence_method": null,
+        "recommended_action": "stop",
+        "evaluator": "authored_exact_quote_rule"
+      },
+      "action": "stop_sufficient",
+      "reason": "explicit_evaluator_sufficient",
+      "next_query": null,
+      "elapsed_ms": 4.1
+    }
+  ],
+  "budget": {
+    "max_iterations": 3,
+    "max_chunks": 20,
+    "time_budget_ms": 500,
+    "initial_top_k": 1
+  },
+  "elapsed_ms": 19.8
+}
