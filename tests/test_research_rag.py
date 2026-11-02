@@ -146,8 +146,10 @@ def test_new_chunk_without_new_supported_claim_stops_and_is_reported_separately(
 
     result = run_pipeline(SearchRequest("Какова дата?"), Backend(), Judge())
     assert len(calls) == 2
-    assert result["termination"] == "no_new_evidence_claims"
-    assert result["trace"][-1]["action"] == "stop_no_new_evidence_claims"
+    # The controller does not stop merely because no new claim signature appeared.
+    # It detects that the same gap query was exhausted after a second chunk arrived.
+    assert result["termination"] == "repeated_query"
+    assert result["trace"][-1]["action"] == "stop_repeated_query"
     assert result["trace"][-1]["new_evidence_chunk_count"] == 1
     assert result["trace"][-1]["new_evidence_claim_count"] == 0
 
@@ -459,7 +461,8 @@ def test_saved_store_trace_uses_stable_ids_and_refuses_overwrite(tmp_path):
                               [(x["action"], x["new_evidence_ids"], x["new_supported_claim_ids"])
                                for x in result["trace"]])
     assert project(first) == project(second)
-    assert first["trace"][0]["action"] == "check_version"
+    assert first["trace"][0]["action"] == "stop_chunk_budget"
+    assert first["assessment"]["status"] == "insufficient"
     with pytest.raises(FileExistsError):
         run(tmp_path / "first")
 

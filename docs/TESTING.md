@@ -1,5 +1,19 @@
 # Проверки и результаты
 
+## Этап 010 (03.11.2026)
+
+- Новые typed claim regressions: `tests/test_stage010_claim_pipeline.py` — авторские synthetic tests, не внешний benchmark. Контрольный browser case загружает три документа, получает четыре атрибутированных утверждения и проверяет цитаты/поправку: `apps/web/e2e/answer-generation-010.spec.ts`.
+- `.venv/bin/pytest -q`: **84 passed**, 1 Starlette/httpx deprecation warning.
+- `npm run check`: **0 ошибок, 0 предупреждений**. `npm run build`: успешен. `VITE_BASE_PATH=/evidencerag/ VITE_PAGES_BASE_PATH=/evidencerag/ npm run build:local`: успешен.
+- `answer-generation-009.spec.ts` + `answer-generation-010.spec.ts`: **2/2 desktop и 2/2 mobile Chromium emulation**; citations, четыре Stage 010 слота, применённая поправка, ограничения и отсутствие external requests.
+- `local-migration.spec.ts`: **3/3 desktop и 3/3 mobile Chromium emulation**; demo, поиск/сравнение, upload/reload/delete, DOCX/PDF parser.
+- `base-path.spec.ts`: **1/1 desktop и 1/1 mobile Chromium emulation**; прямой адрес, навигация, reload и favicon под `/evidencerag/`.
+- Chromium bundle не был установлен в Playwright cache, поэтому E2E запуск выполнен через системный Chrome. Первый запуск без указанного канала браузера закономерно не стартовал.
+- Время и память: 50 evaluator runs, Python 3.12.13: median 14.366 ms / p95 15.436 ms; Python tracemalloc peak 0.166 MiB. Это evaluator-only, не cold start и не RSS. Browser-local build: 34 MiB, vendor runtime 29 MiB.
+- Независимой выборки, двойной разметки, физического mobile memory профиля и систематического controller ablation на этом этапе нет.
+
+---
+
 ## Этап 009 (03.11.2026)
 
 - `.venv/bin/pytest -q`: **72 passed, 0 failed**; одно предупреждение Starlette о переходе TestClient/httpx. Полный JUnit: `experiments/stage009/python-junit.xml`.

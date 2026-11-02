@@ -226,27 +226,24 @@ def handle(method, path, request_json, token):
                             rules.append(FormalRule(rule["question"], requirements))
             trace = run_pipeline(request, EvidenceStoreBackend(STORE, ws), AuthoredOrStructuredEvaluator(tuple(rules)),
                                  AuthoredOrStructuredAnswerGenerator(), budget)
-            display = retrieve(STORE, ws, request.question, strategy="evidencerag", family=request.family,
-                               version=request.version, as_of=request.as_of,
-                               max_iterations=budget.max_iterations, max_chunks=budget.max_chunks,
-                               time_budget_ms=budget.time_budget_ms)
-            # Include every exact source selected by the structured controller,
-            # including a linked amendment stored under a separate family.
-            selected_ids = {item["evidence_id"] for item in trace["selected_evidence"]}
-            indexed_hits = {hit["evidence_id"]: hit for hit in display.get("hits", [])
-                            if "evidence_id" in hit}
-            for summary in STORE.documents(ws):
-                document = STORE.document(ws, summary["id"])
-                for chunk in document["chunks"]:
-                    hit = {**chunk, "document": document["id"], "title": document["title"], "family": document["family"],
-                           "version": document["version"], "date": document["date"],
-                           "digest": document["digest"]}
-                    evidence_id = stable_evidence_id(hit)
-                    if evidence_id in selected_ids:
-                        indexed_hits[evidence_id] = {**hit, "evidence_id": evidence_id}
-            if selected_ids:
-                display["hits"] = list(indexed_hits.values())
-            display["research_trace"] = trace
+            # The research controller owns this result contract. Do not run a
+            # second lexical retrieval whose hits could be mistaken for evaluated evidence.
+            evidence = trace["selected_evidence"]
+            hits = [{"id": item["id"], "document": item["document"], "text": item["text"],
+                     "locator": item.get("locator") or "", "page": item.get("page"),
+                     "title": item.get("title") or "Источник", "version": item.get("version") or "",
+                     "date": item.get("date") or "", "family": item.get("family") or "",
+                     "evidence_id": item["evidence_id"],
+                     "research_role": "revision_audit" if item.get("revision_audit") else "evaluated"}
+                    for item in evidence]
+            missing = [gap.get("description", "") for gap in trace.get("missing_information", [])]
+            display = {"status": trace["assessment"]["status"], "question": request.question,
+                       "mode": "research", "answer": None, "hits": hits,
+                       "conflicts": trace.get("conflicts", []), "version_differences": [],
+                       "gaps": missing, "lexical_coverage": 0, "termination": trace["termination"],
+                       "trace": [], "elapsed_ms": trace["elapsed_ms"],
+                       "limitations": "Фрагменты в этом списке переданы исследовательскому контроллеру; цитаты ответа ссылаются на них. Проверка структурная, без семантической модели.",
+                       "research_trace": trace}
             return _response(200, display)
 
         if method == "POST" and path == "/compare":

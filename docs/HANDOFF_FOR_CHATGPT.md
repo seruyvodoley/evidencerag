@@ -1,3 +1,11 @@
+# Актуальная передача — этап 010 (03.11.2026)
+
+Исходный HEAD `06f5d28819017abc237a93323cd10daaf7bcdeb6`. На старте `experiments/e2e-results.json` уже содержал пользовательские изменения; его нельзя включать в commit. Инфраструктуру не менять.
+
+В Stage 010 добавлены `QuestionAnalyzer`, `ClaimExtractor`, `VersionResolver`, `EvidenceVerifier`, workspace-scoped revision link index, единый `/research` UI/evidence contract и E2E-кейс «Полевой корпус речи». Python: 84 passed; check/build чистые. Stage 009+010 answer E2E 2/2 desktop и mobile; migration 3/3 desktop/mobile; Pages base path 1/1 desktop/mobile. Следующий шаг: commit source, push GitHub, опубликовать GitVerse artifact, затем проверить live assets и Stage 010 browser E2E. Публичную версию считать обновлённой только после live проверки.
+
+Границы: semantic/NLI model не интегрирована и не скачана; независимого набора/разметки нет; 4/4 поля на synthetic примере — только regression, не оценка обобщения. См. `STAGE_010_AUDIT.md`, `STAGE_010_DESIGN.md`, `STAGE_010_EVALUATION.md`.
+
 # Актуальная передача — этап 009 (03.11.2026)
 
 В checkout добавлен browser-local rule-based ответчик, который собирает только явные факты с привязкой к цитате и дате. Stage 009 опубликован на [GitVerse Pages](https://seruyvodoley.gitverse.site/evidencerag/): artifact commit `0a8b63b`, successful run `1994906`; live A–J E2E — desktop 1/1 и mobile emulation 1/1. Источник: local source commit `d0743d9`; публикация описана в `docs/GITVERSE_DEPLOYMENT_009.md`. Основные файлы: `apps/api/evidencerag/research_rag.py`, `apps/web/src/local-api.py`, `apps/web/src/App.svelte`, `apps/web/src/style.css`. Отчёты и артефакты — `docs/*_009.md` и `experiments/stage009/`.

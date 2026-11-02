@@ -35,14 +35,14 @@ test('browser-local demo, search, source and version comparison use no API', asy
   await page.locator('.settings select').selectOption('research');
   await page.getByRole('button', { name: 'Найти основания', exact: true }).click();
   await check(page.locator('.research-trace')).toContainText('authored_exact_quote_rule');
-  await check(page.locator('.research-trace')).toContainText('дословные цитаты проверены');
+  await check(page.locator('.research-trace')).toContainText('структурные правила и источники сверены');
   await page.locator('.research-trace summary').click();
   const [traceDownload] = await Promise.all([
     page.waitForEvent('download', { timeout: 15_000 }),
     page.getByRole('button', { name: 'Скачать JSON-трассу' }).click(),
   ]);
   const trace = JSON.parse(await readFile((await traceDownload.path())!, 'utf8'));
-  expect(trace.schema_version).toBe('research-rag-trace-v1');
+  expect(trace.schema_version).toBe('research-rag-trace-v2');
   expect(trace.trace.length).toBeGreaterThan(0);
 
   const origin = new URL(page.url()).origin;

@@ -42,7 +42,7 @@ def test_a_known_ifiyak_case_builds_three_cited_facts_and_applies_partial_amendm
     assert facts["count:предложение"].value == "8"
     assert facts["duration"].value == "25"
     assert facts["submission_mode"].value == "в электронном виде"
-    answer = validate_answer(StructuredFactAnswerGenerator().generate(request, hits, assessment), hits)
+    answer = validate_answer(StructuredFactAnswerGenerator().generate(request, hits, assessment), hits, assessment)
     assert "25 минут" in answer["text"]
     assert {claim["citations"][0]["id"] for claim in answer["claims"]} == {"new", "amend"}
 
@@ -64,7 +64,7 @@ def test_c_old_date_selects_old_edition():
 def test_d_missing_attribute_is_reported_by_name():
     result = evaluate("2026-10-31", question=QUESTION + " Сколько абзацев требуется?")
     assert result.status is SufficiencyStatus.INSUFFICIENT
-    assert any("count:абзац" in gap.description for gap in result.missing_information)
+    assert any(gap.gap_id == "missing-count:абзац" for gap in result.missing_information)
 
 
 def test_e_competing_applicable_amendments_are_a_conflict():
@@ -108,7 +108,7 @@ def test_i_lexical_lookalike_does_not_become_fact():
 def test_j_unknown_applicability_is_not_returned_as_current():
     hits = [source("undated", "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.", "")]
     result = evaluate("2026-10-31", hits)
-    assert result.status is SufficiencyStatus.INSUFFICIENT
+    assert result.status is SufficiencyStatus.APPLICABILITY_UNCERTAIN
     assert not result.supported_claims
     assert all(gap.kind.value == "version" for gap in result.missing_information)
 

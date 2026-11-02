@@ -40,7 +40,7 @@ test('browser-local answer combines versioned facts and a separately grouped par
   await expect(page.locator('.verified-answer')).toContainText('8 предложений');
   await expect(page.locator('.verified-answer')).toContainText('25 минут');
   await expect(page.locator('.verified-answer')).toContainText('в электронном виде');
-  await expect(page.locator('.answer-claim')).toHaveCount(3);
+  await expect(page.locator('.verified-answer .answer-claim')).toHaveCount(3);
   await page.locator('.answer-claim').filter({hasText:'25 минут'}).getByRole('button', {name:'Открыть подтверждающий фрагмент'}).click();
   await expect(page.locator('.source-panel article.selected')).toContainText('25 минут');
 
@@ -58,8 +58,8 @@ test('browser-local answer combines versioned facts and a separately grouped par
   await page.locator('#question').fill(QUESTION + ' Сколько абзацев требуется?');
   await page.getByRole('button', {name:'Найти основания'}).click();
   await expect(page.locator('.verified-answer')).toHaveCount(0);
-  await expect(page.locator('.missing-facts')).toContainText('count:абзац');
-  await expect(page.locator('.partial-facts .answer-claim')).toHaveCount(3);
+  await expect(page.locator('.missing-facts')).toContainText('Не найдено явное подтверждение');
+  await expect(page.locator('.partial-facts:not(.applied-amendments) .answer-claim')).toHaveCount(3);
 
   // E: same-date competing amendments are refused instead of choosing one.
   await uploadDocument({title:'Поправка 2026 — конфликт',family:'Синтаксис-ИФиЯК-Поправки-2',version:'2026',date:'2026-10-15',text:'С 15 октября 2026 года в редакции от 1 сентября 2026 года время изменено: вместо 20 минут устанавливается 30 минут.'},3);
@@ -100,7 +100,7 @@ test('browser-local answer combines versioned facts and a separately grouped par
   await page.locator('#question').fill(QUESTION);
   await page.getByRole('button', {name:'Найти основания'}).click();
   await expect(page.locator('.verified-answer')).toHaveCount(0);
-  await expect(page.locator('.result-status')).toContainText('Не хватает подтверждений');
+  await expect(page.locator('.result-status')).toContainText('Применимость редакции не установлена');
   if (testInfo.project.name === 'mobile') {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
   }
