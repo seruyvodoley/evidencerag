@@ -1,0 +1,25 @@
+{
+  "experiment": "stage009_known_case_regression",
+  "dataset_kind": "authored_synthetic_regression_fixture",
+  "purpose": "known-case debugging only; excluded from claims of independent efficacy",
+  "status": "sufficient",
+  "answer_status": "answered",
+  "answer": "количество: 8 предложений; время: 25 минут; форма сдачи: в электронном виде.",
+  "values": {
+    "count:предложение": "8",
+    "duration": "25",
+    "submission_mode": "в электронном виде"
+  },
+  "expected": {
+    "count:предложение": "8",
+    "duration": "25",
+    "submission_mode": "в электронном виде"
+  },
+  "values_match_fixture": true,
+  "citation_count": 3,
+  "iterations": 1,
+  "termination": "sufficient",
+  "selected_evidence_count": 2,
+  "elapsed_ms": 9.035,
+  "semantic_claim": "No semantic entailment or scientific effectiveness claim is made."
+}

@@ -11,6 +11,7 @@ import hashlib
 import json
 import sqlite3
 import time
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from enum import Enum
@@ -66,6 +67,12 @@ class SupportedClaim:
     claim_id: str
     text: str
     evidence_ids: tuple[str, ...]
+    attribute: str | None = None
+    value: str | None = None
+    quote: str | None = None
+    effective_date: str | None = None
+    source_family: str | None = None
+    source_version: str | None = None
 
 
 @dataclass(frozen=True)
@@ -198,10 +205,35 @@ class EvidenceStoreBackend:
         try:
             hits = self.store.search(self.workspace, terms(query)[:32], limit, family,
                                      version, as_of, deadline=deadline)
+            # Amendments may live in a separate metadata family. Search a bounded
+            # workspace-scoped candidate pool and admit only dated text that both
+            # references a base-edition date and uses an amendment/correction marker.
+            supplements = self.store.search(self.workspace, terms(query)[:32], min(50, max(limit * 10, 20)),
+                                            None, version, as_of, deadline=deadline)
+            marked_supplements = []
+            for hit in supplements:
+                if family and hit.get("family") == family:
+                    continue
+                text = hit.get("text", "")
+                if (hit.get("date") and _referenced_dates(text)
+                        and re.search(r"поправк|вместо|измен[её]н|изменя|дополнени", text.casefold())):
+                    marked_supplements.append(hit)
+            # Keep a linked amendment visible even when the controller starts with
+            # a small k; otherwise its base edition can look complete too early.
+            hits = marked_supplements + hits
         except sqlite3.OperationalError as exc:
             if "interrupted" in str(exc).lower() and time.perf_counter() >= deadline:
                 return []
             raise
+        unique = {}
+        for hit in hits:
+            ident = stable_evidence_id(hit)
+            if ident not in unique or float(hit.get("score", 0)) < float(unique[ident].get("score", 0)):
+                unique[ident] = hit
+        hits = sorted(unique.values(), key=lambda hit: (
+            0 if re.search(r"поправк|вместо|измен[её]н|изменя|дополнени",
+                           hit.get("text", "").casefold()) and _referenced_dates(hit.get("text", "")) else 1,
+            float(hit.get("score", 0))))[:limit]
         for hit in hits:
             hit["evidence_id"] = stable_evidence_id(hit)
             hit["source_revision_id"] = stable_document_id(hit)
@@ -367,6 +399,162 @@ class FormalRuleEvaluator:
             recommended_action="stop" if not gaps else "retrieve_gap", evaluator=self.name).validate(ids)
 
 
+_MONTHS = {"января": 1, "февраля": 2, "марта": 3, "апреля": 4, "мая": 5,
+           "июня": 6, "июля": 7, "августа": 8, "сентября": 9,
+           "октября": 10, "ноября": 11, "декабря": 12}
+
+
+def _question_attributes(question: str) -> list[tuple[str, str]]:
+    """Parse a narrow set of explicit attribute requests; unsupported syntax abstains."""
+    from .retrieval import lemma
+    result = []
+    for match in re.finditer(r"сколько\s+([а-яё-]+)", question.casefold()):
+        noun = lemma(match.group(1))
+        result.append(("duration" if noun in {"минута", "час", "секунда", "день", "неделя", "месяц", "год"}
+                       else f"count:{noun}", noun))
+    if re.search(r"в\s+каком\s+вид", question.casefold()):
+        result.append(("submission_mode", ""))
+    supported_fields = {"лимит", "срок", "температура", "давление", "напряжение", "ёмкость", "емкость", "мощность"}
+    for raw in re.findall(r"(?:какой|какова|какое|какая)\s+([а-яё-]+)", question.casefold()):
+        noun = lemma(raw)
+        if noun in supported_fields:
+            result.append((f"field:{noun}", noun))
+    return list(dict.fromkeys(result))
+
+
+def _referenced_dates(text: str) -> set[str]:
+    from datetime import date as _date
+    result = set(re.findall(r"\b\d{4}-\d{2}-\d{2}\b", text))
+    for day, month, year in re.findall(r"(?:от\s+)?(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+(\d{4})", text.casefold()):
+        try:
+            result.add(_date(int(year), _MONTHS[month], int(day)).isoformat())
+        except ValueError:
+            pass
+    return result
+
+
+def _extract_attribute_facts(text: str, attributes: list[tuple[str, str]]) -> list[dict]:
+    """Extract only values grammatically tied to the requested attribute."""
+    from .retrieval import lemma
+    facts = []
+    for attribute, noun in attributes:
+        if attribute.startswith("count:"):
+            for match in re.finditer(r"\b(\d{1,5})\s+([а-яё-]+)", text.casefold()):
+                observed = lemma(match.group(2))
+                if observed == noun or observed.startswith(noun[:max(4, len(noun) - 2)]):
+                    facts.append({"attribute": attribute, "value": match.group(1), "unit": match.group(2)})
+        elif attribute == "duration":
+            matches = list(re.finditer(r"\b(\d{1,5})\s*(минут\w*|час\w*|секунд\w*|дн\w*)\b", text.casefold()))
+            if re.search(r"\bвместо\b", text.casefold()):
+                operative = re.search(r"(?:устанавлива\w*|заменя\w*|изменя\w*)\s*[:—-]?\s*(\d{1,5})\s*(минут\w*|час\w*|секунд\w*|дн\w*)", text.casefold())
+                matches = [operative] if operative else []
+            for match in matches:
+                if match:
+                    facts.append({"attribute": attribute, "value": match.group(1), "unit": match.group(2)})
+        elif attribute == "submission_mode":
+            pattern = r"(?:сда[её]тся|представля[её]тся|пода[её]тся|принима[её]тся)\s+(?:только\s+)?(в\s+электронн\w+\s+вид\w*|в\s+цифров\w+\s+систем\w*|электронн\w+\s+форм\w*|посредством\s+цифров\w+\s+систем\w*(?:\s+сдач\w*)?|на\s+бумаг\w*|в\s+бумажн\w+\s+вид\w*)"
+            for match in re.finditer(pattern, text.casefold()):
+                prefix = text.casefold()[:match.start()]
+                if not re.search(r"не\s+(?:должн\w*\s+)?(?:сда[её]тся|представля[её]тся|пода[её]тся|принима[её]тся)\s*$", prefix):
+                    facts.append({"attribute": attribute, "value": match.group(1), "unit": ""})
+        elif attribute.startswith("field:"):
+            for line in text.splitlines():
+                match = re.match(r"\s*([^:]{2,100}):\s*([^\n]{1,160})", line)
+                if match and lemma(match.group(1).strip().split()[0].casefold()) == noun:
+                    facts.append({"attribute": attribute, "value": match.group(2).strip(), "unit": ""})
+    return facts
+
+
+def _canonical_fact_value(attribute: str, value: str) -> str:
+    """Collapse only explicit lexical variants for the currently supported mode field."""
+    folded = value.casefold()
+    if attribute == "submission_mode":
+        if any(token in folded for token in ("электрон", "цифров")):
+            return "digital_submission"
+        if any(token in folded for token in ("бумаг", "бумаж")):
+            return "paper_submission"
+    return " ".join(folded.split())
+
+
+class StructuredClaimEvaluator:
+    """Transparent extraction and date rules; this is not a semantic entailment model."""
+    name = "structured_attribute_date_rules_v1"
+
+    def evaluate(self, request, hits, history):
+        ids = {_hit_id(h) for h in hits}
+        attributes = _question_attributes(request.question)
+        if not attributes:
+            return SufficiencyAssessment(SufficiencyStatus.UNCERTAIN, evidence_ids=tuple(sorted(ids)),
+                version_constraints={"version": request.version, "as_of": request.as_of},
+                reasoning_summary="Формат вопроса вне поддерживаемого извлечения; смысловая оценка не выполнялась.",
+                recommended_action="expand_top_k", evaluator=self.name).validate(ids)
+        candidates = {key: [] for key, _ in attributes}
+        from .retrieval import terms
+        attribute_terms = {word for _, noun in attributes for word in terms(noun)}
+        generic_terms = {"требование", "итоговый", "работа", "действовать", "сколько", "требоваться",
+                         "даваться", "какой", "вид", "сдавать", "содержать", "действующий"}
+        subject_terms = set(terms(request.question)) - attribute_terms - generic_terms
+        for hit in hits:
+            text = hit.get("text", "")
+            for fact in _extract_attribute_facts(text, attributes):
+                amendment = bool(re.search(r"поправк|вместо|измен[её]н|изменя|дополнени", text.casefold()))
+                scope = set(terms(" ".join((hit.get("title", ""), hit.get("family", ""), text))))
+                if not request.family and subject_terms and not amendment and not (scope & subject_terms):
+                    continue
+                candidates[fact["attribute"]].append({**fact, "evidence_id": _hit_id(hit), "quote": text,
+                    "effective_date": hit.get("date") or None, "family": hit.get("family"),
+                    "version": hit.get("version"), "references": _referenced_dates(text),
+                    "amendment": amendment})
+        claims, gaps, conflicts = [], [], []
+        for attribute, noun in attributes:
+            rows = [row for row in candidates[attribute] if row["effective_date"]
+                    and (not request.as_of or row["effective_date"] <= request.as_of)
+                    and (not request.version or row["version"] == request.version or row["amendment"])
+                    and (not request.family or row["family"] == request.family or row["amendment"])]
+            bases = [row for row in rows if not row["amendment"]]
+            selected = None
+            if bases:
+                start = max(row["effective_date"] for row in bases)
+                current = [row for row in bases if row["effective_date"] == start]
+                if len({_canonical_fact_value(attribute, row["value"]) for row in current}) > 1:
+                    conflicts.append(ConflictingClaim(f"{attribute}: разные значения в одной применимой редакции", tuple(sorted({row["evidence_id"] for row in current}))))
+                    continue
+                selected = current[0]
+                amendments = [row for row in rows if row["amendment"] and start in row["references"]]
+                if amendments:
+                    amendment_date = max(row["effective_date"] for row in amendments)
+                    current = [row for row in amendments if row["effective_date"] == amendment_date]
+                    if len({_canonical_fact_value(attribute, row["value"]) for row in current}) > 1:
+                        conflicts.append(ConflictingClaim(f"{attribute}: конфликтующие поправки ссылаются на одну редакцию", tuple(sorted({row["evidence_id"] for row in current}))))
+                        continue
+                    selected = current[0]
+            elif rows:
+                gaps.append(EvidenceGap(f"base-{attribute}", GapKind.VERSION,
+                    "Не установлена базовая редакция для применения изменения.", f"базовая редакция {attribute}", as_of=request.as_of))
+                continue
+            if selected is None:
+                kind = GapKind.VERSION if candidates[attribute] else GapKind.ATTRIBUTE
+                description = "Дата применимости не установлена." if candidates[attribute] else f"Не найдено значение атрибута {attribute}."
+                hint = (f"количество {noun}" if attribute.startswith("count:") else
+                        "время выполнения минуты" if attribute == "duration" else
+                        "форма сдачи электронная бумажная" if attribute == "submission_mode" else noun)
+                gaps.append(EvidenceGap(f"missing-{attribute}", kind, description,
+                    hint[:300], as_of=request.as_of))
+                continue
+            label = "Количество" if attribute.startswith("count:") else "Время" if attribute == "duration" else "Форма сдачи" if attribute == "submission_mode" else noun.capitalize()
+            value = selected["value"] + ((" " + selected["unit"]) if selected["unit"] else "")
+            claims.append(SupportedClaim(attribute, f"{label}: {value}", (selected["evidence_id"],),
+                attribute, selected["value"], selected["quote"], selected["effective_date"],
+                selected["family"], selected["version"]))
+        status = (SufficiencyStatus.CONFLICTING if conflicts else
+                  SufficiencyStatus.INSUFFICIENT if gaps else SufficiencyStatus.SUFFICIENT)
+        return SufficiencyAssessment(status, tuple(claims), tuple(gaps), tuple(conflicts), tuple(sorted(ids)),
+            {"as_of": request.as_of, "attribute_count": len(attributes)},
+            "Извлечены значения с локальной связью с атрибутом; даты и явные ссылки поправок проверены правилами. Это не семантическая entailment-проверка.",
+            recommended_action="stop" if status is SufficiencyStatus.SUFFICIENT else "retrieve_gap",
+            evaluator=self.name).validate(ids)
+
+
 class AnswerGenerator(Protocol):
     name: str
 
@@ -403,9 +591,63 @@ class LiteralExtractAnswerGenerator:
                 "refusal_reason": None}
 
 
+class StructuredFactAnswerGenerator:
+    """Compose a concise answer only from evaluator-extracted, source-linked facts."""
+    name = "structured_fact_composer_v1"
+
+    def generate(self, request, hits, assessment):
+        sources = {_hit_id(hit): hit.get("text", "") for hit in hits}
+        claims = []
+        for fact in assessment.supported_claims:
+            if fact.attribute is None or fact.value is None or fact.quote is None:
+                raise ValueError("Оценка не содержит структурированного факта")
+            evidence_id = next((ident for ident in fact.evidence_ids
+                                if ident in sources and fact.quote == sources[ident]), None)
+            if evidence_id is None:
+                raise ValueError("Цитата не совпала с исходным фрагментом")
+            claims.append({"text": fact.text, "citations": [{"id": evidence_id, "quote": fact.quote}],
+                           "attribute": fact.attribute, "value": fact.value,
+                           "effective_date": fact.effective_date})
+        if not claims:
+            raise ValueError("Нет извлечённых фактов")
+        answer_text = "; ".join(claim["text"].lower() for claim in claims) + "."
+        return {"status": "answered", "text": answer_text, "claims": claims,
+                "verification": "structured_fact_citation_checked", "unresolved_conflicts": [],
+                "refusal_reason": None}
+
+
+class AuthoredOrStructuredEvaluator:
+    """Keep explicit demo rules while using attribute rules for un-authored questions."""
+    name = "authored_or_structured_v1"
+
+    def __init__(self, rules: tuple[FormalRule, ...] = ()):
+        self.formal = FormalRuleEvaluator(rules)
+        self.structured = StructuredClaimEvaluator()
+
+    def evaluate(self, request, hits, history):
+        authored = self.formal.evaluate(request, hits, history)
+        if authored.reasoning_summary != "Для точного вопроса нет авторского формального правила.":
+            return authored
+        return self.structured.evaluate(request, hits, history)
+
+
+class AuthoredOrStructuredAnswerGenerator:
+    name = "authored_or_structured_answer_v1"
+
+    def __init__(self):
+        self.literal = LiteralExtractAnswerGenerator()
+        self.structured = StructuredFactAnswerGenerator()
+
+    def generate(self, request, hits, assessment):
+        if all(claim.attribute is None for claim in assessment.supported_claims):
+            return self.literal.generate(request, hits, assessment)
+        return self.structured.generate(request, hits, assessment)
+
+
 def validate_answer(payload: dict, hits: list[dict]) -> dict:
     """Validate every citation; free-form paraphrases need an independent entailment judge."""
-    if not isinstance(payload, dict) or set(payload) != {"status", "claims", "verification", "unresolved_conflicts", "refusal_reason"}:
+    required = {"status", "claims", "verification", "unresolved_conflicts", "refusal_reason"}
+    if not isinstance(payload, dict) or set(payload) - (required | {"text"}) or required - set(payload):
         raise ValueError("Некорректная схема ответа")
     if payload["status"] not in {"answered", "refused"} or not isinstance(payload["claims"], list) or len(payload["claims"]) > 8:
         raise ValueError("Некорректный статус ответа")
@@ -417,7 +659,7 @@ def validate_answer(payload: dict, hits: list[dict]) -> dict:
     if not payload["claims"] or payload["refusal_reason"] is not None:
         raise ValueError("Ответ должен содержать утверждения без причины отказа")
     for claim in payload["claims"]:
-        if not isinstance(claim, dict) or set(claim) != {"text", "citations"} or not claim["text"] or not claim["citations"]:
+        if not isinstance(claim, dict) or set(claim) not in ({"text", "citations"}, {"text", "citations", "attribute", "value", "effective_date"}) or not claim["text"] or not claim["citations"]:
             raise ValueError("Каждое утверждение должно содержать точные ссылки")
         if len(claim["citations"]) > 8:
             raise ValueError("Слишком много ссылок у утверждения")
@@ -426,11 +668,36 @@ def validate_answer(payload: dict, hits: list[dict]) -> dict:
                     or citation["id"] not in sources or not isinstance(citation["quote"], str)
                     or len(citation["quote"]) < 10 or citation["quote"] not in sources[citation["id"]]):
                 raise ValueError("Выдуманная ссылка или неточная цитата")
-        if not any(c.get("id") in sources and c.get("quote") == claim["text"]
-                   and c["quote"] in sources[c["id"]] for c in claim["citations"]):
+        if "attribute" in claim:
+            attribute = claim["attribute"]
+            if attribute == "duration" or attribute == "submission_mode":
+                noun = ""
+            elif attribute.startswith("count:"):
+                noun = attribute.partition(":")[2]
+            else:
+                noun = attribute.partition(":")[2]
+            supported = False
+            for citation in claim["citations"]:
+                if citation["id"] not in sources or citation["quote"] != sources[citation["id"]]:
+                    continue
+                for fact in _extract_attribute_facts(citation["quote"], [(attribute, noun)]):
+                    if fact["value"] == claim["value"]:
+                        supported = True
+            if not supported or claim.get("effective_date") is None:
+                raise ValueError("Структурированный факт не связан с цитатой или датой")
+        elif not any(c.get("id") in sources and c.get("quote") == claim["text"]
+                     and c["quote"] in sources[c["id"]] for c in claim["citations"]):
             raise ValueError("Без семантического judge допустимы только дословные утверждения")
-    if payload["verification"] != "literal_citation_checked":
-        raise ValueError("Этот конвейер подтверждает ссылки дословно, но не семантическое следование")
+    if payload["verification"] not in {"literal_citation_checked", "structured_fact_citation_checked"}:
+        raise ValueError("Неизвестный метод проверки цитат")
+    if payload["verification"] == "structured_fact_citation_checked":
+        if not payload.get("text") or any("attribute" not in claim for claim in payload["claims"]):
+            raise ValueError("Синтезированный ответ требует только проверенные структурированные факты")
+        expected = "; ".join(claim["text"].lower() for claim in payload["claims"]) + "."
+        if payload["text"] != expected:
+            raise ValueError("Текст ответа должен состоять только из проверенных утверждений")
+    elif "text" in payload:
+        raise ValueError("Дословный режим не формирует сводный текст")
     return payload
 
 
@@ -580,8 +847,15 @@ def run_pipeline(request: SearchRequest, backend: SearchBackend,
     return {
         "schema_version": "research-rag-trace-v1", "question": request.question,
         "request": asdict(request), "strategy": "sufficiency_gap_controller_v1",
-        "evaluator": evaluator.name, "answer_generator": answerer.name,
+        "evaluator": assessment.evaluator or evaluator.name, "answer_generator": answerer.name,
         "termination": termination, "assessment": assessment.to_dict(), "answer": answer,
+        "claims": [asdict(claim) for claim in assessment.supported_claims],
+        "applicability": [{"claim_id": claim.claim_id, "source_family": claim.source_family,
+                           "source_version": claim.source_version, "effective_from": claim.effective_date,
+                           "evidence_ids": list(claim.evidence_ids)} for claim in assessment.supported_claims],
+        "conflicts": [asdict(item) for item in assessment.conflicting_claims],
+        "missing_information": [asdict(item) for item in assessment.missing_information],
+        "verification_status": answer["verification"] if answer["status"] == "answered" else answer["refusal_reason"],
         "selected_evidence": [{"evidence_id": _hit_id(h),
                                 "source_revision_id": h.get("source_revision_id"), "text": h.get("text", ""),
                                 "family": h.get("family"), "version": h.get("version"),

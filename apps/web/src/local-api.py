@@ -11,11 +11,11 @@ from datetime import date as Date
 from pathlib import Path
 
 from evidencerag.parser import parse
-from evidencerag.retrieval import analyze_field_changes, retrieve
+from evidencerag.retrieval import analyze_field_changes, retrieve, stable_evidence_id
 from evidencerag.research_rag import (
-    EvidenceStoreBackend, FormalRequirement, FormalRule, FormalRuleEvaluator,
-    LiteralExtractAnswerGenerator, SearchBudget, SearchRequest,
-    UnavailableSemanticEvaluator, run_pipeline,
+    AuthoredOrStructuredAnswerGenerator, AuthoredOrStructuredEvaluator,
+    EvidenceStoreBackend, FormalRequirement, FormalRule, SearchBudget, SearchRequest,
+    run_pipeline,
 )
 from evidencerag.store import EvidenceStore
 
@@ -217,21 +217,35 @@ def handle(method, path, request_json, token):
             for corpus in CATALOG:
                 for document in corpus["documents"]:
                     for rule in document.get("formal_rules", []):
-                        required = []
-                        for index, quote in enumerate(rule.get("required_text", [])):
-                            required.append(FormalRequirement(
-                                claim_id=f'{document["filename"]}-{index + 1}', claim_text=quote,
-                                exact_quote=quote, search_query=quote,
-                                allowed_versions=(str(rule["version"]),) if rule.get("version") else ()))
-                        if required:
-                            rules.append(FormalRule(rule["question"], tuple(required)))
-            evaluator = FormalRuleEvaluator(tuple(rules)) if rules else UnavailableSemanticEvaluator()
-            trace = run_pipeline(request, EvidenceStoreBackend(STORE, ws), evaluator,
-                                 LiteralExtractAnswerGenerator(), budget)
+                        requirements = tuple(FormalRequirement(
+                            claim_id=f'{document["filename"]}-{index + 1}', claim_text=quote,
+                            exact_quote=quote, search_query=quote,
+                            allowed_versions=(str(rule["version"]),) if rule.get("version") else ())
+                            for index, quote in enumerate(rule.get("required_text", [])))
+                        if requirements:
+                            rules.append(FormalRule(rule["question"], requirements))
+            trace = run_pipeline(request, EvidenceStoreBackend(STORE, ws), AuthoredOrStructuredEvaluator(tuple(rules)),
+                                 AuthoredOrStructuredAnswerGenerator(), budget)
             display = retrieve(STORE, ws, request.question, strategy="evidencerag", family=request.family,
                                version=request.version, as_of=request.as_of,
                                max_iterations=budget.max_iterations, max_chunks=budget.max_chunks,
                                time_budget_ms=budget.time_budget_ms)
+            # Include every exact source selected by the structured controller,
+            # including a linked amendment stored under a separate family.
+            selected_ids = {item["evidence_id"] for item in trace["selected_evidence"]}
+            indexed_hits = {hit["evidence_id"]: hit for hit in display.get("hits", [])
+                            if "evidence_id" in hit}
+            for summary in STORE.documents(ws):
+                document = STORE.document(ws, summary["id"])
+                for chunk in document["chunks"]:
+                    hit = {**chunk, "document": document["id"], "title": document["title"], "family": document["family"],
+                           "version": document["version"], "date": document["date"],
+                           "digest": document["digest"]}
+                    evidence_id = stable_evidence_id(hit)
+                    if evidence_id in selected_ids:
+                        indexed_hits[evidence_id] = {**hit, "evidence_id": evidence_id}
+            if selected_ids:
+                display["hits"] = list(indexed_hits.values())
             display["research_trace"] = trace
             return _response(200, display)
 

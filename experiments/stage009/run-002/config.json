@@ -1,0 +1,46 @@
+{
+  "experiment": "stage009_known_case_regression",
+  "dataset_kind": "authored_synthetic_regression_fixture",
+  "purpose": "known-case debugging only; excluded from claims of independent efficacy",
+  "created_utc": "2026-11-02T19:43:47.892356+00:00",
+  "git_commit_before_run": "a3e564a7f9fc62afa9796c22abf9f521335632b5",
+  "source_sha256": {
+    "experiments/stage009/fixtures/ifiyak-known-case.json": "3bc801523a45f09fb0b584d3e35544ac79bac09b886fd91dd9086a4e18bbe399",
+    "apps/api/evidencerag/research_rag.py": "2f80ee73c6917ceea03f8904265ece65bad37443b61d8d72a0c6b405e0372401",
+    "apps/api/evidencerag/retrieval.py": "869155ec5f9e8ec3a6032578ac94abc439a35f5bc7a4bbc7c18be61fd8c270a8",
+    "apps/api/evidencerag/store.py": "9689026c39f4f1f6c1ac01f5878e1e53755e60f0b48b3369b22530adc352abea",
+    "packages/research/stage009_runner.py": "5ed0207cd491a3722af7bb8c32e7baa64fcda476b6c890d7f1772142217ce422"
+  },
+  "environment": {
+    "python": "3.12.13 (main, Mar  3 2026, 12:39:30) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "sqlite": "3.54.1"
+  },
+  "retrieval": "workspace-scoped SQLite FTS5; Russian morphological query terms",
+  "evaluator": "structured_attribute_date_rules_v1; transparent regex/lemma rules, no NLI",
+  "answer_generator": "structured_fact_composer_v1; mechanically linked citation quotes",
+  "external_model": null,
+  "request": {
+    "question": "Какие требования к итоговой работе по практикуму «Причастный оборот» действуют? Сколько предложений требуется, сколько минут даётся и в каком виде сдаётся работа?",
+    "family": "Синтаксис-ИФиЯК",
+    "as_of": "2026-10-31"
+  },
+  "budget": {
+    "max_iterations": 3,
+    "max_chunks": 20,
+    "time_budget_ms": 2000,
+    "initial_top_k": 5
+  },
+  "expected_values": {
+    "count:предложение": "8",
+    "duration": "25",
+    "submission_mode": "в электронном виде"
+  },
+  "scientific_inference": null,
+  "metrics_not_measured": [
+    "semantic entailment",
+    "real-world accuracy",
+    "S2G-RAG comparison",
+    "human adjudication"
+  ]
+}

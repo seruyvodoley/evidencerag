@@ -1,4 +1,16 @@
-# Актуальное состояние — этап 008 (31.10.2026)
+# Актуальное состояние — этап 009 (03.11.2026)
+
+Реализован первый общий (не привязанный к контрольному вопросу) путь rule-based извлечения структурированных атрибутов, датированной применимости и построения короткого цитируемого ответа в браузерном EvidenceRAG. `StructuredClaimEvaluator` работает только на ограниченных грамматических шаблонах; полноценного semantic/NLI judge нет. Сценарий этапа 009 воспроизведён на авторской synthetic fixture: 8 предложений, 25 минут из частичной поправки, электронная сдача; 3 citation claims, 2 source chunks, 1 retrieval iteration, 8.429 ms локального Python pipeline. Это regression, не independent efficacy.
+
+Частичная поправка доступна из отдельной группы только при явном текстовом упоминании даты базовой редакции и маркере изменения. Изменяется только распознанный атрибут. Не моделируются отмены, полная замена отдельной поправкой, юридический приоритет и сложные семантические отношения. Неразрешённый конфликт/пропуск/неизвестная дата приводят к отказу.
+
+Проверки 03.11.2026: `.venv/bin/pytest -q` — 72 passed, 1 Starlette/httpx deprecation warning; Svelte check — 0 ошибок/предупреждений; production build успешен; browser-local A–J E2E 1/1 desktop + 1/1 mobile emulation; browser migration suite 6/6 desktop+mobile. Артефакты: `experiments/stage009/`. Физические Samsung Internet/Safari не проверены.
+
+Stage 009 пока локален. Последняя опубликованная версия остаётся GitVerse Pages Stage 008: https://seruyvodoley.gitverse.site/evidencerag/ . Никаких серверных/VPN/DNS/SSH настроек не менялось. Перед выпуском нужно проверить GitVerse remote/CI и live browser URL; публичное обновление пока не подтверждено.
+
+Подробно: [аудит достаточности](EVIDENCE_SUFFICIENCY_AUDIT_009.md), [разрешение версий](VERSIONED_CLAIM_RESOLUTION_009.md), [построение ответов](ANSWER_GENERATION_009.md), [эксперимент](EXPERIMENT_009.md), [проверки](TESTING.md).
+
+# Историческое состояние — этап 008 (31.10.2026)
 
 Текущий код содержит браузерную сборку, работающую локально через Pyodide/SQLite WASM; публичный адрес GitVerse Pages — https://seruyvodoley.gitverse.site/evidencerag/ . Проект не следует описывать только как прежний VPS MVP. Актуальная приёмка и ограничения приведены в [FINAL_BROWSER_AUDIT_008.md](FINAL_BROWSER_AUDIT_008.md). Stage 008 опубликован Pages commit `15e1241`, GitVerse run `1971623` успешен. На live URL прошли новые acceptance 3/3 desktop + 3/3 mobile emulation и core migration 4/4 desktop + 4/4 mobile emulation. Старые разделы ниже сохраняют историю предыдущих этапов.
 

@@ -1,0 +1,318 @@
+{
+  "answer": {
+    "claims": [
+      {
+        "attribute": "count:предложение",
+        "citations": [
+          {
+            "id": "ev-43e415f7339e96f792d96036",
+            "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде."
+          }
+        ],
+        "effective_date": "2026-09-01",
+        "text": "Количество: 8 предложений",
+        "value": "8"
+      },
+      {
+        "attribute": "duration",
+        "citations": [
+          {
+            "id": "ev-b2a6cddc33d4bcd388bbfc39",
+            "quote": "С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются."
+          }
+        ],
+        "effective_date": "2026-10-15",
+        "text": "Время: 25 минут",
+        "value": "25"
+      },
+      {
+        "attribute": "submission_mode",
+        "citations": [
+          {
+            "id": "ev-43e415f7339e96f792d96036",
+            "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде."
+          }
+        ],
+        "effective_date": "2026-09-01",
+        "text": "Форма сдачи: в электронном виде",
+        "value": "в электронном виде"
+      }
+    ],
+    "refusal_reason": null,
+    "status": "answered",
+    "text": "количество: 8 предложений; время: 25 минут; форма сдачи: в электронном виде.",
+    "unresolved_conflicts": [],
+    "verification": "structured_fact_citation_checked"
+  },
+  "answer_generator": "structured_fact_composer_v1",
+  "applicability": [
+    {
+      "claim_id": "count:предложение",
+      "effective_from": "2026-09-01",
+      "evidence_ids": [
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "source_family": "Синтаксис-ИФиЯК",
+      "source_version": "2026"
+    },
+    {
+      "claim_id": "duration",
+      "effective_from": "2026-10-15",
+      "evidence_ids": [
+        "ev-b2a6cddc33d4bcd388bbfc39"
+      ],
+      "source_family": "Синтаксис-ИФиЯК-Поправки",
+      "source_version": "2026"
+    },
+    {
+      "claim_id": "submission_mode",
+      "effective_from": "2026-09-01",
+      "evidence_ids": [
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "source_family": "Синтаксис-ИФиЯК",
+      "source_version": "2026"
+    }
+  ],
+  "assessment": {
+    "confidence": null,
+    "confidence_method": null,
+    "conflicting_claims": [],
+    "evaluator": "structured_attribute_date_rules_v1",
+    "evidence_ids": [
+      "ev-43e415f7339e96f792d96036",
+      "ev-b2a6cddc33d4bcd388bbfc39"
+    ],
+    "missing_information": [],
+    "reasoning_summary": "Извлечены значения с локальной связью с атрибутом; даты и явные ссылки поправок проверены правилами. Это не семантическая entailment-проверка.",
+    "recommended_action": "stop",
+    "status": "sufficient",
+    "supported_claims": [
+      {
+        "attribute": "count:предложение",
+        "claim_id": "count:предложение",
+        "effective_date": "2026-09-01",
+        "evidence_ids": [
+          "ev-43e415f7339e96f792d96036"
+        ],
+        "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+        "source_family": "Синтаксис-ИФиЯК",
+        "source_version": "2026",
+        "text": "Количество: 8 предложений",
+        "value": "8"
+      },
+      {
+        "attribute": "duration",
+        "claim_id": "duration",
+        "effective_date": "2026-10-15",
+        "evidence_ids": [
+          "ev-b2a6cddc33d4bcd388bbfc39"
+        ],
+        "quote": "С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются.",
+        "source_family": "Синтаксис-ИФиЯК-Поправки",
+        "source_version": "2026",
+        "text": "Время: 25 минут",
+        "value": "25"
+      },
+      {
+        "attribute": "submission_mode",
+        "claim_id": "submission_mode",
+        "effective_date": "2026-09-01",
+        "evidence_ids": [
+          "ev-43e415f7339e96f792d96036"
+        ],
+        "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+        "source_family": "Синтаксис-ИФиЯК",
+        "source_version": "2026",
+        "text": "Форма сдачи: в электронном виде",
+        "value": "в электронном виде"
+      }
+    ],
+    "version_constraints": {
+      "as_of": "2026-10-31",
+      "attribute_count": 3
+    }
+  },
+  "budget": {
+    "initial_top_k": 5,
+    "max_chunks": 20,
+    "max_iterations": 3,
+    "time_budget_ms": 2000
+  },
+  "claims": [
+    {
+      "attribute": "count:предложение",
+      "claim_id": "count:предложение",
+      "effective_date": "2026-09-01",
+      "evidence_ids": [
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+      "source_family": "Синтаксис-ИФиЯК",
+      "source_version": "2026",
+      "text": "Количество: 8 предложений",
+      "value": "8"
+    },
+    {
+      "attribute": "duration",
+      "claim_id": "duration",
+      "effective_date": "2026-10-15",
+      "evidence_ids": [
+        "ev-b2a6cddc33d4bcd388bbfc39"
+      ],
+      "quote": "С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются.",
+      "source_family": "Синтаксис-ИФиЯК-Поправки",
+      "source_version": "2026",
+      "text": "Время: 25 минут",
+      "value": "25"
+    },
+    {
+      "attribute": "submission_mode",
+      "claim_id": "submission_mode",
+      "effective_date": "2026-09-01",
+      "evidence_ids": [
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+      "source_family": "Синтаксис-ИФиЯК",
+      "source_version": "2026",
+      "text": "Форма сдачи: в электронном виде",
+      "value": "в электронном виде"
+    }
+  ],
+  "conflicts": [],
+  "elapsed_ms": 9.035,
+  "evaluator": "structured_attribute_date_rules_v1",
+  "missing_information": [],
+  "question": "Какие требования к итоговой работе по практикуму «Причастный оборот» действуют? Сколько предложений требуется, сколько минут даётся и в каком виде сдаётся работа?",
+  "request": {
+    "as_of": "2026-10-31",
+    "family": "Синтаксис-ИФиЯК",
+    "question": "Какие требования к итоговой работе по практикуму «Причастный оборот» действуют? Сколько предложений требуется, сколько минут даётся и в каком виде сдаётся работа?",
+    "version": null
+  },
+  "schema_version": "research-rag-trace-v1",
+  "selected_evidence": [
+    {
+      "date": "2026-10-15",
+      "evidence_id": "ev-b2a6cddc33d4bcd388bbfc39",
+      "family": "Синтаксис-ИФиЯК-Поправки",
+      "locator": "Начало документа",
+      "page": null,
+      "source_revision_id": "doc-ab0b88c4eac4593e8586e2d4",
+      "text": "С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются.",
+      "version": "2026"
+    },
+    {
+      "date": "2026-09-01",
+      "evidence_id": "ev-43e415f7339e96f792d96036",
+      "family": "Синтаксис-ИФиЯК",
+      "locator": "Начало документа",
+      "page": null,
+      "source_revision_id": "doc-dcdce39f5b67408d87f10d50",
+      "text": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+      "version": "2026"
+    }
+  ],
+  "strategy": "sufficiency_gap_controller_v1",
+  "termination": "sufficient",
+  "trace": [
+    {
+      "action": "stop_sufficient",
+      "as_of": "2026-10-31",
+      "assessment": {
+        "confidence": null,
+        "confidence_method": null,
+        "conflicting_claims": [],
+        "evaluator": "structured_attribute_date_rules_v1",
+        "evidence_ids": [
+          "ev-43e415f7339e96f792d96036",
+          "ev-b2a6cddc33d4bcd388bbfc39"
+        ],
+        "missing_information": [],
+        "reasoning_summary": "Извлечены значения с локальной связью с атрибутом; даты и явные ссылки поправок проверены правилами. Это не семантическая entailment-проверка.",
+        "recommended_action": "stop",
+        "status": "sufficient",
+        "supported_claims": [
+          {
+            "attribute": "count:предложение",
+            "claim_id": "count:предложение",
+            "effective_date": "2026-09-01",
+            "evidence_ids": [
+              "ev-43e415f7339e96f792d96036"
+            ],
+            "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+            "source_family": "Синтаксис-ИФиЯК",
+            "source_version": "2026",
+            "text": "Количество: 8 предложений",
+            "value": "8"
+          },
+          {
+            "attribute": "duration",
+            "claim_id": "duration",
+            "effective_date": "2026-10-15",
+            "evidence_ids": [
+              "ev-b2a6cddc33d4bcd388bbfc39"
+            ],
+            "quote": "С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются.",
+            "source_family": "Синтаксис-ИФиЯК-Поправки",
+            "source_version": "2026",
+            "text": "Время: 25 минут",
+            "value": "25"
+          },
+          {
+            "attribute": "submission_mode",
+            "claim_id": "submission_mode",
+            "effective_date": "2026-09-01",
+            "evidence_ids": [
+              "ev-43e415f7339e96f792d96036"
+            ],
+            "quote": "Итоговая работа содержит 8 предложений. На выполнение отводится 20 минут. Работа сдаётся в электронном виде.",
+            "source_family": "Синтаксис-ИФиЯК",
+            "source_version": "2026",
+            "text": "Форма сдачи: в электронном виде",
+            "value": "в электронном виде"
+          }
+        ],
+        "version_constraints": {
+          "as_of": "2026-10-31",
+          "attribute_count": 3
+        }
+      },
+      "elapsed_ms": 8.888,
+      "family": "Синтаксис-ИФиЯК",
+      "iteration": 1,
+      "new_document_count": 2,
+      "new_document_ids": [
+        "doc-ab0b88c4eac4593e8586e2d4",
+        "doc-dcdce39f5b67408d87f10d50"
+      ],
+      "new_evidence_chunk_count": 2,
+      "new_evidence_claim_count": 3,
+      "new_evidence_ids": [
+        "ev-b2a6cddc33d4bcd388bbfc39",
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "new_supported_claim_ids": [
+        "count:предложение",
+        "duration",
+        "submission_mode"
+      ],
+      "next_query": null,
+      "query": "Какие требования к итоговой работе по практикуму «Причастный оборот» действуют? Сколько предложений требуется, сколько минут даётся и в каком виде сдаётся работа?",
+      "query_fingerprint": "5a8c183a92f5fa2416c0737468c6aaf1f8f5be5a3fadbc883bcdcc885b12de71",
+      "reason": "explicit_evaluator_sufficient",
+      "requested_limit": 5,
+      "returned_evidence_ids": [
+        "ev-b2a6cddc33d4bcd388bbfc39",
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "selected_evidence_ids": [
+        "ev-b2a6cddc33d4bcd388bbfc39",
+        "ev-43e415f7339e96f792d96036"
+      ],
+      "version": null
+    }
+  ],
+  "verification_status": "structured_fact_citation_checked"
+}

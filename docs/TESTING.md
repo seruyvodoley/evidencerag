@@ -1,5 +1,18 @@
 # Проверки и результаты
 
+## Этап 009 (03.11.2026)
+
+- `.venv/bin/pytest -q`: **72 passed, 0 failed**; одно предупреждение Starlette о переходе TestClient/httpx. Полный JUnit: `experiments/stage009/python-junit.xml`.
+- Stage 009 tests: **11**; весь research RAG suite + новые regression: **33 passed**. Новый набор A–J выполняется в `tests/test_stage009_structured_answers.py`; SQLite/FTS интеграция использует реальный store.
+- `npm run check`: **0 ошибок, 0 предупреждений**. `npm run build`: успешен; Stage 009 build JS 87.67 KB (30.90 KB gzip), CSS 23.31 KB (5.43 KB gzip).
+- `VITE_BASE_PATH=/evidencerag/ VITE_PAGES_BASE_PATH=/evidencerag/ npm run build:local`: успешен для project subpath.
+- `answer-generation-009.spec.ts`: **1/1 desktop (10.4 s) + 1/1 mobile Chromium emulation (10.1 s)**. В браузере проверены A–J, цитата и переход в исходный фрагмент, layout без горизонтального переполнения на mobile, absence of external origins and `/api/` calls.
+- `local-migration.spec.ts`: **6/6** desktop + mobile emulation; runtime, demo, upload/search/reload/export/import/delete, DOCX/PDF/scan checks. Полные JSON: `experiments/stage009/browser-e2e-{desktop,mobile}.json`, `browser-migration-e2e.json`.
+- Известный Python trace `experiments/stage009/run-002/`: 2 chunks, 3 exact source citations, 1 iteration, `sufficient`/`answered`, **8.429 ms**. Это один synthetic regression, не benchmark.
+- Прямой Samsung Internet, iOS Safari, Firefox, accessibility tree audit, нагрузка и production GitVerse Stage 009 не проверены на этой отметке.
+
+---
+
 31.10.2026. Локальная проверка stage 006: macOS 27 / Python 3.12. Публичный сайт остаётся на production release `20261031-006` с cookie notice; исследовательский pipeline не развёртывался. Браузерные тесты проверяют пользовательские сценарии и мобильную раскладку; они не являются аудитом доступности или нагрузочной оценкой.
 
 - `.venv/bin/pytest -q`: **61 passed, 0 failed, 0 skipped**, одно предупреждение Starlette о будущем переходе TestClient с `httpx` на `httpx2`. Полный вывод записан в `experiments/pytest-final.txt`; новые 22 теста stage-006 — `tests/test_research_rag.py`.

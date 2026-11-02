@@ -1,4 +1,16 @@
-# Актуальная передача — этап 008 (31.10.2026)
+# Актуальная передача — этап 009 (03.11.2026)
+
+В checkout добавлен browser-local rule-based ответчик, который собирает только явные факты с привязкой к цитате и дате. Основные файлы: `apps/api/evidencerag/research_rag.py`, `apps/web/src/local-api.py`, `apps/web/src/App.svelte`, `apps/web/src/style.css`. Отчёты и артефакты — `docs/*_009.md` и `experiments/stage009/`.
+
+Результат авторской известной fixture: 8 предложений, 25 минут (поправка с явной ссылкой на 01.09.2026), электронная сдача; 3 citation claims, 2 chunks, 1 iteration, 8.429 ms Python SQLite pipeline. A–J прошли в CPython unit tests и browser-local E2E; browser E2E A–J 1 desktop + 1 mobile Chromium emulation, core migration suite 6/6. Полная suite 72 passed, одно deprecation warning; `npm run check` чистый, build успешный. Смотрите `docs/EXPERIMENT_009.md`.
+
+Ограничения критичны: этот evaluator — regex/лемма и датированные правила, не semantic/NLI/entailment. Он понимает узкую форму `сколько N`, длительности, ограниченную форму сдачи и allowlist подписанных полей. Юридическая отмена/полная замена, сложные отрицания и правомочность источника не моделируются. Синтетический сценарий известен разработчику и не доказывает эффективность. Независимые baselines и semantic judge не сравнивались.
+
+Публичный Stage 009 ещё не опубликован. Live URL остаётся Stage 008: https://seruyvodoley.gitverse.site/evidencerag/ . Следующий шаг — восстановить/проверить GitVerse remote, выполнить publish по уже данному владельцем разрешению, дождаться CI и протестировать live A–J; только затем записать точный commit и live результаты. Не менять SSH/VPN/DNS/firewall/Caddy/TunnelDeck. Не трогать пользовательское незакоммиченное `experiments/e2e-results.json`.
+
+---
+
+# Историческая передача — этап 008
 
 Публичная browser версия: https://seruyvodoley.gitverse.site/evidencerag/ . Исходный HEAD перед этапом: `904b96a7c3238af522744ebbabf6e65868fac170`; рабочее дерево изначально содержало изменённый пользователем `experiments/e2e-results.json` — сохранять его локальные изменения. Код Stage 008 исправляет стартовый top-k в browser research запросе и добавляет авторское synthetic rule; расширяет e2e audit. Архив результатов: `artifacts/evidencerag-reports-stage-008.zip`. Отчёты: [приёмка](FINAL_BROWSER_AUDIT_008.md), [parity](BROWSER_PARITY_008.md), [deployment](GITVERSE_DEPLOYMENT_008.md), [VPS](VPS_DECOMMISSION_008.md), [экспериментальный план](NEXT_EXPERIMENT_PLAN.md).
 
