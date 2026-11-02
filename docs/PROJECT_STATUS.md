@@ -6,7 +6,7 @@
 
 Проверки 03.11.2026: `.venv/bin/pytest -q` — 72 passed, 1 Starlette/httpx deprecation warning; Svelte check — 0 ошибок/предупреждений; production build успешен; browser-local A–J E2E 1/1 desktop + 1/1 mobile emulation; browser migration suite 6/6 desktop+mobile. Артефакты: `experiments/stage009/`. Физические Samsung Internet/Safari не проверены.
 
-Stage 009 пока локален. Последняя опубликованная версия остаётся GitVerse Pages Stage 008: https://seruyvodoley.gitverse.site/evidencerag/ . Никаких серверных/VPN/DNS/SSH настроек не менялось. Перед выпуском нужно проверить GitVerse remote/CI и live browser URL; публичное обновление пока не подтверждено.
+Stage 009 опубликован на GitVerse Pages: https://seruyvodoley.gitverse.site/evidencerag/ . Artifact commit `0a8b63b`; GitVerse Pages run `1994906` завершился успешно. Live A–J E2E прошёл в Chromium desktop и mobile emulation (1/1 в каждом); live HTML, JS и CSS отвечают HTTP 200. Исходный код этапа — commit `d0743d9`; отчёт публикации — [GITVERSE_DEPLOYMENT_009.md](GITVERSE_DEPLOYMENT_009.md). VPS/VPN/DNS/SSH инфраструктура не менялась.
 
 Подробно: [аудит достаточности](EVIDENCE_SUFFICIENCY_AUDIT_009.md), [разрешение версий](VERSIONED_CLAIM_RESOLUTION_009.md), [построение ответов](ANSWER_GENERATION_009.md), [эксперимент](EXPERIMENT_009.md), [проверки](TESTING.md).
 

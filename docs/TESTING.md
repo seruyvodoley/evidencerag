@@ -9,7 +9,7 @@
 - `answer-generation-009.spec.ts`: **1/1 desktop (10.4 s) + 1/1 mobile Chromium emulation (10.1 s)**. В браузере проверены A–J, цитата и переход в исходный фрагмент, layout без горизонтального переполнения на mobile, absence of external origins and `/api/` calls.
 - `local-migration.spec.ts`: **6/6** desktop + mobile emulation; runtime, demo, upload/search/reload/export/import/delete, DOCX/PDF/scan checks. Полные JSON: `experiments/stage009/browser-e2e-{desktop,mobile}.json`, `browser-migration-e2e.json`.
 - Известный Python trace `experiments/stage009/run-002/`: 2 chunks, 3 exact source citations, 1 iteration, `sufficient`/`answered`, **8.429 ms**. Это один synthetic regression, не benchmark.
-- Прямой Samsung Internet, iOS Safari, Firefox, accessibility tree audit, нагрузка и production GitVerse Stage 009 не проверены на этой отметке.
+- Публикация: GitVerse Pages run `1994906` successful; live A–J E2E **1/1 desktop (24.4 s) + 1/1 mobile Chromium emulation (21.3 s)**. Live HTML, JS, CSS HTTP 200; JSON: `experiments/stage009/browser-live-{desktop,mobile}.json`. Samsung Internet, iOS Safari, Firefox, полноценный accessibility audit и нагрузка не проверялись.
 
 ---
 

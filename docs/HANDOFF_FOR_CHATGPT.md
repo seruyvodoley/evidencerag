@@ -1,12 +1,14 @@
 # Актуальная передача — этап 009 (03.11.2026)
 
-В checkout добавлен browser-local rule-based ответчик, который собирает только явные факты с привязкой к цитате и дате. Основные файлы: `apps/api/evidencerag/research_rag.py`, `apps/web/src/local-api.py`, `apps/web/src/App.svelte`, `apps/web/src/style.css`. Отчёты и артефакты — `docs/*_009.md` и `experiments/stage009/`.
+В checkout добавлен browser-local rule-based ответчик, который собирает только явные факты с привязкой к цитате и дате. Stage 009 опубликован на [GitVerse Pages](https://seruyvodoley.gitverse.site/evidencerag/): artifact commit `0a8b63b`, successful run `1994906`; live A–J E2E — desktop 1/1 и mobile emulation 1/1. Источник: local source commit `d0743d9`; публикация описана в `docs/GITVERSE_DEPLOYMENT_009.md`. Основные файлы: `apps/api/evidencerag/research_rag.py`, `apps/web/src/local-api.py`, `apps/web/src/App.svelte`, `apps/web/src/style.css`. Отчёты и артефакты — `docs/*_009.md` и `experiments/stage009/`.
 
 Результат авторской известной fixture: 8 предложений, 25 минут (поправка с явной ссылкой на 01.09.2026), электронная сдача; 3 citation claims, 2 chunks, 1 iteration, 8.429 ms Python SQLite pipeline. A–J прошли в CPython unit tests и browser-local E2E; browser E2E A–J 1 desktop + 1 mobile Chromium emulation, core migration suite 6/6. Полная suite 72 passed, одно deprecation warning; `npm run check` чистый, build успешный. Смотрите `docs/EXPERIMENT_009.md`.
 
+Публичный URL и live browser-local runtime проверены; VPS/VPN/DNS/SSH настройки не изменялись. Live test reports: `experiments/stage009/browser-live-desktop.json`, `browser-live-mobile.json`.
+
 Ограничения критичны: этот evaluator — regex/лемма и датированные правила, не semantic/NLI/entailment. Он понимает узкую форму `сколько N`, длительности, ограниченную форму сдачи и allowlist подписанных полей. Юридическая отмена/полная замена, сложные отрицания и правомочность источника не моделируются. Синтетический сценарий известен разработчику и не доказывает эффективность. Независимые baselines и semantic judge не сравнивались.
 
-Публичный Stage 009 ещё не опубликован. Live URL остаётся Stage 008: https://seruyvodoley.gitverse.site/evidencerag/ . Следующий шаг — восстановить/проверить GitVerse remote, выполнить publish по уже данному владельцем разрешению, дождаться CI и протестировать live A–J; только затем записать точный commit и live результаты. Не менять SSH/VPN/DNS/firewall/Caddy/TunnelDeck. Не трогать пользовательское незакоммиченное `experiments/e2e-results.json`.
+Публикация и live A–J приёмка Stage 009 завершены; новые действия по инфраструктуре не требуются. Будущие изменения публиковать через Pages artifact repository с новым CI и live smoke. Не менять SSH/VPN/DNS/firewall/Caddy/TunnelDeck без отдельного scope. Пользовательское незакоммиченное `experiments/e2e-results.json` сохранено; не включать в commit.
 
 ---
 

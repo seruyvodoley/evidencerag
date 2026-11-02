@@ -1,6 +1,6 @@
 # Этап 009 — воспроизводимость и результаты
 
-Дата выполнения: 03.11.2026 (Asia/Krasnoyarsk). URL текущего браузерного продукта: https://seruyvodoley.gitverse.site/evidencerag/ . Пока Stage 009 не опубликован, этот адрес остаётся предыдущим release; commit публикации будет внесён сюда после проверки GitVerse CI и live URL.
+Дата выполнения: 03.11.2026 (Asia/Krasnoyarsk). URL текущего браузерного продукта: https://seruyvodoley.gitverse.site/evidencerag/ . Stage 009 опубликован: GitVerse Pages artifact commit `0a8b63b`, CI run `1994906` успешен; live A–J E2E прошёл на desktop и mobile Chromium emulation. Подробности и HTTP asset checks: [GITVERSE_DEPLOYMENT_009.md](GITVERSE_DEPLOYMENT_009.md).
 
 ## Известный сценарий (только regression)
 
@@ -26,7 +26,7 @@ Runner использует настоящий `EvidenceStoreBackend`/SQLite FTS
 
 Не выполнялось сопоставимое новое сравнение Fixed-k / Adaptive-k / Sufficiency-guided / Proposed на независимом gold: готовая разметка run-004 содержит lexical evidence spans, но не атрибуты/применимость/правильность ответов, а для Stage 009 нет независимого NLI judge. Измерять answer precision/recall, faithfulness, semantic sufficiency, false refusal, calibration или преимущество по этим fixture было бы подгонкой. Исторические метрики run-004 не изменялись.
 
-Измерение 8.429 ms — одна локальная Python/SQLite синтетическая трасса, не benchmark. Browser E2E known scenario: desktop 10.4 s, mobile emulation 10.1 s целиком, включая browser runtime и загрузки; это не чистое время алгоритма и не измерение на Samsung/реальном Android.
+Измерение 8.429 ms — одна локальная Python/SQLite синтетическая трасса, не benchmark. Browser-local E2E known scenario: desktop 10.4 s, mobile emulation 10.1 s в локальном прогоне; live GitVerse A–J E2E: desktop 24.4 s и mobile emulation 21.3 s (общая длительность теста с загрузкой runtime). Это не чистое время алгоритма и не измерение на Samsung/реальном Android. Live JSON: `experiments/stage009/browser-live-{desktop,mobile}.json`.
 
 ## Проверки
 
@@ -34,7 +34,7 @@ Runner использует настоящий `EvidenceStoreBackend`/SQLite FTS
 - `npm run check`: 0 ошибок/предупреждений; `npm run build`: успешно.
 - Browser-local production bundle, mounted под `/evidencerag/`; A–J `answer-generation-009.spec.ts`: desktop 1/1, mobile Chromium emulation 1/1. Проверены multi-document answer, source links, conflict/refusal, no API/external requests. JSON: `experiments/stage009/browser-e2e-desktop.json`, `browser-e2e-mobile.json`.
 - `local-migration.spec.ts`: desktop+mobile 6/6; demo, import/export/delete, DOCX/PDF and no `/api`. JSON: `browser-migration-e2e.json`.
-- Samsung Internet и Safari физически не проверены. GitVerse deployment и live URL Stage 009 пока не подтверждены.
+- Samsung Internet и Safari физически не проверены. GitVerse Pages Stage 009 подтверждён: run `1994906` успешен, live A–J прошёл desktop/mobile Chromium emulation; физические Samsung Internet и iOS Safari не проверялись.
 
 ## Фальшивые ответы и отказы
 
