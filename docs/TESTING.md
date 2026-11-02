@@ -12,6 +12,10 @@
 - Время и память: 50 evaluator runs, Python 3.12.13: median 14.366 ms / p95 15.436 ms; Python tracemalloc peak 0.166 MiB. Это evaluator-only, не cold start и не RSS. Browser-local build: 34 MiB, vendor runtime 29 MiB.
 - Независимой выборки, двойной разметки, физического mobile memory профиля и систематического controller ablation на этом этапе нет.
 
+- GitVerse Pages: artifact commit `62efa58cc8e020c18feb9596f962d90de14c4e7f`, собран из source commit `15e5f8417caa5402fa85e2259f7aa0ef9b0050f8`. Публичные HTML, JS, CSS и четыре favicon/touch icon вернули HTTP 200; HTML содержит новый bundle `index-DAAyKUxz.js`.
+- `answer-generation-010.spec.ts` на опубликованном HTTPS: **1/1 desktop Chromium**; полный сценарий загрузил три synthetic документа и проверил четыре атрибутированных факта и межсемейную поправку.
+- Запуск Pages workflow был инициирован push; номер и интерфейсный статус CI run не зафиксированы отдельно. Live URL и E2E проверены после обновления публичного HTML.
+
 ---
 
 ## Этап 009 (03.11.2026)

@@ -2,7 +2,7 @@
 
 Исходный HEAD `06f5d28819017abc237a93323cd10daaf7bcdeb6`. На старте `experiments/e2e-results.json` уже содержал пользовательские изменения; его нельзя включать в commit. Инфраструктуру не менять.
 
-В Stage 010 добавлены `QuestionAnalyzer`, `ClaimExtractor`, `VersionResolver`, `EvidenceVerifier`, workspace-scoped revision link index, единый `/research` UI/evidence contract и E2E-кейс «Полевой корпус речи». Python: 84 passed; check/build чистые. Stage 009+010 answer E2E 2/2 desktop и mobile; migration 3/3 desktop/mobile; Pages base path 1/1 desktop/mobile. Следующий шаг: commit source, push GitHub, опубликовать GitVerse artifact, затем проверить live assets и Stage 010 browser E2E. Публичную версию считать обновлённой только после live проверки.
+В Stage 010 добавлены `QuestionAnalyzer`, `ClaimExtractor`, `VersionResolver`, `EvidenceVerifier`, workspace-scoped revision link index, единый `/research` UI/evidence contract и E2E-кейс «Полевой корпус речи». Python: 84 passed; check/build чистые. Stage 009+010 answer E2E 2/2 desktop и mobile; migration 3/3 desktop/mobile; Pages base path 1/1 desktop/mobile. Исходный код запушен в GitHub commit `15e5f8417caa5402fa85e2259f7aa0ef9b0050f8`; Pages artifact опубликован commit `62efa58cc8e020c18feb9596f962d90de14c4e7f`. Публичные assets/favicon HTTP 200, live Stage 010 desktop E2E 1/1. Запись: `docs/GITVERSE_DEPLOYMENT_010.md`.
 
 Границы: semantic/NLI model не интегрирована и не скачана; независимого набора/разметки нет; 4/4 поля на synthetic примере — только regression, не оценка обобщения. См. `STAGE_010_AUDIT.md`, `STAGE_010_DESIGN.md`, `STAGE_010_EVALUATION.md`.
 

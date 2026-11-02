@@ -2,7 +2,7 @@
 
 Публичная browser-local версия: [GitVerse Pages](https://seruyvodoley.gitverse.site/evidencerag/). Статус текущего релиза см. в [PROJECT_STATUS.md](docs/PROJECT_STATUS.md).
 
-Локальный checkout Stage 010 прошёл unit/integration и desktop/mobile browser-local регрессии. Новый artifact ещё не опубликован; ограничения оценки, результаты и статус независимой проверки приведены в [STAGE_010_EVALUATION.md](docs/STAGE_010_EVALUATION.md).
+Stage 010 опубликован на GitVerse Pages и прошёл live browser smoke. Локальные и публичные проверки, ограничения оценки и статус независимой проверки приведены в [PROJECT_STATUS.md](docs/PROJECT_STATUS.md) и [STAGE_010_EVALUATION.md](docs/STAGE_010_EVALUATION.md).
 
 Работающий прототип проверяемого поиска по документам и сравнения редакций. Русский интерфейс, Svelte 5 + TypeScript; browser-local режим использует Pyodide и SQLite WASM/FTS5, FastAPI остаётся для локального серверного варианта. Публичный browser build не требует внешней модели или платного API.
 
