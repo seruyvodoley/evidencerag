@@ -28,15 +28,47 @@ function waitForServiceWorkerControl(): Promise<boolean> {
 }
 
 function ensureWasmServiceWorker(): Promise<void> {
-  if (navigator.serviceWorker?.controller) return Promise.resolve();
   if (!navigator.serviceWorker) return Promise.reject(new Error('Браузер не поддерживает локальную обработку WebAssembly'));
   if (!wasmServiceWorkerReady) {
     wasmServiceWorkerReady = (async () => {
+      const previousController = navigator.serviceWorker.controller;
       const baseUrl = new URL('./', document.baseURI);
       const scriptUrl = new URL('pyodide-wasm-sw.js', baseUrl);
-      await navigator.serviceWorker.register(scriptUrl, { scope: baseUrl.pathname });
+      const registration = await navigator.serviceWorker.register(scriptUrl, { scope: baseUrl.pathname });
+      await registration.update();
       await navigator.serviceWorker.ready;
-      if (!await waitForServiceWorkerControl()) throw new Error('Браузер не включил локальную обработку WebAssembly');
+      if (registration.installing) {
+        await new Promise<void>((resolve) => {
+          const installing = registration.installing;
+          if (!installing) return resolve();
+          const finish = () => {
+            if (installing.state === 'activated' || installing.state === 'redundant') {
+              installing.removeEventListener('statechange', finish);
+              resolve();
+            }
+          };
+          installing.addEventListener('statechange', finish);
+          finish();
+        });
+      }
+      if (previousController && registration.active && registration.active !== previousController) {
+        await new Promise<void>((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            navigator.serviceWorker.removeEventListener('controllerchange', onChange);
+            reject(new Error('Браузер не обновил локальный обработчик WebAssembly'));
+          }, 10_000);
+          const onChange = () => {
+            if (navigator.serviceWorker.controller !== registration.active) return;
+            clearTimeout(timeout);
+            navigator.serviceWorker.removeEventListener('controllerchange', onChange);
+            resolve();
+          };
+          navigator.serviceWorker.addEventListener('controllerchange', onChange);
+          onChange();
+        });
+      } else if (!await waitForServiceWorkerControl()) {
+        throw new Error('Браузер не включил локальную обработку WebAssembly');
+      }
     })().catch((error) => {
       wasmServiceWorkerReady = undefined;
       throw error;
