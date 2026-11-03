@@ -71,6 +71,36 @@ function sourceFiles(): Record<string, string> {
   return files;
 }
 
+async function fetchWasmBinary(url: string): Promise<Uint8Array> {
+  const chunkSize = 1024 * 1024;
+  const first = await fetch(url, { headers: { Range: `bytes=0-${chunkSize - 1}` } });
+  if (first.status === 200) return new Uint8Array(await first.arrayBuffer());
+  if (first.status !== 206) throw new Error(`Не удалось загрузить сегмент WebAssembly: HTTP ${first.status}`);
+  const firstChunk = new Uint8Array(await first.arrayBuffer());
+  const contentRange = first.headers.get('content-range')?.match(/^bytes 0-\d+\/(\d+)$/i);
+  if (!contentRange || firstChunk.length === 0) throw new Error('Сервер вернул неверный диапазон WebAssembly');
+  const total = Number(contentRange[1]);
+  if (!Number.isSafeInteger(total) || total < firstChunk.length) throw new Error('Размер WebAssembly указан неверно');
+
+  const chunks: Uint8Array[] = [firstChunk];
+  for (let start = firstChunk.length; start < total; start += chunkSize) {
+    const end = Math.min(start + chunkSize - 1, total - 1);
+    const response = await fetch(url, { headers: { Range: `bytes=${start}-${end}` } });
+    if (response.status !== 206) throw new Error(`Не удалось загрузить WebAssembly: HTTP ${response.status}`);
+    const chunk = new Uint8Array(await response.arrayBuffer());
+    if (chunk.length !== end - start + 1) throw new Error('Сегмент WebAssembly загружен не полностью');
+    chunks.push(chunk);
+  }
+
+  const result = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    result.set(chunk, offset);
+    offset += chunk.length;
+  }
+  return result;
+}
+
 async function initialize(id: number) {
   if (initialization) return initialization;
   initialization = (async () => {
@@ -80,7 +110,16 @@ async function initialize(id: number) {
     const runtimeBaseUrl = new URL('../', self.location.href);
     const pyodideUrl = new URL('vendor/pyodide/pyodide.mjs', runtimeBaseUrl).href;
     const pyodideModule = await import(/* @vite-ignore */ pyodideUrl);
-    pyodide = await pyodideModule.loadPyodide({ indexURL: new URL('vendor/pyodide/', runtimeBaseUrl).href });
+    const pyodideAsmUrl = new URL('vendor/pyodide/pyodide.asm.mjs', runtimeBaseUrl).href;
+    const pyodideAsm = await import(/* @vite-ignore */ pyodideAsmUrl);
+    const wasmUrl = new URL('vendor/pyodide/pyodide.asm.wasm', runtimeBaseUrl).href;
+    pyodide = await pyodideModule.loadPyodide({
+      indexURL: new URL('vendor/pyodide/', runtimeBaseUrl).href,
+      createPyodideModule: async (settings: Record<string, unknown>) => {
+        settings.wasmBinary = await fetchWasmBinary(wasmUrl);
+        return pyodideAsm.default(settings);
+      },
+    });
     await pyodide.loadPackage('micropip');
     postProgress(id, 'Подключаем зафиксированные библиотеки PDF, DOCX и русского языка…');
     const wheelDirectory = new URL('vendor/wheels/', runtimeBaseUrl);
