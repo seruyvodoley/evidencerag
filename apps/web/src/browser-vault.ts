@@ -1,6 +1,17 @@
 const DATABASE = 'evidencerag-browser-v1';
 const STORE = 'settings';
 let database: Promise<IDBDatabase> | undefined;
+let persistentStorage: Promise<boolean> | undefined;
+
+/** Ask the browser to protect this origin's OPFS/IndexedDB data from eviction. */
+export function requestPersistentStorage(): Promise<boolean> {
+  if (!persistentStorage) {
+    persistentStorage = typeof navigator !== 'undefined' && navigator.storage?.persist
+      ? navigator.storage.persist().catch(() => false)
+      : Promise.resolve(false);
+  }
+  return persistentStorage;
+}
 
 function openDatabase(): Promise<IDBDatabase> {
   if (!database) {
