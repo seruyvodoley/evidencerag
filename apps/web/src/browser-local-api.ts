@@ -80,7 +80,7 @@ export async function localApi(path: string, options: RequestInit = {}, progress
     const catalog = JSON.parse(catalogSource);
     return { ok: true, status: 200, payload: catalog.map((item: any) => ({ id: item.id, name: item.name, description: item.description, questions: item.questions, count: item.documents.length })) };
   }
-  if (method === 'POST' && path === '/workspaces') await requestPersistentStorage();
+  if (method === 'POST' && path === '/workspaces') void requestPersistentStorage();
   const token = await getWorkspaceToken();
   if (method === 'GET' && path === '/session' && !token) return { ok: false, status: 401, payload: { detail: 'Локального пространства пока нет' } };
   const request = await normalizeRequest(options);
