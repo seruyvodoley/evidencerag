@@ -28,7 +28,7 @@ async function assembleWasm() {
   }
 
   const chunks = await Promise.all(parts.map(async (part, index) => {
-    const filename = `pyodide.asm.wasm.part-${String(index).padStart(2, '0')}`;
+    const filename = `pyodide.asm.wasm.part-${String(index).padStart(2, '0')}.wasm`;
     if (part?.file !== filename || !Number.isSafeInteger(part.size_bytes) || part.size_bytes < 1 || typeof part.sha256 !== 'string') {
       throw new Error('WebAssembly manifest contains an invalid part');
     }

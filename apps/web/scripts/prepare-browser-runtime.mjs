@@ -22,7 +22,7 @@ const wasmBytes = await readFile(wasmPath);
 const wasmPartSize = 1024 * 1024;
 const wasmParts = [];
 for (let offset = 0, index = 0; offset < wasmBytes.length; offset += wasmPartSize, index += 1) {
-  const filename = `${wasmName}.part-${String(index).padStart(2, '0')}`;
+  const filename = `${wasmName}.part-${String(index).padStart(2, '0')}.wasm`;
   const bytes = wasmBytes.subarray(offset, Math.min(offset + wasmPartSize, wasmBytes.length));
   await writeFile(resolve(runtimeRoot, filename), bytes);
   wasmParts.push({
