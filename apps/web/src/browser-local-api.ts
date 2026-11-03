@@ -7,6 +7,43 @@ type Pending = { resolve: (value: LocalResult) => void; reject: (error: Error) =
 let worker: Worker | undefined;
 let nextId = 1;
 const pending = new Map<number, Pending>();
+let wasmServiceWorkerReady: Promise<void> | undefined;
+
+function waitForServiceWorkerControl(): Promise<boolean> {
+  if (navigator.serviceWorker.controller) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    const check = () => {
+      if (!navigator.serviceWorker.controller) return;
+      clearTimeout(timeout);
+      navigator.serviceWorker.removeEventListener('controllerchange', check);
+      resolve(true);
+    };
+    const timeout = setTimeout(() => {
+      navigator.serviceWorker.removeEventListener('controllerchange', check);
+      resolve(Boolean(navigator.serviceWorker.controller));
+    }, 10_000);
+    navigator.serviceWorker.addEventListener('controllerchange', check);
+    check();
+  });
+}
+
+function ensureWasmServiceWorker(): Promise<void> {
+  if (navigator.serviceWorker?.controller) return Promise.resolve();
+  if (!navigator.serviceWorker) return Promise.reject(new Error('Браузер не поддерживает локальную обработку WebAssembly'));
+  if (!wasmServiceWorkerReady) {
+    wasmServiceWorkerReady = (async () => {
+      const baseUrl = new URL('./', document.baseURI);
+      const scriptUrl = new URL('pyodide-wasm-sw.js', baseUrl);
+      await navigator.serviceWorker.register(scriptUrl, { scope: baseUrl.pathname });
+      await navigator.serviceWorker.ready;
+      if (!await waitForServiceWorkerControl()) throw new Error('Браузер не включил локальную обработку WebAssembly');
+    })().catch((error) => {
+      wasmServiceWorkerReady = undefined;
+      throw error;
+    });
+  }
+  return wasmServiceWorkerReady;
+}
 
 function getWorker(): Worker {
   if (!worker) {
@@ -80,7 +117,10 @@ export async function localApi(path: string, options: RequestInit = {}, progress
     const catalog = JSON.parse(catalogSource);
     return { ok: true, status: 200, payload: catalog.map((item: any) => ({ id: item.id, name: item.name, description: item.description, questions: item.questions, count: item.documents.length })) };
   }
-  if (method === 'POST' && path === '/workspaces') void requestPersistentStorage();
+  if (method === 'POST' && path === '/workspaces') {
+    void requestPersistentStorage();
+    await ensureWasmServiceWorker();
+  }
   const token = await getWorkspaceToken();
   if (method === 'GET' && path === '/session' && !token) return { ok: false, status: 401, payload: { detail: 'Локального пространства пока нет' } };
   const request = await normalizeRequest(options);

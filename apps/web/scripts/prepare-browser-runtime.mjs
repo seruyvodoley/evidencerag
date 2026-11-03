@@ -16,6 +16,27 @@ await mkdir(runtimeRoot, { recursive: true });
 await mkdir(wheelRoot, { recursive: true });
 for (const name of pyodideFiles) await copyFile(resolve(pyodideRoot, name), resolve(runtimeRoot, name));
 
+const wasmName = 'pyodide.asm.wasm';
+const wasmPath = resolve(runtimeRoot, wasmName);
+const wasmBytes = await readFile(wasmPath);
+const wasmPartSize = 1024 * 1024;
+const wasmParts = [];
+for (let offset = 0, index = 0; offset < wasmBytes.length; offset += wasmPartSize, index += 1) {
+  const filename = `${wasmName}.part-${String(index).padStart(2, '0')}`;
+  const bytes = wasmBytes.subarray(offset, Math.min(offset + wasmPartSize, wasmBytes.length));
+  await writeFile(resolve(runtimeRoot, filename), bytes);
+  wasmParts.push({
+    file: filename,
+    size_bytes: bytes.length,
+    sha256: createHash('sha256').update(bytes).digest('hex'),
+  });
+}
+await rm(wasmPath);
+await writeFile(resolve(runtimeRoot, `${wasmName}.parts.json`), JSON.stringify({
+  total_size_bytes: wasmBytes.length,
+  parts: wasmParts,
+}, null, 2) + '\n');
+
 const wheelNames = (await readdir(localWheelRoot)).filter((name) => name.endsWith('.whl')).sort();
 if (wheelNames.length !== 10) throw new Error(`Expected 10 pinned wheels, found ${wheelNames.length}`);
 const manifest = [];
@@ -30,6 +51,7 @@ if (lock.info.python !== '3.14.2' || lock.info.abi_version !== '2026_0') throw n
 await writeFile(resolve(outputRoot, 'browser-runtime-lock.json'), JSON.stringify({
   pyodide: '314.0.7',
   sqliteWasm: '3.54.1',
+  pyodideWasm: { total_size_bytes: wasmBytes.length, parts: wasmParts },
   pythonWheels: manifest,
 }, null, 2) + '\n');
 process.stdout.write(`Prepared Pyodide runtime and ${manifest.length} pinned wheels in ${outputRoot}\n`);
