@@ -113,8 +113,9 @@ async function normalizeRequest(options: RequestInit): Promise<any> {
         const bytes = new Uint8Array(await value.arrayBuffer());
         let binary = '';
         for (let offset = 0; offset < bytes.length; offset += 0x8000) binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
-        values.filename = value.name;
-        values.file_b64 = btoa(binary);
+        const encoded = { filename: value.name, file_b64: btoa(binary) };
+        if (key === 'files') (values.files ||= []).push(encoded);
+        else Object.assign(values, encoded);
       } else values[key] = String(value);
     }
     return values;

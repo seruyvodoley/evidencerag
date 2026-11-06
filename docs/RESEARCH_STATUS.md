@@ -1,3 +1,7 @@
+# Stage 011 research status — implementation in progress (03.11.2026)
+
+Typed temporal roles and partial amendment handling now pass an authored synthetic regression derived from the facts and exact amendment text in the task. It is not the user's original corpus; those files were unavailable. The rule system remains deterministic and grammar-limited. There is no semantic/NLI judge and no evidence of general amendment accuracy. The four Stage 011 reports describe the current code and outstanding acceptance gates. Do not use these synthetic results as efficacy evidence.
+
 # Актуальный исследовательский статус — этап 010 (03.11.2026)
 
 Появились typed slot/fact структуры, явный поиск межсемейных редакционных связей и раздельная проверка source integrity/answer composition. На авторском синтетическом контрольном примере достигнуты ожидаемые 4/4 слота с источниками полной редакции и частичной поправки. Авторская regression не является independent test. NLI не внедрён, независимая выборка, статистическая оценка и сопоставление контроллеров с одинаковым evaluator/budget не выполнены. Полное доказательство достаточности, false sufficiency rate и обобщающая способность не измерены. Подробно: [аудит](STAGE_010_AUDIT.md), [архитектура](STAGE_010_DESIGN.md), [оценка](STAGE_010_EVALUATION.md).

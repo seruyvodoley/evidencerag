@@ -20,7 +20,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
-from .parser import parse
+from .parser import infer_metadata, parse
 from .retrieval import retrieve
 from .store import EvidenceStore
 
@@ -233,11 +233,13 @@ def upload(request: Request, file: UploadFile = File(...), title: str = Form('',
                     raise ValueError('Невозможно прочитать файл: проверьте формат, пароль и ограничения')
             except (subprocess.TimeoutExpired, json.JSONDecodeError):
                 raise ValueError('Обработка прервана: файл слишком сложный или повреждён')
-        # Conservative filename metadata only; all inferred values remain editable on upload.
-        inferred = re.search(r'(?:v|версия[-_ ]?)(\d+(?:\.\d+)*)', filename, re.I)
-        ident = STORE.add(ws, filename, raw, parsed, title.strip() or filename,
-                          family.strip() or (title.strip() or Path(filename).stem),
-                          version.strip() or (inferred.group(1) if inferred else ''), date)
+        suggestions = infer_metadata(filename, raw, suffix, parsed)
+        proposals = suggestions['proposals']
+        metadata = {'metadata_proposals': suggestions, 'metadata_provenance': proposals,
+                    'document_type': proposals['document_type']['value']}
+        ident = STORE.add(ws, filename, raw, parsed, title.strip() or proposals['title']['value'],
+                          family.strip() or proposals['family']['value'],
+                          version.strip() or proposals['version']['value'], date or proposals['date']['value'], metadata)
         return STORE.document(ws, ident)
     except ValueError as e:
         raise HTTPException(422, str(e))
@@ -251,6 +253,29 @@ def document(ident: str, request: Request):
     if not doc:
         raise HTTPException(404, 'Документ не найден')
     return doc
+
+
+class DocumentMetadata(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    title: str = Field(max_length=160)
+    family: str = Field(max_length=100)
+    version: str = Field(max_length=40)
+    date: str = Field(default='', max_length=10)
+    document_type: str = Field(default='unknown', max_length=30)
+    amends_document_id: str = Field(default='', max_length=40)
+
+
+@app.patch('/api/documents/{ident}')
+def update_document(ident: str, body: DocumentMetadata, request: Request):
+    ws = workspace(request)
+    if not STORE.document(ws, ident):
+        raise HTTPException(404, 'Документ не найден')
+    valid_date(body.date)
+    current = STORE.document(ws, ident)
+    metadata = json.loads(current.get('metadata') or '{}')
+    metadata.update({'document_type': body.document_type, 'amends_document_id': body.amends_document_id})
+    STORE.update_metadata(ws, ident, body.title, body.family, body.version, body.date, metadata)
+    return STORE.document(ws, ident)
 
 
 @app.get('/api/documents/{ident}/original')

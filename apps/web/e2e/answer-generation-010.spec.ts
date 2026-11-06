@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { addQueuedFile } from './upload-helper';
 
 const QUESTION = 'Какие требования действуют на 3 ноября 2026 года для итогового зачёта по практикуму «Полевой корпус речи»? Укажи количество аудиозаписей, максимальную длительность каждой, формат файлов и крайний срок сдачи. Приведи источники.';
 
@@ -18,13 +19,7 @@ test('browser-local research extracts four facts and applies a cross-family part
     {title:'Поправка к положению о Полевом корпусе речи', family:'speech-corpus-amendment', version:'2026-10', date:'2026-10-20', text:'Поправка к Положение о зачёте по практикуму «Полевой корпус речи». В редакции от 1 сентября 2026 года пункт 4.2 изменить: формат файлов установить FLAC; срок сдачи установить до 30 ноября 2026 года включительно.'},
   ];
   for (const [index, document] of documents.entries()) {
-    await page.getByRole('button', {name:'Добавить документ'}).click();
-    await page.locator('input[name=file]').setInputFiles({name:`stage010-${index}.txt`, mimeType:'text/plain', buffer:Buffer.from(document.text)});
-    await page.locator('input[name=title]').fill(document.title);
-    await page.locator('input[name=family]').fill(document.family);
-    await page.locator('input[name=version]').fill(document.version);
-    await page.locator('input[name=date]').fill(document.date);
-    await page.getByRole('button', {name:'Загрузить и обработать'}).click();
+    await addQueuedFile(page,{name:`stage010-${index}.txt`,mimeType:'text/plain',buffer:Buffer.from(document.text)},document);
     await expect(page.locator('.document-item')).toHaveCount(index + 1, {timeout:90_000});
   }
 

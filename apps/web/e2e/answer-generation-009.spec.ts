@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { addQueuedFile } from './upload-helper';
 
 const QUESTION = 'Какие требования к итоговой работе по практикуму «Причастный оборот» действуют? Сколько предложений требуется, сколько минут даётся и в каком виде сдаётся работа?';
 
@@ -18,14 +19,7 @@ test('browser-local answer combines versioned facts and a separately grouped par
     {title:'Поправка 2026', family:'Синтаксис-ИФиЯК-Поправки', version:'2026', date:'2026-10-15', text:'С 15 октября 2026 года в редакции от 1 сентября 2026 года время выполнения изменено: вместо 20 минут устанавливается 25 минут. Остальные положения не отменяются.'},
   ];
   const uploadDocument = async (document:any, index:number) => {
-    const open = page.getByRole('button', {name:'Добавить документ'});
-    await open.click();
-    await page.locator('input[name=file]').setInputFiles({name:`stage009-${index}.txt`,mimeType:'text/plain',buffer:Buffer.from(document.text)});
-    await page.locator('input[name=title]').fill(document.title);
-    await page.locator('input[name=family]').fill(document.family);
-    await page.locator('input[name=version]').fill(document.version);
-    await page.locator('input[name=date]').fill(document.date);
-    await page.getByRole('button', {name:'Загрузить и обработать'}).click();
+    await addQueuedFile(page,{name:`stage009-${index}.txt`,mimeType:'text/plain',buffer:Buffer.from(document.text)},document);
     await expect(page.locator('.document-item')).toHaveCount(index + 1, {timeout:90_000});
   };
   for (const [index, document] of documents.entries()) {

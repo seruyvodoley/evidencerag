@@ -98,9 +98,11 @@ async function initialize(id: number) {
     ].map((file) => new URL(file, wheelDirectory).href);
     await pyodide.runPythonAsync(`import micropip\nawait micropip.install(${JSON.stringify(wheels)}, deps=False)`);
 
-    postProgress(id, 'Открываем защищённый локальный индекс…');
+    postProgress(id, 'Инициализируем SQLite WASM…');
     sqlite3 = await sqlite3InitModule();
+    postProgress(id, 'Подключаем OPFS для постоянного хранения…');
     const pool = await sqlite3.installOpfsSAHPoolVfs({ name: 'evidencerag_v1', directory: '/evidencerag', initialCapacity: 16 });
+    postProgress(id, 'Открываем постоянную базу документов…');
     database = new pool.OpfsSAHPoolDb('/evidence.sqlite3');
     self.postMessage({ id, op: 'runtime', sqliteVersion: sqlite3.version.libVersion, pyodideVersion: pyodide.version, persistent: true });
 

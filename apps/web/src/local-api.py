@@ -10,7 +10,7 @@ import time
 from datetime import date as Date
 from pathlib import Path
 
-from evidencerag.parser import parse
+from evidencerag.parser import infer_metadata, parse
 from evidencerag.retrieval import analyze_field_changes, retrieve, stable_evidence_id
 from evidencerag.research_rag import (
     AuthoredOrStructuredAnswerGenerator, AuthoredOrStructuredEvaluator,
@@ -179,12 +179,65 @@ def handle(method, path, request_json, token):
                 else:
                     detail = "Невозможно прочитать файл: проверьте формат, пароль и ограничения"
                 return _response(422, {"detail": detail})
-            title = str(payload.get("title", "")).strip()[:160] or filename
-            family = str(payload.get("family", "")).strip()[:100] or (str(payload.get("title", "")).strip()[:100] or Path(filename).stem)
-            inferred = re.search(r"(?:v|версия[-_ ]?)(\d+(?:\.\d+)*)", filename, re.I)
-            version = str(payload.get("version", "")).strip()[:40] or (inferred.group(1) if inferred else "")
-            ident = STORE.add(ws, filename, raw, parsed, title, family, version, date)
+            suggestions = infer_metadata(filename, raw, suffix, parsed)
+            proposals = suggestions["proposals"]
+            title = str(payload.get("title", "")).strip()[:160] or proposals["title"]["value"]
+            family = str(payload.get("family", "")).strip()[:100] or proposals["family"]["value"]
+            version = str(payload.get("version", "")).strip()[:40] or proposals["version"]["value"]
+            date = date or proposals["date"]["value"]
+            metadata = {"metadata_proposals": suggestions, "document_type": payload.get("document_type") or proposals["document_type"]["value"],
+                        "metadata_provenance": {key: value for key, value in proposals.items()}}
+            ident = STORE.add(ws, filename, raw, parsed, title, family, version, date, metadata)
             return _response(200, STORE.document(ws, ident))
+
+        if method == "POST" and path == "/documents/analyze":
+            filename = Path(str(payload.get("filename", "document")).replace("\\", "/")).name[:160]
+            suffix = Path(filename).suffix.lower()
+            if suffix not in {".pdf", ".docx", ".txt", ".md"}:
+                return _response(415, {"detail": "Поддерживаются PDF, DOCX, TXT и Markdown"})
+            raw = base64.b64decode(payload.get("file_b64", ""), validate=True)
+            if not raw or len(raw) > 10_000_000:
+                return _response(413, {"detail": "Нужен непустой файл не более 10 МБ"})
+            parsed = parse(raw, suffix)
+            suggestions = infer_metadata(filename, raw, suffix, parsed)
+            return _response(200, {"filename": filename, **suggestions})
+
+        if method == "POST" and path == "/documents/batch":
+            files = payload.get("files")
+            if not isinstance(files, list) or not 1 <= len(files) <= 20:
+                return _response(422, {"detail": "Выберите от 1 до 20 документов"})
+            total = 0
+            try:
+                metadata_rows = json.loads(payload.get("metadata", "[]")) if isinstance(payload.get("metadata", "[]"), str) else payload.get("metadata", [])
+            except Exception:
+                return _response(422, {"detail": "Не удалось прочитать предложенные сведения"})
+            prepared = []
+            for index, item in enumerate(files):
+                try:
+                    filename = Path(str(item.get("filename", "document")).replace("\\", "/")).name[:160]
+                    suffix = Path(filename).suffix.lower()
+                    raw = base64.b64decode(item.get("file_b64", ""), validate=True)
+                    if suffix not in {".pdf", ".docx", ".txt", ".md"} or not raw or len(raw) > 10_000_000:
+                        raise ValueError("Неподдерживаемый тип или превышен лимит 10 МБ")
+                    total += len(raw)
+                    if total > 40_000_000:
+                        raise ValueError("Пакет превышает лимит 40 МБ")
+                    parsed = parse(raw, suffix)
+                    suggestions = infer_metadata(filename, raw, suffix, parsed)
+                    edits = metadata_rows[index] if index < len(metadata_rows) and isinstance(metadata_rows[index], dict) else {}
+                    proposals = suggestions["proposals"]
+                    title = str(edits.get("title") or proposals["title"]["value"])[:160]
+                    family = str(edits.get("family") or proposals["family"]["value"])[:100]
+                    version = str(edits.get("version") or proposals["version"]["value"])[:40]
+                    date = _valid_date(str(edits.get("date") or proposals["date"]["value"])[:10])
+                    metadata = {"metadata_proposals": suggestions, "metadata_provenance": proposals,
+                                "document_type": edits.get("document_type") or proposals["document_type"]["value"],
+                                "amends_document_id": str(edits.get("amends_document_id") or "")}
+                    prepared.append((filename, raw, parsed, title, family, version, date, metadata))
+                except Exception as error:
+                    return _response(422, {"detail": f"{item.get('filename', 'Файл')}: {str(error)[:180]}"})
+            ids = STORE.add_many(ws, prepared)
+            return _response(200, {"added": [STORE.document(ws, ident) for ident in ids]})
 
         doc_match = re.fullmatch(r"/documents/([^/]+)(/original)?", path)
         if doc_match:
@@ -200,6 +253,19 @@ def handle(method, path, request_json, token):
                 if not STORE.delete(ws, ident):
                     return _response(404, {"detail": "Документ не найден"})
                 return _response(200, {"deleted": True})
+            if method == "PATCH" and not original:
+                current = STORE.document(ws, ident)
+                if not current:
+                    return _response(404, {"detail": "Документ не найден"})
+                date = _valid_date(str(payload.get("date", current["date"]))[:10])
+                metadata = json.loads(current.get("metadata") or "{}")
+                metadata.update({"document_type": str(payload.get("document_type", metadata.get("document_type", "unknown"))),
+                                 "amends_document_id": str(payload.get("amends_document_id", metadata.get("amends_document_id", "")))})
+                if not STORE.update_metadata(ws, ident, str(payload.get("title", current["title"]))[:160],
+                    str(payload.get("family", current["family"]))[:100], str(payload.get("version", current["version"]))[:40],
+                    date, metadata):
+                    return _response(404, {"detail": "Документ не найден"})
+                return _response(200, STORE.document(ws, ident))
 
         if method == "POST" and path == "/search":
             if payload.get("as_of"):

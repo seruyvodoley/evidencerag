@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import { addQueuedFile } from './upload-helper';
 
 test('demo search, version rule, source and comparison',async({page})=>{
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
@@ -23,10 +24,7 @@ test('demo search, version rule, source and comparison',async({page})=>{
 });
 
 test('upload real file, find contents, delete and empty results',async({page})=>{
-  await page.goto('/');await page.getByRole('button',{name:'Загрузить документ',exact:true}).click();
-  await page.locator('input[type=file]').setInputFiles({name:'private.md',mimeType:'text/markdown',buffer:Buffer.from('# Инструкция\n\nУникальный маркер: сапфир721\nНапряжение: 12 вольт')});
-  await page.locator('input[name=title]').fill('Личный документ');
-  await page.getByRole('button',{name:'Загрузить и обработать',exact:true}).click();
+  await page.goto('/');await addQueuedFile(page,{name:'private.md',mimeType:'text/markdown',buffer:Buffer.from('# Инструкция\n\nУникальный маркер: сапфир721\nНапряжение: 12 вольт')},{title:'Личный документ'});
   await expect(page.locator('.document-item')).toHaveCount(1);
   await page.locator('#question').fill('сапфир721');
   await page.getByRole('button',{name:'Найти основания',exact:true}).click();

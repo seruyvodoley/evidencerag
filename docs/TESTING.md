@@ -1,5 +1,14 @@
 # Проверки и результаты
 
+## Stage 011 — incomplete acceptance (03.11.2026)
+
+- `.venv/bin/pytest -q`: **98 passed**, 1 existing Starlette/httpx deprecation warning.
+- `npm run check`: **0 errors, 0 warnings**; `npm run build:local`: succeeded.
+- Manual Chromium production preview opened the new dialog and found three entries in a test ZIP. Pyodide initialization remained pending during observation; end-to-end import, indexing, answer/citations and refresh persistence are unverified.
+- Production mobile viewport, malicious ZIP cases and the full amendment negative matrix are not verified. No source commit or Pages artifact was published because Stage 011 key browser acceptance did not pass.
+- Local CPython synthetic Markdown microprofile (median of 3 runs): 1/3/20 files total parse+metadata+batch-index **2.86/4.62/20.29 ms**. Not a browser/PDF/DOCX performance result.
+- Reports: `STAGE_011_AUDIT.md`, `STAGE_011_VERSION_FIX.md`, `STAGE_011_IMPORT_UX.md`, `STAGE_011_EVALUATION.md`.
+
 ## Этап 010 (03.11.2026)
 
 - Новые typed claim regressions: `tests/test_stage010_claim_pipeline.py` — авторские synthetic tests, не внешний benchmark. Контрольный browser case загружает три документа, получает четыре атрибутированных утверждения и проверяет цитаты/поправку: `apps/web/e2e/answer-generation-010.spec.ts`.

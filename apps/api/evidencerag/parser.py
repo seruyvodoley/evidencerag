@@ -4,9 +4,80 @@ import json
 import re
 import sys
 import zipfile
+from pathlib import Path
 
 MAX_TEXT = 180_000
 MAX_PAGES = 300
+
+MONTHS = {'января':'01','февраля':'02','марта':'03','апреля':'04','мая':'05','июня':'06','июля':'07','августа':'08','сентября':'09','октября':'10','ноября':'11','декабря':'12'}
+
+def infer_metadata(filename: str, data: bytes, suffix: str, parsed: dict) -> dict:
+    """Conservative, editable suggestions. Only explicit effective-date language creates an applicability date."""
+    text = '\n'.join(part['text'] for part in parsed.get('parts', []))
+    candidates = []
+    if suffix in {'.txt', '.md'}:
+        for line in text.splitlines():
+            line = line.strip().lstrip('#').strip()
+            if line and len(line) >= 4:
+                candidates.append(('document_heading', line[:160]))
+                break
+    embedded_title = ''
+    try:
+        if suffix == '.pdf':
+            from pypdf import PdfReader
+            embedded_title = str(PdfReader(io.BytesIO(data), strict=True).metadata.title or '').strip()
+        elif suffix == '.docx':
+            from docx import Document
+            embedded_title = str(Document(io.BytesIO(data)).core_properties.title or '').strip()
+    except Exception:
+        embedded_title = ''
+    if embedded_title:
+        candidates.insert(0, ('embedded_document_metadata', embedded_title[:160]))
+    if not candidates and text:
+        first_line = next((line.strip() for line in text.splitlines() if len(line.strip()) >= 4), '')
+        if first_line:
+            candidates.append(('first_informative_line', first_line[:160]))
+    title = candidates[0][1] if candidates else Path(filename).stem[:160]
+    title_source = candidates[0][0] if candidates else 'filename_fallback'
+    version_match = re.search(r'(?:редакци\w*\s+(?:от\s+)?|верси\w*\s*|\bv)((?:20\d{2})|(?:\d{1,2}(?:\.\d+){0,2}))', text, re.I)
+    version_source = 'explicit_text'
+    if not version_match:
+        version_match = re.search(r'\b(20\d{2})\b', title)
+        version_source = 'document_heading_year'
+    if not version_match:
+        version_match = re.search(r'(?:^|[_ .-])(?:v|версия[-_ ]?)(\d+(?:\.\d+)*)(?:$|[_ .-])', filename, re.I)
+        version_source = 'filename_marker'
+    version = version_match.group(1).strip() if version_match else ''
+    effective = []
+    date_re = r'(\d{4}-\d{2}-\d{2}|\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+\d{4}(?:\s+года?)?)'
+    for match in re.finditer(r'(?:вступает\s+в\s+силу\s+с|действует\s+с|начинает\s+действовать\s+с)\s+' + date_re, text, re.I):
+        value = match.group(1)
+        if re.fullmatch(r'\d{4}-\d{2}-\d{2}', value):
+            normalized = value
+        else:
+            day, month, year = re.match(r'(\d{1,2})\s+(\w+)\s+(\d{4})', value, re.I).groups()
+            normalized = f'{year}-{MONTHS[month.casefold()]}-{int(day):02d}'
+        effective.append({'value': normalized, 'source': 'explicit_effective_date', 'quote': match.group(0)})
+    unique = {item['value']: item for item in effective}
+    date_value = next(iter(unique)) if len(unique) == 1 else ''
+    type_ = 'amendment' if re.search(r'поправк\w*|изменени\w+\s+в\s+(?:регламент|положени|правил)', text, re.I) else ('full_edition' if re.search(r'полная\s+редакци|регламент|положение', text, re.I) else 'unknown')
+    family = re.sub(r'^(?:поправка|изменение)(?:\s+к)?\s+', '', title, flags=re.I)
+    family = re.sub(r'\bрегламенту\b', 'регламент', family, flags=re.I)
+    family = re.sub(r'\bположению\b', 'положение', family, flags=re.I)
+    family = re.sub(r'\b20\d{2}\b', '', family)
+    family = ' '.join(re.sub(r'[^\wа-яё -]', ' ', family, flags=re.I).split())[:100] or title
+    family = family[:1].lower() + family[1:] if family else title
+    return {
+        'proposals': {
+            'title': {'value': title, 'source': title_source, 'quote': candidates[0][1] if candidates else Path(filename).stem},
+            'family': {'value': family, 'source': 'normalized_title_suggestion', 'quote': title, 'status': 'suggested'},
+            'version': {'value': version, 'source': version_source if version else 'unresolved', 'quote': version_match.group(0) if version_match else ''},
+            'date': {'value': date_value, 'source': 'explicit_effective_date' if date_value else ('conflicting_explicit_dates' if len(unique)>1 else 'unresolved'), 'quote': '; '.join(x['quote'] for x in effective)},
+            'document_type': {'value': type_, 'source': 'explicit_document_wording' if type_ != 'unknown' else 'unresolved', 'quote': ''},
+        },
+        'date_roles': [{'role': 'effective_from', **item} for item in effective],
+        'unresolved_effective_dates': len(unique) > 1,
+    }
 
 
 def parse(data: bytes, suffix: str) -> dict:

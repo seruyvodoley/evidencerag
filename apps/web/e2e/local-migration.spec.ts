@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { addQueuedFile } from './upload-helper';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 const check = expect.configure({ timeout: 30_000 });
@@ -60,10 +61,7 @@ test('browser-local upload persists, searches and deletes without transmitting a
   page.on('request', (request) => requests.push(request.url()));
 
   await page.goto('./');
-  await page.getByRole('button', { name: 'Загрузить документ', exact: true }).click();
-  await page.locator('input[type=file]').setInputFiles({ name: 'private.md', mimeType: 'text/markdown', buffer: Buffer.from('# Инструкция\n\nУникальный маркер: сапфир721\nНапряжение: 12 вольт') });
-  await page.locator('input[name=title]').fill('Личный документ');
-  await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();
+  await addQueuedFile(page,{name:'private.md',mimeType:'text/markdown',buffer:Buffer.from('# Инструкция\n\nУникальный маркер: сапфир721\nНапряжение: 12 вольт')},{title:'Личный документ'});
   await check(page.locator('.document-item')).toHaveCount(1, { timeout: 90_000 });
   await check(page.locator('.document-item')).toContainText('Личный документ');
 
@@ -105,14 +103,8 @@ test('browser-local Python parser extracts DOCX tables and PDF pages, identifies
   await page.goto('./');
 
   const uploadFixture = async (filename: string, title: string, family: string) => {
-    const open = page.getByRole('button', { name: 'Загрузить документ', exact: true });
-    if (await open.count()) await open.click();
-    else await page.getByRole('button', { name: 'Добавить документ', exact: true }).click();
     const buffer = await readFile(resolve(fixtures, filename));
-    await page.locator('input[name=file]').setInputFiles({ name: filename, mimeType: 'application/octet-stream', buffer });
-    await page.locator('input[name=title]').fill(title);
-    await page.locator('input[name=family]').fill(family);
-    await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();
+    await addQueuedFile(page,{name:filename,mimeType:'application/octet-stream',buffer},{title,family});
   };
 
   await uploadFixture('table-heading.docx', 'Таблица DOCX', 'fixture-docx');

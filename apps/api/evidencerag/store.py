@@ -94,75 +94,156 @@ class EvidenceStore:
                 'SELECT id FROM documents WHERE workspace=? AND family=?', (ws, family))]
 
     def add(self, ws, filename, raw, parsed, title, family, version, date, metadata=None):
+        return self.add_many(ws, [(filename, raw, parsed, title, family, version, date, metadata)])[0]
+
+    def add_many(self, ws, items):
         from .retrieval import normalized
-        ident = secrets.token_hex(12)
+        items = list(items)
+        if not items:
+            return []
+        idents = [secrets.token_hex(12) for _ in items]
         with self.connect() as db:
             # Quotas are checked inside the write transaction, including demo imports.
             db.execute('BEGIN IMMEDIATE')
             count, size = db.execute('SELECT count(*),coalesce(sum(length(original)),0) FROM documents WHERE workspace=?', (ws,)).fetchone()
             total = db.execute('SELECT coalesce(sum(length(original)),0) FROM documents').fetchone()[0]
-            if count >= 20 or size + len(raw) > 40_000_000 or total + len(raw) > 400_000_000:
+            added_size = sum(len(item[1]) for item in items)
+            if count + len(items) > 20 or size + added_size > 40_000_000 or total + added_size > 400_000_000:
                 raise ValueError('Лимит хранилища: 20 документов / 40 МБ на пространство')
-            db.execute('INSERT INTO documents VALUES(?,?,?,?,?,?,?,?,?,?,?)',
-                       (ident, ws, title, filename, family, version, date, parsed['status'], hashlib.sha256(raw).hexdigest(), raw, json.dumps(metadata or {}, ensure_ascii=False)))
-            for p in parsed['parts']:
-                db.execute('INSERT INTO chunks(document,text,locator,page,offset,indexed) VALUES(?,?,?,?,?,?)',
-                           (ident, p['text'], p['locator'], p['page'], p.get('offset', 0), normalized(p['text'])))
+            for ident, (filename, raw, parsed, title, family, version, date, metadata) in zip(idents, items):
+                db.execute('INSERT INTO documents VALUES(?,?,?,?,?,?,?,?,?,?,?)',
+                           (ident, ws, title, filename, family, version, date, parsed['status'], hashlib.sha256(raw).hexdigest(), raw, json.dumps(metadata or {}, ensure_ascii=False)))
+                for p in parsed['parts']:
+                    db.execute('INSERT INTO chunks(document,text,locator,page,offset,indexed) VALUES(?,?,?,?,?,?)',
+                               (ident, p['text'], p['locator'], p['page'], p.get('offset', 0), normalized(p['text'])))
         self.rebuild_revision_links(ws)
-        return ident
+        return idents
+
+    def update_metadata(self, ws, ident, title, family, version, date, metadata):
+        with self.connect() as db:
+            changed = db.execute('''UPDATE documents SET title=?,family=?,version=?,date=?,metadata=?
+                WHERE workspace=? AND id=?''', (title, family, version, date,
+                json.dumps(metadata or {}, ensure_ascii=False), ws, ident)).rowcount
+        if changed:
+            self.rebuild_revision_links(ws)
+        return changed
 
     def rebuild_revision_links(self, ws):
-        """Index only explicit revision relationships within one workspace.
-
-        Equal metadata families link full editions. Cross-family amendments require
-        an exact target-title reference plus an operative amendment clause. A narrow
-        legacy rule also supports Stage 009 fixtures when an exact edition date and
-        replaced old value identify exactly one target edition.
-        """
+        """Rebuild only explicit links; equal scores remain visibly ambiguous."""
         from .retrieval import terms
-        marker = re.compile(r'поправ|измен|изложить|дополнить|утратил\s+силу|вместо|заменить', re.I)
-        legacy = re.compile(r'в\s+редакции\s+от\s+(\d{1,2})\s+([а-яё]+)\s+(\d{4}).{0,240}?вместо\s+([^.,;]{1,60}).{0,100}?(?:устанавлива|заменя|изменя)', re.I | re.S)
-        month = {'января':1,'февраля':2,'марта':3,'апреля':4,'мая':5,'июня':6,'июля':7,'августа':8,'сентября':9,'октября':10,'ноября':11,'декабря':12}
+        marker = re.compile(r'поправ|измен|перенес|изложить|дополнить|утратил\s+силу|вместо|заменить|считать\s+равн', re.I)
+        clause_re = re.compile(r'(?:пункт(?:а|е|ом)?|п\.)\s*(\d+(?:\.\d+)*)', re.I)
+        target_date_re = re.compile(r'(?:редакци\w*|издани\w*)\s+от\s+(\d{1,2}\s+[а-яё]+\s+\d{4}|\d{4}-\d{2}-\d{2})', re.I)
+        target_year_re = re.compile(r'(?:регламент\w*|положени\w*|редакци\w*)\s+(?:от\s+)?(20\d{2})(?:\s+года)?', re.I)
+        months = {'января':1,'февраля':2,'марта':3,'апреля':4,'мая':5,'июня':6,'июля':7,'августа':8,'сентября':9,'октября':10,'ноября':11,'декабря':12}
+
+        def dates(text):
+            found = set(re.findall(r'\b\d{4}-\d{2}-\d{2}\b', text))
+            for day, name, year in re.findall(r'\b(\d{1,2})\s+(января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+(\d{4})', text.casefold()):
+                try:
+                    from datetime import date as _date
+                    found.add(_date(int(year), months[name], int(day)).isoformat())
+                except ValueError:
+                    pass
+            return found
+
+        def old_values(text):
+            values = []
+            for match in re.finditer(r'\bвместо\s+(.{1,80}?)(?=\s+(?:необходимо|нужно|следует|предоставлять|представлять|комплект|материалы|принимается|устанавливается|должен|должно)\b|[,;.]|$)', text, re.I | re.S):
+                value = ' '.join(match.group(1).casefold().split()).strip(' «»"\'')
+                if value:
+                    values.append(value)
+            return values
+
+        def normalize(text):
+            normalized_dates = dates(text)
+            return normalized_dates or {' '.join(re.findall(r'[a-zа-яё0-9]+', text.casefold()))}
+
         with self.connect() as db:
             documents = [dict(row) for row in db.execute(
-                'SELECT id,title,family,version,date FROM documents WHERE workspace=?', (ws,))]
+                'SELECT id,title,family,version,date,metadata FROM documents WHERE workspace=? ORDER BY date,id', (ws,))]
             texts = {doc['id']: '\n'.join(row[0] for row in db.execute(
                 'SELECT text FROM chunks WHERE document=? ORDER BY id', (doc['id'],))) for doc in documents}
             db.execute('DELETE FROM revision_links WHERE workspace=?', (ws,))
             links = []
             for amendment in documents:
+                text = texts[amendment['id']]
+                folded = text.casefold()
+                amendment_meta = json.loads(amendment.get('metadata') or '{}')
+                explicit_id = amendment_meta.get('amends_document_id')
+                if not marker.search(folded) and not explicit_id:
+                    continue
+                if explicit_id and any(item['id'] == explicit_id for item in documents if item['id'] != amendment['id']):
+                    links.append((ws, amendment['id'], explicit_id, 'explicit_metadata_target', 'amends_document_id'))
+                    continue
+                target_dates = dates(target_date_re.search(text).group(1)) if target_date_re.search(text) else set()
+                target_year_match = target_year_re.search(text)
+                target_year = target_year_match.group(1) if target_year_match else None
+                clauses = set(clause_re.findall(text))
+                old_refs = [value for value in old_values(text)]
+                candidates = []
+                quoted_targets = [a or b for a, b in re.findall(r'«([^»]+)»|"([^"]+)"', text)]
                 for target in documents:
                     if amendment['id'] == target['id']:
                         continue
                     if amendment['family'] and amendment['family'] == target['family']:
-                        links.append((ws, amendment['id'], target['id'], 'same_family', amendment['family']))
+                        candidates.append((target, 1, 'same_family', amendment['family']))
                         continue
-                    text = texts[amendment['id']]
-                    folded = text.casefold()
                     title = target['title'].strip()
-                    if len(title) >= 8 and title.casefold() in folded and marker.search(text):
-                        links.append((ws, amendment['id'], target['id'], 'explicit_title', title))
+                    exact_target_title = bool(len(title) >= 8 and title.casefold() in folded)
+                    if quoted_targets and not any(value.casefold() in title.casefold() for value in quoted_targets):
                         continue
-                    match = legacy.search(text)
-                    if not match:
+                    if exact_target_title:
+                        candidates.append((target, 4, 'explicit_title', title))
                         continue
-                    day, month_name, year, old_value = match.groups()
-                    if month_name.casefold() not in month:
+                    if marker.search((title + ' ' + texts[target['id']]).casefold()):
+                        # A generic year/clause reference points at a full edition,
+                        # not at another amendment. An amendment can be targeted
+                        # only by an explicit title or trusted metadata relation.
                         continue
-                    try:
-                        from datetime import date as _date
-                        edition_date = _date(int(year), month[month_name.casefold()], int(day)).isoformat()
-                    except ValueError:
-                        continue
-                    exact_date_targets = [item for item in documents if item['id'] != amendment['id']
-                                          and item['date'] == edition_date
-                                          and (item['family'] == target['family'] or set(terms(item['title'])) & set(terms(target['title'])))]
-                    # A date alone never creates a relationship: the explicit old-value
-                    # clause must also occur in the unique target edition.
-                    old = ' '.join(old_value.casefold().split())
-                    if len(exact_date_targets) == 1 and old and old in texts[exact_date_targets[0]['id']].casefold():
-                        links.append((ws, amendment['id'], exact_date_targets[0]['id'],
-                                      'legacy_unique_edition_and_value', f'{edition_date}; {old}'))
+                    has_explicit_date = bool(target_dates and target['date'] in target_dates)
+                    target_matches_year = bool(target_year and (str(target.get('version') or '') == target_year or str(target.get('date') or '').startswith(target_year)))
+                    title_kind_matches = bool(re.search(r'регламент|положени|правил', target['title'], re.I)
+                                              and re.search(r'регламент|положени|правил', text, re.I))
+                    source_text = texts[target['id']].casefold()
+                    source_dates = dates(source_text)
+                    def old_appears(source):
+                        source_folded = source.casefold()
+                        source_dates = dates(source_folded)
+                        return any(bool(normalize(old) & source_dates) or
+                                   any(token and token in source_folded for token in normalize(old))
+                                   for old in old_refs)
+                    old_match = old_appears(source_text)
+                    chain_match = any(
+                        target['id'] == linked_target and linked_amendment != amendment['id'] and
+                        old_appears(texts.get(linked_amendment, ''))
+                        for _, linked_amendment, linked_target, _, _ in links)
+                    old_match = old_match or chain_match
+                    has_clause = bool(clauses)
+                    if has_explicit_date and has_clause and old_match:
+                        candidates.append((target, 5, 'explicit_edition_and_clause_and_old_value',
+                                           f'{", ".join(sorted(target_dates))}; clauses={",".join(sorted(clauses))}; old={";".join(old_refs)}'))
+                    elif target_matches_year and title_kind_matches and has_clause and old_match:
+                        relation = 'explicit_amendment_chain' if chain_match and not old_appears(source_text) else 'explicit_edition_and_clause_and_old_value'
+                        candidates.append((target, 3, relation,
+                                           f'{target_year}; clauses={",".join(sorted(clauses))}; old={";".join(old_refs)}'))
+                if not candidates:
+                    # Keep the narrow date + replaced-value compatibility path.
+                    for target in documents:
+                        if amendment['id'] == target['id']:
+                            continue
+                        if target_dates and target['date'] in target_dates and old_refs and any(
+                            bool(normalize(old) & dates(texts[target['id']].casefold())) or
+                            any(token and token in texts[target['id']].casefold() for token in normalize(old))
+                            for old in old_refs):
+                            candidates.append((target, 5, 'legacy_unique_edition_and_value',
+                                               f'{target["date"]}; {";".join(old_refs)}'))
+                if candidates:
+                    highest = max(score for _, score, _, _ in candidates)
+                    best = [(target, relation, proof) for target, score, relation, proof in candidates if score == highest]
+                    relation = best[0][1] if len(best) == 1 else 'ambiguous_target'
+                    proof = best[0][2] if len(best) == 1 else '; '.join(sorted({item[2] for item in best}))
+                    links.extend((ws, amendment['id'], target['id'], relation, proof) for target, _, _ in best)
             for link in links:
                 db.execute('INSERT OR IGNORE INTO revision_links VALUES(?,?,?,?,?)', link)
             return len(links)

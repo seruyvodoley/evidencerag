@@ -3,8 +3,9 @@
   import { paths, routeFromPath } from './navigation';
   import type { View } from './navigation';
   import { localApi, downloadLocalOriginal } from './browser-local-api';
+  import { extractDocumentZip } from './archive-import';
   const LOCAL_EXECUTION = import.meta.env.VITE_LOCAL_EXECUTION === 'true';
-  type Doc = {id:string;title:string;filename:string;family:string;version:string;date:string;status:string;chunk_count:number};
+  type Doc = {id:string;title:string;filename:string;family:string;version:string;date:string;status:string;chunk_count:number;metadata?:string};
   type Hit = {id:number;document:string;text:string;locator:string;page:number|null;title:string;version:string;date:string;family:string;evidence_id?:string;research_role?:string};
   type Demo = {id:string;name:string;description:string;questions:string[];count:number};
   type Result = {status:string;answer:{text:string;citations:number[]}|null;hits:Hit[];conflicts:any[];version_differences?:any[];gaps:string[];trace:any[];elapsed_ms:number;limitations:string;lexical_coverage:number;research_trace?:any};
@@ -16,7 +17,12 @@
   let busy = $state(false), busyMessage = $state('Выполняем запрос…'), error = $state(''), notice = $state(''), hasSession = $state(false);
   let cookieNoticeVisible = $state(!LOCAL_EXECUTION);
   let uploadDialog: HTMLDialogElement;
+  let metadataDialog: HTMLDialogElement;
   let uploadForm: HTMLFormElement;
+  let uploadItems = $state<any[]>([]);
+  let uploadDropActive = $state(false);
+  let editingDoc = $state<Doc|null>(null);
+  let editFields = $state({title:'',family:'',version:'',date:'',document_type:'unknown',amends_document_id:''});
   const statuses: Record<string,{title:string;description:string;kind:string}> = {
     no_results:{title:'Подходящих фрагментов не найдено',description:'Измените формулировку или добавьте документы. Отсутствие результата не доказывает отсутствие факта.',kind:'neutral'},
     insufficient:{title:'Недостаточно сведений для вывода',description:'Часть терминов вопроса не найдена. Ниже — доступные фрагменты; полнота их смысла не проверена.',kind:'warning'},
@@ -67,9 +73,9 @@
     const url=URL.createObjectURL(blob),anchor=document.createElement('a');anchor.href=url;anchor.download=filename;anchor.className='download-anchor';
     document.body.append(anchor);anchor.click();anchor.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
   }
-  async function api(path:string, options:RequestInit = {}) {
+  async function api(path:string, options:RequestInit = {}, progress?:(message:string)=>void) {
     if(LOCAL_EXECUTION) {
-      const response=await localApi(path,options,message=>busyMessage=message);
+      const response=await localApi(path,options,message=>{busyMessage=message;progress?.(message);});
       if(!response.ok) {
         const message=typeof response.payload?.detail==='string'?response.payload.detail:'Проверьте поля формы и ограничения запроса';
         if(response.status===401) hasSession=false;
@@ -93,8 +99,28 @@
     busy=true; busyMessage='Выполняем запрос…'; error=''; notice='';
     try { await action(); } catch(e) { error=e instanceof Error?e.message:'Не удалось выполнить действие'; } finally { busy=false; }
   }
-  async function ensureSession() {
-    if(!hasSession) {await api('/workspaces',{method:'POST'});hasSession=true;}
+  function iterationWord(count:number) {
+    const lastTwo=count%100, last=count%10;
+    if(lastTwo>=11&&lastTwo<=14)return 'итераций';
+    if(last===1)return 'итерация';
+    if(last>=2&&last<=4)return 'итерации';
+    return 'итераций';
+  }
+  function confirmedClaimsLabel(count:number) {
+    const lastTwo=count%100, last=count%10;
+    if(lastTwo===1)return `${count} подтверждённое утверждение`;
+    if(lastTwo>=2&&lastTwo<=4)return `${count} подтверждённых утверждения`;
+    return `${count} подтверждённых утверждений`;
+  }
+  function documentWord(count:number) {
+    const lastTwo=count%100,last=count%10;
+    if(lastTwo>=11&&lastTwo<=14)return 'документов';
+    if(last===1)return 'документ';
+    if(last>=2&&last<=4)return 'документа';
+    return 'документов';
+  }
+  async function ensureSession(progress?:(message:string)=>void) {
+    if(!hasSession) {await api('/workspaces',{method:'POST'},progress);hasSession=true;}
   }
   async function refresh() { docs=await api('/documents'); }
   async function openDemo(id:string) {
@@ -132,16 +158,66 @@
     if(!confirm('Удалить документ и все его фрагменты из рабочего пространства?'))return;
     await run(async()=>{await api('/documents/'+id,{method:'DELETE'});await refresh();source=null;result=null;comparison=null;notice='Документ и его поисковый индекс удалены.';});
   }
+  async function analyzeFiles(files: FileList | File[]) {
+    const list = Array.from(files);
+    if (!list.length) return;
+    error=''; uploadDialog.showModal();
+    if(uploadItems.length+list.length>20||uploadItems.reduce((n,item)=>n+(item.file?.size||0),0)+list.reduce((n,file)=>n+file.size,0)>25_000_000){error='Очередь ограничена 20 элементами и 25 МБ исходных файлов.';return;}
+    for (const selected of list) {
+      let candidates: File[];
+      try { candidates = selected.name.toLowerCase().endsWith('.zip') ? await extractDocumentZip(selected) : [selected]; }
+      catch(e) { uploadItems.push({file:selected,status:'error',message:e instanceof Error?e.message:'Не удалось прочитать архив'}); continue; }
+      if(uploadItems.length+candidates.length>20||uploadItems.reduce((n,item)=>n+(item.file?.size||0),0)+candidates.reduce((n,file)=>n+file.size,0)>25_000_000){uploadItems.push({file:selected,status:'error',message:'Очередь ограничена 20 документами и 25 МБ.'});continue;}
+      const pendingItems = candidates.map((file) => {
+        const item:any={file,status:'analyzing',metadata:{title:file.name.replace(/\.[^.]+$/,''),family:file.name.replace(/\.[^.]+$/,''),version:'',date:'',document_type:'unknown'},proposals:null};
+        uploadItems.push(item);
+        return item;
+      });
+      for (const item of pendingItems) {
+        const file:File=item.file;
+        try {
+          if(file.size>10_000_000) throw new Error('Файл должен быть не больше 10 МБ.');
+          busyMessage='Готовим локальную обработку…';
+          await ensureSession((message)=>item.stage=message);
+          const form=new FormData();form.append('file',file);
+          const proposal=await api('/documents/analyze',{method:'POST',body:form},(message)=>item.stage=message);
+          item.proposals=proposal.proposals;
+          for(const key of ['title','family','version','date','document_type']) item.metadata[key]=proposal.proposals[key]?.value||'';
+          item.status='ready';
+        } catch(e) { item.status='error';item.message=e instanceof Error?e.message:'Не удалось проанализировать файл'; }
+      }
+    }
+  }
+  function selectedFiles(event:Event) { const input=event.currentTarget as HTMLInputElement;if(input.files) void analyzeFiles(input.files);input.value=''; }
+  function droppedFiles(event:DragEvent) { event.preventDefault();uploadDropActive=false;if(event.dataTransfer?.files)void analyzeFiles(event.dataTransfer.files); }
+  async function retryUpload(item:any) { item.status='analyzing';item.stage='Повторный анализ…';try{const form=new FormData();form.append('file',item.file);const proposal=await api('/documents/analyze',{method:'POST',body:form},(message)=>item.stage=message);item.proposals=proposal.proposals;for(const key of ['title','family','version','date','document_type'])item.metadata[key]=proposal.proposals[key]?.value||'';item.status='ready';}catch(e){item.status='error';item.message=e instanceof Error?e.message:'Не удалось обработать файл';} }
   async function upload(event:SubmitEvent) {
     event.preventDefault();
+    const ready=uploadItems.filter(item=>item.status==='ready');
+    if(!ready.length){error='Добавьте файлы для обработки.';return;}
+    if(docs.length+ready.length>20){error='В рабочем пространстве может быть не более 20 документов.';return;}
     await run(async()=>{
-      await ensureSession();const form=new FormData(uploadForm);
-      const file=form.get('file') as File;
-      if(file.size>10_000_000)throw new Error('Файл должен быть не больше 10 МБ');
-      const doc=await api('/documents',{method:'POST',body:form});await refresh();
-      result=null;source=doc;uploadDialog.close();uploadForm.reset();await navigate('work');
-      notice=doc.status==='needs_ocr'?'В PDF нет текстового слоя. Требуется распознавание; OCR пока не подключён.':'Документ обработан. Можно искать по его содержимому.';
+      await ensureSession();const form=new FormData();
+      for(const item of ready) form.append('files',item.file);
+      form.append('metadata',JSON.stringify(ready.map(item=>item.metadata)));
+      const response=await api('/documents/batch',{method:'POST',body:form});
+      await refresh();result=null;source=null;uploadDialog.close();uploadForm.reset();uploadItems=[];await navigate('work');
+      notice=`Добавлено документов: ${response.added.length}.`;
     });
+  }
+  function metadataObject(doc:Doc) { try{return JSON.parse(doc.metadata||'{}');}catch{return {};} }
+  function metadataSuggestionEntries(doc:Doc) { return Object.entries(metadataObject(doc).metadata_proposals?.proposals||{}); }
+  function openMetadataEditor(doc:Doc) {
+    const metadata=metadataObject(doc);editingDoc=doc;
+    editFields={title:doc.title,family:doc.family,version:doc.version,date:doc.date,
+      document_type:metadata.document_type||'unknown',amends_document_id:metadata.amends_document_id||''};
+    void tick().then(()=>metadataDialog?.showModal());
+  }
+  function closeMetadataEditor() { metadataDialog?.close();editingDoc=null; }
+  async function saveMetadataEdit() {
+    if(!editingDoc)return;
+    const id=editingDoc.id;
+    await run(async()=>{await api('/documents/'+id,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(editFields)});await refresh();result=null;comparison=null;source=null;closeMetadataEditor();notice='Сведения обновлены, связи редакций перестроены.';});
   }
   async function compareDocs() {
     await run(async()=>{comparison=await api('/compare',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({left,right})});});
@@ -256,7 +332,7 @@
   <div class="workspace">
     <aside class="library" aria-label="Ваши документы"><div class="library-title"><h2>Документы</h2><span>{docs.length}/20</span></div><button class="primary full" onclick={()=>uploadDialog.showModal()}>Добавить документ <span aria-hidden="true">+</span></button>
       {#if !docs.length}<p class="empty-small">Загрузите PDF, DOCX, TXT или Markdown. Или откройте набор ниже.</p>{/if}
-      <div class="document-list">{#each docs as doc}<div class="document-item"><button class="document-open" onclick={()=>inspect(doc.id)}><span class="file-type">{doc.filename.split('.').pop()?.toUpperCase()}</span><strong>{doc.title}</strong><span>{doc.version?'Редакция '+doc.version:'Версия не указана'}</span><small>{doc.status==='needs_ocr'?'Требуется распознавание':doc.chunk_count+' фрагментов'}{doc.date?' · '+doc.date:''}</small></button><button class="delete" aria-label={'Удалить '+doc.title+' '+doc.version} onclick={()=>deleteDoc(doc.id)}>×</button></div>{/each}</div>
+      <div class="document-list">{#each docs as doc}<div class="document-item"><button class="document-open" onclick={()=>inspect(doc.id)}><span class="file-type">{doc.filename.split('.').pop()?.toUpperCase()}</span><strong>{doc.title}</strong><span>{doc.version?'Редакция '+doc.version:'Версия не указана'}</span><small>{doc.status==='needs_ocr'?'Требуется распознавание':doc.chunk_count+' фрагментов'}{doc.date?' · '+doc.date:''}</small></button><button class="text-button" aria-label={'Изменить сведения '+doc.title} onclick={()=>openMetadataEditor(doc)}>Сведения</button><button class="delete" aria-label={'Удалить '+doc.title+' '+doc.version} onclick={()=>deleteDoc(doc.id)}>×</button></div>{/each}</div>
       <details class="demo-picker"><summary>Демонстрационные наборы</summary>{#each demos as demo}<button disabled={busy} onclick={()=>openDemo(demo.id)}>{demo.name}</button>{/each}</details>
       {#if LOCAL_EXECUTION}<div class="workspace-tools"><button class="secondary" disabled={busy||!hasSession} onclick={exportWorkspace}>Экспортировать</button><label class="secondary import-button" class:disabled={busy}>Импортировать<input type="file" accept="application/json,.json" disabled={busy} onchange={importWorkspace}/></label></div>{/if}
       <div class="privacy-note"><strong>{LOCAL_EXECUTION?'Локальное пространство':'Временное пространство'}</strong><p>{LOCAL_EXECUTION?'Документы сохраняются в этом браузерном профиле и остаются после обновления страницы. При создании пространства сайт просит браузер защитить хранилище от автоматической очистки. Это не резервная копия: регулярно экспортируйте важные документы.':'Удаление через 24 часа после создания. Содержимое не передаётся внешней модели. Не делитесь cookie сеанса.'}</p>{#if hasSession}<button class="text-button" onclick={clearWorkspace}>Удалить всё пространство</button>{/if}</div>
@@ -269,7 +345,8 @@
         <details class="settings"><summary>Параметры поиска</summary><label>Стратегия<select aria-label="Стратегия" bind:value={strategy}><option value="versioned">С учётом редакций</option><option value="adaptive">Размер контекста по перепаду BM25</option><option value="fixed5">Первые 5 фрагментов</option><option value="fixed10">Первые 10 фрагментов</option>{#if LOCAL_EXECUTION}<option value="research">EvidenceRAG: контроллер достаточности</option>{/if}</select></label><p id="date-note">Дата выбирает последнюю известную полную редакцию группы на этот день. Без даты система показывает историю версий. Адаптивный режим отбирает фрагменты по перепаду BM25; это не проверка смысловой достаточности. Неизвестные даты не подтверждают применимость.{#if LOCAL_EXECUTION} Режим EvidenceRAG запускает отдельный версионный контроллер; без подтверждённого оценщика он воздерживается от семантического вывода.{/if}</p></details>
       </form>
       {#if !result}<div class="starter"><h2>Проверьте на примере</h2><p>Выберите вопрос или задайте свой. Источники будут показаны дословно.</p><div class="suggestions">{#each suggestions as q}<button disabled={busy} onclick={()=>search(q)}>{q}<span aria-hidden="true">↗</span></button>{/each}</div>{#if !docs.length}<button class="secondary" disabled={busy} onclick={()=>openDemo('device')}>Открыть инструкцию «Север»</button>{/if}</div>{/if}
-      {#if result && selectedStatus}<section class="search-results" aria-live="polite"><div class={'result-status '+selectedStatus.kind}><span class="status-mark" aria-hidden="true">{selectedStatus.kind==='warning'?'!':selectedStatus.kind==='success'?'✓':'≡'}</span><div><h2>{selectedStatus.title}</h2><p>{selectedStatus.description}</p></div></div>
+      {#if result && selectedStatus}<section class="search-results" aria-live="polite">
+        <div class={'result-status '+selectedStatus.kind}><span class="status-mark" aria-hidden="true">{selectedStatus.kind==='warning'?'!':selectedStatus.kind==='success'?'✓':'≡'}</span><div><h2>{selectedStatus.title}</h2><p>{selectedStatus.description}</p></div></div>
         {#if result.research_trace?.answer.status==='answered'}<article class="formal-answer verified-answer"><h3>Краткий ответ</h3><p>{result.research_trace.answer.text||result.research_trace.answer.claims.map((claim:any)=>claim.text).join('; ')}</p><div class="answer-claims">{#each result.research_trace.answer.claims as claim}<div class="answer-claim"><p><strong>{claim.text}</strong>{#if claim.effective_date}<span class="claim-date">Действует с {claim.effective_date}</span>{/if}</p>{#each claim.citations as citation}<button class="source-link" onclick={()=>{const h=result?.hits.find(h=>h.evidence_id===citation.id);if(h)inspect(h.document,h.id);}}>Открыть подтверждающий фрагмент</button>{/each}</div>{/each}</div></article>{/if}
         {#if result.research_trace?.assessment.missing_information?.length}<section class="missing-facts"><h3>Что осталось неподтверждённым</h3>{#each result.research_trace.assessment.missing_information as gap}<p>{gap.description}</p>{/each}</section>{/if}
         {#if result.research_trace?.answer.status==='refused' && result.research_trace.assessment.supported_claims?.length}<section class="partial-facts"><h3>Что уже подтверждено</h3>{#each result.research_trace.assessment.supported_claims as claim}<div class="answer-claim"><p><strong>{claim.text}</strong>{#if claim.effective_date}<span class="claim-date">Действует с {claim.effective_date}</span>{/if}</p><button class="source-link" onclick={()=>{const h=result?.hits.find(h=>h.evidence_id===claim.evidence_ids[0]);if(h)inspect(h.document,h.id);}}>Открыть подтверждающий фрагмент</button></div>{/each}</section>{/if}
@@ -278,7 +355,7 @@
         {#if result.answer && !result.research_trace}<article class="formal-answer"><h3>Формальный вывод</h3><p>{result.answer.text}</p>{#each result.answer.citations as id}<button class="source-link" onclick={()=>{const h=result?.hits.find(h=>h.id===id);if(h)inspect(h.document,id);}}>Источник [{id}]</button>{/each}</article>{/if}
         {#if result.version_differences?.length}<div class="conflicts version-differences"><h3>Изменения между редакциями</h3>{#each result.version_differences as c}<details><summary>{c.field}</summary>{#each c.sources as s}<button class="conflict-source" onclick={()=>inspect(s.document,s.id)}><span>{s.date||'Дата неизвестна'} · редакция {s.version||'не указана'}</span><strong>{s.value}</strong><span>[{s.id}]</span></button>{/each}</details>{/each}<p class="fine">Буквальные значения различаются. Система не устанавливает, какое из них применимо и отменяет ли новая редакция старую.</p></div>{/if}
         {#if result.conflicts.length}<div class="conflicts"><h3>Несогласованные значения в одной редакции</h3>{#each result.conflicts as c}<details><summary>{c.field}</summary>{#each c.sources as s}<button class="conflict-source" onclick={()=>inspect(s.document,s.id)}><span>Редакция {s.version||'не указана'} · {s.date||'дата неизвестна'}</span><strong>{s.value}</strong><span>[{s.id}]</span></button>{/each}</details>{/each}<p class="fine">Найденные формулировки указывают на расхождение внутри редакции. Система не определяет смысловую совместимость или приоритет разделов.</p></div>{/if}
-        <div class="evidence-heading"><h3>Найденные фрагменты <span class="count">{result.hits.length}</span></h3><span>{result.elapsed_ms.toFixed(1)} мс · {result.trace.length} итерации</span></div>
+        <div class="evidence-heading"><h3>Найденные фрагменты <span class="count">{result.hits.length}</span></h3><span>{(result.research_trace?.elapsed_ms ?? result.elapsed_ms).toFixed(1)} мс · {result.research_trace?.trace.length ?? result.trace.length} {iterationWord(result.research_trace?.trace.length ?? result.trace.length)}{#if result.research_trace} · {confirmedClaimsLabel(result.research_trace.assessment.supported_claims.length)}{/if}</span></div>
         <div class="hits">{#each result.hits as hit}<article class="hit"><div class="hit-meta"><button class="citation" onclick={()=>inspect(hit.document,hit.id)}>[{hit.id}]</button><strong>{hit.title}</strong><span class="version-tag">{hit.version||'Без версии'}</span>{#if hit.research_role}<span class="version-tag">{hit.research_role==='revision_audit'?'аудит редакций':'участвовал в оценке'}</span>{/if}</div><blockquote>{hit.text}</blockquote><div class="hit-footer"><span>{hit.locator}{hit.page?' · с. '+hit.page:''}{hit.date?' · '+hit.date:''}</span><button class="source-link" onclick={()=>inspect(hit.document,hit.id)}>Открыть источник</button></div></article>{/each}</div>
         {#if !result.research_trace}<details class="trace"><summary>Как искала система</summary><p>{result.limitations}</p><p>Лексическое покрытие: {Math.round(result.lexical_coverage*100)}%. Это доля терминов вопроса, найденных в тексте, а не уверенность в ответе.</p>{#if result.gaps.length}<p>Не найдены термины: {result.gaps.join(', ')}.</p>{/if}{#each result.trace as step}<p>Шаг {step.iteration}: {step.query.join(', ')}. {step.reason==='lexical_coverage_reached'?'Термины найдены; смысл не проверен.':'Проверка недостающих терминов.'}</p>{/each}</details>{/if}
         {#if result.research_trace}<details class="trace research-trace"><summary>Трасса контроллера EvidenceRAG · {result.research_trace.termination}</summary><p>Оценщик: {result.research_trace.evaluator}. Оценка: {result.research_trace.assessment.status}. Ответ: {result.research_trace.answer.status==='answered'?'структурные правила и источники сверены; смысловая модель не применялась':result.research_trace.answer.refusal_reason}.</p><p>Бюджет: {result.research_trace.budget.max_iterations} итераций · {result.research_trace.budget.max_chunks} фрагментов · {result.research_trace.budget.time_budget_ms} мс. Время всего контроллера: {result.research_trace.elapsed_ms.toFixed(1)} мс.</p>{#each result.research_trace.trace as step}<article><strong>Итерация {step.iteration}: {step.action}</strong><p>Запрос: {step.query}</p><p>Найдено новых фрагментов: {step.new_evidence_chunk_count}; новых структурных утверждений: {step.new_evidence_claim_count}.</p><p>{step.assessment.reasoning_summary}</p><p>Причина: {step.reason}</p></article>{/each}<button class="text-button" onclick={()=>downloadResearchTrace(result?.research_trace)}>Скачать JSON-трассу</button></details>{/if}
@@ -329,4 +406,14 @@
 {/if}
 </main>
 <footer class="footer wrap"><span>Основание <span class="muted">/ EvidenceRAG</span></span><span>Исследовательский прототип · источники важнее уверенного тона</span><div class="footer-links"><a class="text-button" href={paths.research} onclick={(e)=>followLink(e,'research')}>Метод и ограничения</a><a class="text-button" href={paths.cookies} onclick={(e)=>followLink(e,'cookies')}>Cookie</a></div></footer>
-<dialog bind:this={uploadDialog} class="upload-dialog"><div class="dialog-heading"><h2>Добавить документ</h2><button class="secondary" onclick={()=>uploadDialog.close()} aria-label="Закрыть окно загрузки">Закрыть</button></div><p>{LOCAL_EXECUTION?'Документ разбирается и индексируется в локальном браузерном Worker.':'Только в ваше временное пространство. Внешняя модель отключена.'}</p><form bind:this={uploadForm} onsubmit={upload}><label>Файл<input name="file" type="file" required accept=".pdf,.docx,.txt,.md"/></label><p class="fine">PDF с текстом, DOCX, TXT или Markdown. До 10 МБ, 300 страниц, 180 000 символов. Для сканов потребуется OCR.</p><label>Название<input name="title" maxlength="160" placeholder="Например, инструкция к устройству…"/></label><label>Группа редакций<input name="family" maxlength="100" placeholder="Одинаковое имя для версий одного документа…"/></label><div class="form-pair"><label>Версия<input name="version" maxlength="40" placeholder="Например, 2.0…"/></label><label>Действует с<input name="date" type="date"/></label></div><p class="fine">Если дата не указана, система не будет предполагать её по времени загрузки. Версия может быть определена из имени вида v2.0.</p>{#if error}<p class="message error" role="alert">{error}</p>{/if}<button class="primary full" disabled={busy}>{busy?'Обработка…':'Загрузить и обработать'}</button></form></dialog>
+<dialog bind:this={uploadDialog} class="upload-dialog"><div class="dialog-heading"><h2>Добавить документы</h2><button class="secondary" onclick={()=>{uploadDialog.close();uploadItems=[];error='';}} aria-label="Закрыть окно загрузки">Закрыть</button></div><p>Выберите файлы или ZIP. Названия, версии и даты будут предложены по содержимому; каждый файл можно исправить перед добавлением.</p><form bind:this={uploadForm} onsubmit={upload}><label class="drop-zone" class:active={uploadDropActive} ondragover={(e)=>{e.preventDefault();uploadDropActive=true;}} ondragleave={()=>uploadDropActive=false} ondrop={droppedFiles}>Перетащите сюда документы или выберите их<input name="files" type="file" multiple accept=".pdf,.docx,.txt,.md,.zip" onchange={selectedFiles}/></label><p class="fine">PDF, DOCX, TXT или Markdown: до 10 МБ на файл. ZIP: до 25 МБ, до 20 документов и 25 МБ после распаковки. Архивы внутри ZIP не принимаются. Для сканов PDF требуется OCR.</p>
+  {#if uploadItems.length}<div class="upload-queue" aria-label="Очередь документов">{#each uploadItems as item,index}<article class="upload-item"><div class="upload-item-heading"><strong>{item.file.name}</strong><span>{item.status==='ready'?'Готов к добавлению':item.status==='analyzing'?(item.stage||'Анализ…'):'Ошибка'}</span>{#if item.status==='error'}<button type="button" class="text-button" onclick={()=>retryUpload(item)}>Повторить</button>{/if}<button type="button" class="delete" aria-label="Убрать из очереди" onclick={()=>uploadItems.splice(index,1)}>×</button></div>{#if item.status==='ready'}<div class="upload-fields"><label>Название<input bind:value={item.metadata.title} maxlength="160"/></label><label>Группа редакций<input bind:value={item.metadata.family} maxlength="100"/></label><div class="form-pair"><label>Версия<input bind:value={item.metadata.version} maxlength="40"/></label><label>Действует с<input type="date" bind:value={item.metadata.date}/></label></div><details><summary>Дополнительные сведения</summary><label>Тип документа<select bind:value={item.metadata.document_type}><option value="unknown">Не определён</option><option value="full_edition">Полная редакция</option><option value="amendment">Поправка</option></select></label></details><small>Происхождение: {Object.entries(item.proposals||{}).map(([key,value]:any)=>`${key}: ${value.source}`).join(' · ')}. Пустая дата означает, что применимость не установлена.</small></div>{:else if item.message}<p class="message error">{item.message}</p>{/if}</article>{/each}</div>{/if}
+  {#if error}<p class="message error" role="alert">{error}</p>{/if}<button type="button" class="secondary full" onclick={()=>uploadItems=[]} disabled={!uploadItems.length||busy}>Очистить очередь</button><button class="primary full" disabled={busy||!uploadItems.some(item=>item.status==='ready')}>{busy?busyMessage:`Добавить ${uploadItems.filter(item=>item.status==='ready').length} ${documentWord(uploadItems.filter(item=>item.status==='ready').length)}`}</button></form></dialog>
+<dialog class="upload-dialog" bind:this={metadataDialog} onclose={()=>editingDoc=null}>
+  {#if editingDoc}<div class="dialog-heading"><h2>Сведения документа</h2><button type="button" class="secondary" onclick={closeMetadataEditor}>Закрыть</button></div><form onsubmit={(event)=>{event.preventDefault();void saveMetadataEdit();}}>
+    <label>Название<input bind:value={editFields.title} maxlength="160" required/></label><label>Группа редакций<input bind:value={editFields.family} maxlength="100"/></label><div class="form-pair"><label>Версия<input bind:value={editFields.version} maxlength="40"/></label><label>Действует с<input type="date" bind:value={editFields.date}/></label></div>
+    <label>Тип документа<select bind:value={editFields.document_type}><option value="unknown">Не определён</option><option value="full_edition">Полная редакция</option><option value="amendment">Поправка</option></select></label><label>Изменяет документ<select bind:value={editFields.amends_document_id}><option value="">Связь не указана</option>{#each docs.filter(doc=>doc.id!==editingDoc?.id) as target}<option value={target.id}>{target.title} · {target.version||target.filename}</option>{/each}</select></label>
+    <details><summary>Источник предложенных сведений</summary>{#each metadataSuggestionEntries(editingDoc) as entry}<p><strong>{entry[0]}</strong>: {(entry[1] as any).source||'не указан'}{(entry[1] as any).quote?` · «${(entry[1] as any).quote}»`:''}</p>{/each}</details>
+    {#if error}<p class="message error" role="alert">{error}</p>{/if}<button type="submit" class="primary full" disabled={busy}>{busy?'Сохраняем…':'Сохранить сведения'}</button>
+  </form>{/if}
+</dialog>

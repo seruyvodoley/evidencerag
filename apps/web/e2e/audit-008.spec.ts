@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { addQueuedFile, clearUploadQueue } from './upload-helper';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
@@ -155,13 +156,14 @@ test('local processing and privacy survive disabling network after core assets a
 
   await context.setOffline(true);
   await page.getByRole('button', { name: /^(Загрузить документ|Добавить документ)$/ }).click();
-  await page.locator('input[name=file]').setInputFiles({
+  await page.locator('input[name=files]').setInputFiles({
     name: 'offline-check.txt', mimeType: 'text/plain',
     buffer: Buffer.from('Эксплуатация. Private marker: offlinecitrine. Service interval: twelve months.'),
   });
-  await page.locator('input[name=title]').fill('Offline acceptance');
   const uploadStart = Date.now();
-  await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();
+  await page.locator('.upload-item-heading').toContainText('Готов к добавлению', {timeout:90_000});
+  await page.locator('.upload-fields label').filter({hasText:'Название'}).locator('input').fill('Offline acceptance');
+  await page.getByRole('button', { name: 'Добавить 1 документ', exact: true }).click();
   await check(page.locator('.document-item').filter({ hasText: 'Offline acceptance' })).toBeVisible({ timeout: 90_000 });
   const uploadMs = Date.now() - uploadStart;
   await page.getByLabel('Набор').selectOption({ label: 'Все документы' });
@@ -177,20 +179,19 @@ test('local processing and privacy survive disabling network after core assets a
   expect(pageErrors).toEqual([]);
 
   await page.getByRole('button', { name: 'Добавить документ', exact: true }).click();
-  await page.locator('input[name=file]').setInputFiles({
+  await page.locator('input[name=files]').setInputFiles({
     name: 'damaged.pdf', mimeType: 'application/pdf', buffer: Buffer.from('not a PDF'),
   });
-  await page.locator('input[name=title]').fill('Повреждённый файл');
-  await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();
-  await check(page.locator('dialog[open] [role="alert"]')).toContainText('Некорректная сигнатура PDF');
+  await check(page.locator('.upload-item')).toContainText('Ошибка', {timeout:90_000});
+  await check(page.locator('.upload-item')).toContainText('Некорректная сигнатура PDF');
   expect(await page.locator('.document-item').count()).toBe(3);
 
-  await page.locator('input[name=file]').setInputFiles({
+  await clearUploadQueue(page);
+  await page.locator('input[name=files]').setInputFiles({
     name: 'oversized.txt', mimeType: 'text/plain', buffer: Buffer.alloc(10_000_001, 65),
   });
-  await page.locator('input[name=title]').fill('Слишком большой файл');
-  await page.getByRole('button', { name: 'Загрузить и обработать', exact: true }).click();
-  await check(page.locator('dialog[open] [role="alert"]')).toContainText('Файл должен быть не больше 10 МБ');
+  await check(page.locator('.upload-item')).toContainText('Ошибка', {timeout:90_000});
+  await check(page.locator('.upload-item')).toContainText('не больше 10 МБ');
   expect(await page.locator('.document-item').count()).toBe(3);
   await mkdir(artifactDir, { recursive: true });
   await writeFile(resolve(artifactDir, `offline-browser-check-${capturePrefix}-${testInfo.project.name}.json`), JSON.stringify({

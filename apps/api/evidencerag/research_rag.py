@@ -127,6 +127,10 @@ class ExtractedFact:
     source_quote: str
     source_span_start: int
     source_span_end: int
+    date_role: str | None = None
+    old_value: str | None = None
+    target_clause: str | None = None
+    operation_kind: str | None = None
 
 
 @dataclass(frozen=True)
@@ -142,6 +146,10 @@ class AmendmentOperation:
     priority: int | None
     source_evidence_id: str
     link_proof: str | None
+    target_edition_version: str | None = None
+    source_quote: str | None = None
+    old_value_quote: str | None = None
+    new_value_quote: str | None = None
 
 
 @dataclass(frozen=True)
@@ -296,8 +304,27 @@ class EvidenceStoreBackend:
         unique = {}
         for hit in hits:
             ident = stable_evidence_id(hit)
-            if ident not in unique or float(hit.get("score", 0)) < float(unique[ident].get("score", 0)):
+            if ident not in unique:
                 unique[ident] = hit
+                continue
+            current = unique[ident]
+            audit_keys = ("revision_audit", "revision_audit_complete", "revision_document_count",
+                          "revision_chunk_count", "revision_relation", "revision_proof")
+            for key in audit_keys:
+                if key in hit:
+                    if key == "revision_relation":
+                        rank = {"seed": 0, "same_family": 1, "legacy_unique_edition_and_value": 2,
+                                "explicit_edition_and_clause_and_old_value": 3, "explicit_edition_date": 4,
+                                "explicit_amendment_chain": 3, "explicit_title": 4,
+                                "explicit_metadata_target": 5, "ambiguous_target": 6}
+                        if rank.get(hit[key], 1) < rank.get(current.get(key), 0):
+                            continue
+                    current[key] = hit[key]
+            if float(hit.get("score", 0)) < float(current.get("score", 0)) and not hit.get("revision_audit"):
+                unique[ident] = hit
+                for key in audit_keys:
+                    if key in current:
+                        unique[ident][key] = current[key]
         hits = sorted(unique.values(), key=lambda hit: (
             1 if hit.get("revision_audit") else 0,
             float(hit.get("score", 0))))
@@ -483,6 +510,56 @@ def _date_values(text: str) -> set[str]:
     return result
 
 
+_DATE_MENTION_RE = re.compile(
+    r"\b(?P<iso>\d{4}-\d{2}-\d{2})\b|"
+    r"\b(?P<day>\d{1,2})\s+(?P<month>января|февраля|марта|апреля|мая|июня|июля|"
+    r"августа|сентября|октября|ноября|декабря)\s+(?P<year>\d{4})\s*(?:года)?",
+    re.I,
+)
+
+
+def _date_mentions(text: str) -> list[dict]:
+    """Return normalized dates with exact source spans; roles are assigned separately."""
+    from datetime import date as _date
+    mentions = []
+    for match in _DATE_MENTION_RE.finditer(text):
+        try:
+            value = (match.group("iso") if match.group("iso") else
+                     _date(int(match.group("year")), _MONTHS[match.group("month").casefold()],
+                           int(match.group("day"))).isoformat())
+        except (ValueError, KeyError):
+            continue
+        mentions.append({"value": value, "start": match.start(), "end": match.end(),
+                         "text": match.group(0)})
+    return mentions
+
+
+def _date_role(sentence: str, mention: dict) -> str:
+    """Classify a date by its local legal/temporal cue, never by its mere presence."""
+    start, end = mention["start"], mention["end"]
+    before = sentence[max(0, start - 100):start].casefold()
+    after = sentence[end:min(len(sentence), end + 100)].casefold()
+    local = before + " <DATE> " + after
+    if re.search(r"редакци\w*\s+(?:от|по состоянию на)\s*$|издани\w*\s+от\s*$", before):
+        return "edition_reference"
+    if re.search(r"вступ\w*.{0,35}силу\s+(?:с|от)\s*$|действ\w*.{0,25}с\s*$|начина\w*.{0,25}действ\w*\s+(?:с|от)\s*$", before):
+        return "document_effective_from"
+    if re.search(r"(?:отмен\w*|утрат\w*.{0,20}силу|прекращ\w*.{0,20}действ\w*)\s+(?:с|от)\s*$", before):
+        return "repeal_effective_from"
+    if re.search(r"вместо\s*$|(?:ранее|прежде|стар(?:ый|ого)\s+(?:срок|дедлайн)).{0,45}$", before):
+        return "old_deadline"
+    deadline_cue = re.search(r"срок\w*\s+(?:сдач\w*|представлен\w*|подач\w*|приём\w*)|крайн\w*\s+срок|дедлайн|принима\w*.{0,35}(?:до|по)\s*$", before + after)
+    if deadline_cue:
+        if re.search(r"(?:перенес\w*|продл\w*|нов(?:ый|ого)\s+срок|установ\w*\s+нов\w*\s+срок)", local):
+            return "new_deadline"
+        if re.search(r"\b(?:до|по|не\s+позднее)\s*$", before) or "включительно" in after:
+            return "active_deadline"
+        if re.search(r"вместо.{0,120}$", before):
+            return "old_deadline"
+        return "deadline_candidate"
+    return "content_event"
+
+
 def _noun_lemmas(text: str) -> list[str]:
     from .retrieval import lemma, morphology
     result = []
@@ -615,6 +692,11 @@ def _target_edition_date(text: str) -> str | None:
     return next(iter(dates)) if len(dates) == 1 else None
 
 
+def _target_clause(text: str) -> str | None:
+    match = re.search(r"(?:пункт(?:а|е|ом)?|п\.)\s*(\d+(?:\.\d+)*)", text, re.I)
+    return match.group(1) if match else None
+
+
 _NUMBER_WORDS = {
     "ноль": 0, "один": 1, "одна": 1, "одно": 1, "два": 2, "две": 2,
     "три": 3, "четыре": 4, "пять": 5, "шесть": 6, "семь": 7,
@@ -688,6 +770,13 @@ def _extract_attribute_facts(text: str, attributes: list[tuple[str, str]]) -> li
         for attribute, noun in attributes:
             common = {"condition": condition, "source_span_start": sentence_start,
                       "source_span_end": sentence_end, "quote": sentence}
+            if re.search(r"(?:утратил\s+силу|отменить)", folded) and re.search(r"(?:пункт\w*\s+\d|документ\w*.{0,30}утратил)", folded):
+                facts.append({**common, "attribute": attribute, "value": "", "unit": "",
+                              "operator": "repealed", "subject": noun, "relation": "repealed",
+                              "object": None, "value_type": "operation", "old_value": None,
+                              "date_role": None, "target_clause": _target_clause(sentence),
+                              "operation_kind": "repeal"})
+                continue
             if attribute.startswith("count:"):
                 for number in _NUMBER_RE.finditer(folded):
                     value = _number_value(number.group(0))
@@ -709,6 +798,9 @@ def _extract_attribute_facts(text: str, attributes: list[tuple[str, str]]) -> li
                 date_spans = [m.span() for m in re.finditer(
                     r"\b\d{1,2}\s+(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря)\s+\d{4}(?:\s+года)?\b|\b\d{4}-\d{2}-\d{2}\b",
                     folded)]
+                date_spans.extend(m.span(1) for m in re.finditer(
+                    r"(?:редакци\w*|издани\w*|регламент\w*|положени\w*)\s+(?:от\s+)?(20\d{2})(?:\s+года)?",
+                    folded))
                 for number in _NUMBER_RE.finditer(folded):
                     if any(start <= number.start() < end for start, end in date_spans):
                         continue
@@ -730,14 +822,26 @@ def _extract_attribute_facts(text: str, attributes: list[tuple[str, str]]) -> li
                                   "subject": "", "relation": "has_duration", "object": None,
                                   "value_type": "duration", "old_value": old.group(1) if old else None})
             elif attribute in {"format", "submission_mode"}:
+                old_format = None
                 if attribute == "submission_mode":
                     patterns = [r"(?:сда[её]тся|представля[её]тся|пода[её]тся|принима[её]тся)\s+(?:только\s+)?(в\s+электронн\w+\s+вид\w*|в\s+цифров\w+\s+систем\w*|электронн\w+\s+форм\w*|посредством\s+цифров\w+\s+систем\w*(?:\s+сдач\w*)?|на\s+бумаг\w*|в\s+бумажн\w+\s+вид\w*)"]
                     values = [(match.group(1), match.start(), "text") for pattern in patterns for match in re.finditer(pattern, folded)]
                 else:
-                    if not re.search(r"формат|тип\s+файл|расширени|запис\w*\s+в\s+формат", folded):
+                    if not re.search(r"формат|тип\s+файл|расширени|запис\w*\s+в\s+формат|заменить\s+слова|считать\s+равн", folded):
                         continue
                     values = [(match.group(0), match.start(), "file_format")
                               for match in re.finditer(r"(?<![A-Za-z0-9])[A-Z][A-Z0-9]{1,9}(?![A-Za-z0-9])", sentence)]
+                    replacement = re.search(
+                        r"вместо\s+([A-Z][A-Z0-9]{1,9})\b.{0,100}?\b([A-Z][A-Z0-9]{1,9})\b",
+                        sentence, re.I | re.S)
+                    if not replacement:
+                        replacement = re.search(
+                            r"(?:заменить\s+слова\s+|значение\s+)([A-Z][A-Z0-9]{1,9})\b.{0,80}?(?:словами\s+|считать\s+равным\s+)([A-Z][A-Z0-9]{1,9})\b",
+                            sentence, re.I | re.S)
+                    if replacement:
+                        old_format = replacement.group(1).upper()
+                        new = replacement.group(2).upper()
+                        values = [(new, sentence.upper().find(new, replacement.start(2)), "file_format")]
                 for value, position, value_type in values:
                     prefix = folded[max(0, position-50):position]
                     prohibited = bool(re.search(r"запрещ\w*|не\s+допуска\w*|не\s+использ\w*|нельзя", prefix + folded[position:position+40]))
@@ -745,20 +849,24 @@ def _extract_attribute_facts(text: str, attributes: list[tuple[str, str]]) -> li
                                   "unit": "", "operator": "prohibited" if prohibited else "equals",
                                   "subject": "file" if attribute == "format" else "work",
                                   "relation": "forbidden_format" if prohibited else ("has_format" if attribute == "format" else "submitted_as"),
-                                  "object": value, "value_type": value_type, "old_value": None})
+                                  "object": value, "value_type": value_type,
+                                  "old_value": old_format,
+                                  "date_role": None, "target_clause": _target_clause(sentence)})
             elif attribute == "deadline":
-                for value in sorted(_date_values(sentence)):
-                    # Dates explicitly naming the target edition are not due dates.
-                    if value == _target_edition_date(sentence):
-                        continue
-                    position = sentence.find(value)
-                    if position < 0:
-                        date_match = re.search(r"\d{1,2}\s+[а-яё]+\s+\d{4}", sentence, re.I)
-                        position = date_match.start() if date_match else 0
-                    facts.append({**common, "attribute": attribute, "value": value, "unit": "",
+                mentions = _date_mentions(sentence)
+                roles = [_date_role(sentence, mention) for mention in mentions]
+                old_deadlines = [mention for mention, role in zip(mentions, roles) if role == "old_deadline"]
+                deadline_rows = [(mention, role) for mention, role in zip(mentions, roles)
+                                 if role in {"old_deadline", "new_deadline", "active_deadline", "deadline_candidate"}]
+                for mention, role in deadline_rows:
+                    position = mention["start"]
+                    prior_old = next((item for item in reversed(old_deadlines) if item["end"] < position), None)
+                    facts.append({**common, "attribute": attribute, "value": mention["value"], "unit": "",
                                   "operator": _operator_near(folded, position, "deadline"),
                                   "subject": "submission", "relation": "due_by", "object": None,
-                                  "value_type": "date", "old_value": None})
+                                  "value_type": "date", "old_value": prior_old["value"] if prior_old and role in {"new_deadline", "active_deadline"} else None,
+                                  "date_role": role, "target_clause": _target_clause(sentence),
+                                  "mention_start": position, "mention_text": mention["text"]})
             elif attribute.startswith("field:"):
                 for line in sentence.splitlines():
                     match = re.match(r"\s*([^:]{2,100}):\s*([^\n]{1,160})", line)
@@ -784,7 +892,9 @@ class ClaimExtractor:
                 item["operator"], item.get("unit"), item.get("object"), item.get("condition"),
                 hit.get("effective_from") or hit.get("date") or None, hit.get("effective_until"),
                 _hit_id(hit), str(hit.get("document")) if hit.get("document") is not None else None,
-                hit.get("digest"), quote, int(item["source_span_start"]), int(item["source_span_end"])))
+                hit.get("digest"), quote, int(item["source_span_start"]), int(item["source_span_end"]),
+                item.get("date_role"), item.get("old_value"), item.get("target_clause"),
+                item.get("operation_kind")))
         return tuple(extracted)
 
 
@@ -793,7 +903,7 @@ class VersionResolver:
     name = "explicit_revision_operations_v2"
 
     def _is_amendment(self, hit: dict) -> bool:
-        return bool(re.search(r"поправк|измен|дополнени|утратил\s+силу|вместо|заменить|новой\s+редакции",
+        return bool(re.search(r"поправк|измен|перенес|дополнени|утратил\s+силу|вместо|заменить|новой\s+редакции",
                               (str(hit.get("title", "")) + " " + str(hit.get("text", ""))).casefold()))
 
     def _operation(self, row: dict, base: dict) -> AmendmentOperation | None:
@@ -803,38 +913,74 @@ class VersionResolver:
         relation = hit.get("revision_relation")
         references = sorted(_referenced_dates(text))
         target_title = base.get("title") if base.get("title") and base["title"].casefold() in folded else None
-        clause_match = re.search(r"(?:пункт(?:а|е|ом)?|п\.)\s*([\d.]+)", folded)
+        clause = row.get("target_clause") or _target_clause(text)
+        clause_match = re.match(r".+", clause) if clause else None
+        target_edition_version = None
+        version_match = re.search(
+            r"(?:регламент\w*|положени\w*|редакци\w*)\s+(?:от\s+)?(?:20\d{2}\s+года|20\d{2})",
+            folded)
+        if version_match:
+            year = re.search(r"20\d{2}", version_match.group(0))
+            target_edition_version = year.group(0) if year else None
         if re.search(r"документ\w*.{0,50}утратил\s+силу|отменить\s+документ", folded):
             kind = "repeal_document"
-        elif re.search(r"утратил\s+силу|отменить", folded) and clause_match:
+        elif re.search(r"утратил\s+силу|отменить", folded) and clause:
             kind = "repeal_clause"
-        elif re.search(r"дополнить\s+(?:пункт|п\.)", folded):
+        elif re.search(r"дополнить\s+(?:пункт|п\.)", folded) and clause:
             kind = "add_clause"
-        elif (re.search(r"изложить\s+(?:пункт|п\.)", folded)
-              or re.search(r"вместо\s+.{1,60}(?:устанавлива|заменя|изменя)", folded)):
+        elif (row.get("old_value") is not None and row.get("value") is not None and
+              re.search(r"измен\w*|перенес\w*|замен\w*|считать\s+равн\w*|вместо", folded)):
             kind = "replace_value"
-        elif re.search(r"(?:изменить\s+(?:пункт|п\.)|(?:пункт|п\.)\s*[\d.]+.{0,40}\bизменить)", folded):
+        elif (re.search(r"изложить\s+(?:пункт|п\.)\s+.{0,100}?(?:следующ\w*\s+редакци|в\s+редакци)", folded)
+              and clause and row.get("value") is not None):
+            kind = "replace_clause"
+        elif re.search(r"(?:изменить\s+(?:пункт|п\.)|(?:пункт|п\.)\s*[\d.]+.{0,40}\bизменить)", folded) and clause:
             kind = "replace_clause"
         else:
             return None
-        proof = relation if relation in {"same_family", "explicit_title", "legacy_unique_edition_and_value"} else None
+        proof = relation if relation in {"same_family", "explicit_title", "legacy_unique_edition_and_value",
+                                         "explicit_edition_and_clause_and_old_value", "explicit_edition_date",
+                                         "explicit_metadata_target", "explicit_amendment_chain"} else None
         if not proof and target_title:
             proof = "exact_target_title_in_source"
         if not proof and references and row.get("old_value"):
             proof = "unique_date_plus_replaced_value" if row.get("legacy_unique_target") else None
         if not proof:
             return None
-        return AmendmentOperation(kind, target_title, _target_edition_date(text) or (references[0] if len(references) == 1 else None),
-            clause_match.group(1) if clause_match else None, hit.get("date") or None,
+        target_date = _target_edition_date(text)
+        if target_date is None and len(references) == 1 and not target_edition_version:
+            target_date = references[0]
+        def value_span(value):
+            if not value:
+                return None
+            iso = next((item for item in _date_mentions(text) if item["value"] == value), None)
+            if iso:
+                return iso["text"]
+            match = re.search(r"(?<![\w])" + re.escape(str(value)) + r"(?![\w])", text, re.I)
+            return match.group(0) if match else None
+        base_date = base.get("date") or base.get("effective_from")
+        if target_date and base_date and target_date != base_date:
+            return None
+        if target_edition_version and str(base.get("version") or "") != target_edition_version:
+            return None
+        return AmendmentOperation(kind, target_title, target_date,
+            clause, hit.get("date") or None,
             row.get("attribute"), row.get("old_value"), row.get("value"),
             int(re.search(r"приоритет\s+(\d+)", folded).group(1)) if re.search(r"приоритет\s+(\d+)", folded) else None,
-            row["evidence_id"], proof)
+            row["evidence_id"], proof, target_edition_version, row.get("quote"),
+            value_span(row.get("old_value")), value_span(row.get("value")))
 
     def resolve(self, slot: RequestedClaim, candidates: list[dict], request: SearchRequest,
                 analysis: QuestionAnalysis) -> tuple[dict | None, list[ConflictingClaim], list[EvidenceGap], dict]:
         from .retrieval import terms
         as_of = analysis.effective_as_of
         rows = [row for row in candidates if row["attribute"] == slot.claim_id]
+        if slot.claim_id == "deadline":
+            # Old deadlines and other dates in an amendment are evidence roles,
+            # not competing current requirements.
+            rows = [row for row in rows if row.get("date_role") not in {
+                "old_deadline", "edition_reference", "document_effective_from",
+                "repeal_effective_from", "content_event"}]
         rows = [row for row in rows if not row.get("condition") or
                 set(terms(row["condition"])).issubset(set(terms(request.question)))]
         if not rows:
@@ -867,9 +1013,21 @@ class VersionResolver:
             return None, [ConflictingClaim("Разные значения в одной применимой полной редакции для " + slot.claim_id,
                 tuple(sorted({row["evidence_id"] for row in latest_bases})))], [], {"selected_base": latest, "applied_operations": []}
         selected = latest_bases[-1]
+        base_selected = selected
         selected_base_title = selected.get("title")
         applied = []
+        rejected = []
         conflicts = []
+        ambiguous = [row for row in amendment_rows if row["hit"].get("revision_relation") == "ambiguous_target"]
+        if ambiguous:
+            ids = tuple(sorted({row["evidence_id"] for row in ambiguous}))
+            return None, [], [EvidenceGap("ambiguous-amendment-link-" + slot.claim_id, GapKind.VERSION,
+                "Найдено несколько одинаково подтверждённых целей поправки; она не применена.",
+                slot.subject or slot.label, as_of=as_of)], {
+                    "selected_base": latest, "base_document": selected_base_title,
+                    "base_value": selected["value"], "applied_operations": [],
+                    "ambiguous_amendment_evidence_ids": list(ids)}
+        candidates_by_date: dict[str, list[tuple[AmendmentOperation, dict]]] = {}
         for row in amendment_rows:
             hit = row["hit"]
             if request.family and hit.get("family") == request.family:
@@ -884,23 +1042,28 @@ class VersionResolver:
                     row["old_value"].casefold() in item["quote"].casefold() for item in matching_bases)
                     and len({item["effective_date"] for item in matching_bases}) == 1)
                 relation = hit.get("revision_relation")
-                linked = relation in {"same_family", "explicit_title", "legacy_unique_edition_and_value"} or exact_title or legacy_match
+                linked = relation in {"same_family", "explicit_title", "legacy_unique_edition_and_value",
+                                      "explicit_edition_and_clause_and_old_value", "explicit_edition_date",
+                                      "explicit_metadata_target", "explicit_amendment_chain"} or exact_title or legacy_match
                 proof = relation or ("exact_target_title_in_source" if exact_title else
                                      "unique_date_plus_replaced_value" if legacy_match else None)
             if not linked:
+                rejected.append({"source_evidence_id": row["evidence_id"], "reason": "no_explicit_target_link"})
                 continue
             operation = self._operation({**row, "revision_relation": proof,
                                          "legacy_unique_target": proof == "unique_date_plus_replaced_value"}, selected["hit"])
             if operation is None:
+                rejected.append({"source_evidence_id": row["evidence_id"], "reason": "operation_not_supported_or_target_mismatch"})
                 continue
             if operation.target_edition_date and operation.target_edition_date != latest:
+                rejected.append({"source_evidence_id": row["evidence_id"], "reason": "different_target_edition_date"})
+                continue
+            if operation.target_edition_version and operation.target_edition_version != str(selected.get("version") or ""):
+                rejected.append({"source_evidence_id": row["evidence_id"], "reason": "different_target_edition_version"})
                 continue
             if operation.operation in {"repeal_clause", "repeal_document"}:
-                gaps = [EvidenceGap("repealed-" + slot.claim_id, GapKind.VERSION,
-                    "Применимая поправка отменяет этот пункт или документ; значение не считается действующим.",
-                    slot.subject or slot.label, as_of=as_of)]
-                applied.append(asdict(operation))
-                return None, [], gaps, {"selected_base": latest, "applied_operations": applied}
+                candidates_by_date.setdefault(operation.effective_from or "", []).append((operation, row))
+                continue
             if operation.operation in {"add_clause", "replace_clause"}:
                 # A clause-level operation without an extracted replacement value
                 # is recorded, but no guessed value is emitted.
@@ -911,33 +1074,60 @@ class VersionResolver:
                         {"selected_base": latest, "applied_operations": [asdict(operation)]})
             if operation.operation not in {"replace_value", "replace_clause"}:
                 continue
-            if operation.old_value and _canonical_fact_value(slot.claim_id, operation.old_value) != _canonical_fact_value(slot.claim_id, selected["value"]):
-                continue
-            applied.append(asdict(operation))
-        if applied:
-            newest_date = max(op["effective_from"] or "" for op in applied)
-            newest = [op for op in applied if (op["effective_from"] or "") == newest_date]
-            values = {op["new_value"] for op in newest}
-            priorities = {op["priority"] for op in newest if op["priority"] is not None}
-            if len(values) > 1 and len(priorities) != len(newest):
-                conflicts.append(ConflictingClaim("Конкурирующие поправки задают разные значения для " + slot.claim_id,
-                    tuple(sorted({op["source_evidence_id"] for op in newest}))))
-            elif len(values) > 1:
-                top_priority = max(priorities)
-                top = [op for op in newest if op["priority"] == top_priority]
-                if len({op["new_value"] for op in top}) > 1:
-                    conflicts.append(ConflictingClaim("Равноприоритетные поправки не согласованы для " + slot.claim_id,
-                        tuple(sorted({op["source_evidence_id"] for op in top}))))
+            candidates_by_date.setdefault(operation.effective_from or "", []).append((operation, row))
+
+        current_value = base_selected["value"]
+        for effective_from in sorted(candidates_by_date):
+            dated_operations = candidates_by_date[effective_from]
+            matching = []
+            for operation, row in dated_operations:
+                if operation.old_value and _canonical_fact_value(slot.claim_id, operation.old_value) != _canonical_fact_value(slot.claim_id, current_value):
+                    rejected.append({"source_evidence_id": operation.source_evidence_id,
+                                     "reason": "old_value_does_not_match_preceding_effective_value",
+                                     "expected_old_value": current_value, "stated_old_value": operation.old_value})
                 else:
-                    chosen_id = top[0]["source_evidence_id"]
-                    selected = next(row for row in amendment_rows if row["evidence_id"] == chosen_id)
-            else:
-                chosen_id = newest[0]["source_evidence_id"]
-                selected = next(row for row in amendment_rows if row["evidence_id"] == chosen_id)
+                    matching.append((operation, row))
+            repealed = [(operation, row) for operation, row in matching
+                        if operation.operation in {"repeal_clause", "repeal_document"}]
+            if repealed:
+                applied.extend(asdict(operation) for operation, _ in repealed)
+                return None, [], [EvidenceGap("repealed-" + slot.claim_id, GapKind.VERSION,
+                    "Применимая поправка отменяет этот пункт или документ; значение не считается действующим.",
+                    slot.subject or slot.label, as_of=as_of)], {
+                        "selected_base": latest, "base_document": selected_base_title,
+                        "base_value": base_selected["value"], "applied_operations": applied,
+                        "effective_value": None, "rejected_operations": rejected}
+            replacements = [(operation, row) for operation, row in matching
+                            if operation.operation in {"replace_value", "replace_clause"}]
+            if not replacements:
+                continue
+            values = {operation.new_value for operation, _ in replacements}
+            priorities = {operation.priority for operation, _ in replacements if operation.priority is not None}
+            selected_replacements = replacements
+            if len(values) > 1:
+                if len(priorities) != len(replacements):
+                    conflicts.append(ConflictingClaim("Конкурирующие поправки задают разные значения для " + slot.claim_id,
+                        tuple(sorted({operation.source_evidence_id for operation, _ in replacements}))))
+                    continue
+                top_priority = max(priorities)
+                selected_replacements = [(operation, row) for operation, row in replacements if operation.priority == top_priority]
+                if len({operation.new_value for operation, _ in selected_replacements}) > 1:
+                    conflicts.append(ConflictingClaim("Равноприоритетные поправки не согласованы для " + slot.claim_id,
+                        tuple(sorted({operation.source_evidence_id for operation, _ in selected_replacements}))))
+                    continue
+            chosen_operation, selected = selected_replacements[-1]
+            current_value = chosen_operation.new_value or current_value
+            applied.extend(asdict(operation) for operation, _ in selected_replacements)
         audit = {"selected_base": latest, "base_document": selected_base_title,
-                 "applied_operations": applied}
+                 "base_version": selected.get("version"), "base_value": latest_bases[-1]["value"],
+                 "rejected_operations": rejected, "applied_operations": applied}
         if conflicts:
             return None, conflicts, [], audit
+
+        audit.update({"effective_value": selected.get("value"),
+                      "effective_evidence_id": selected.get("evidence_id"),
+                      "effective_source_quote": selected.get("quote"),
+                      "revision_catalog_complete": selected.get("revision_audit_complete")})
 
         operator = selected.get("operator", "equals")
         expected = slot.operator
@@ -1013,9 +1203,8 @@ class StructuredClaimEvaluator:
                     "effective_date":fact.effective_from, "family":hit.get("family"),
                     "version":hit.get("version"), "title":hit.get("title"),
                     "references":sorted(_referenced_dates(hit.get("text", ""))),
-                    "old_value":next((item.get("old_value") for item in _extract_attribute_facts(
-                        hit.get("text", ""), [(fact.claim_id, fact.subject)])
-                        if item.get("value") == fact.value and item.get("source_span_start") == fact.source_span_start), None),
+                    "old_value":fact.old_value, "date_role":fact.date_role,
+                    "target_clause":fact.target_clause,
                     "hit":hit})
 
         claims, gaps, conflicts, resolutions = [], [], [], {}
@@ -1074,10 +1263,11 @@ class StructuredClaimEvaluator:
                 selected.get("source_span_start"), selected.get("source_span_end")))
 
         audit_hits = [h for h in hits if h.get("revision_audit")]
-        audit_complete = all(bool(h.get("revision_audit_complete")) for h in audit_hits) if audit_hits else None
-        if audit_hits and not audit_complete and not any(g.kind is GapKind.VERSION and "полностью" in g.description for g in gaps):
+        audit_complete = all(bool(h.get("revision_audit_complete")) for h in audit_hits) if audit_hits else False
+        if not audit_complete and not any(g.kind is GapKind.VERSION and
+                ("полностью" in g.description.casefold() or "каталог" in g.description.casefold()) for g in gaps):
             gaps.append(EvidenceGap("revision-catalog-incomplete", GapKind.VERSION,
-                "Каталог связанных редакций не помещён в бюджет; отсутствие поправок не установлено.",
+                "Связанный каталог поправок не проверен полностью; отсутствие применимых поправок не установлено.",
                 "проверить все связанные редакции", as_of=analysis.effective_as_of))
         status = (SufficiencyStatus.CONFLICTING if conflicts else
                   SufficiencyStatus.APPLICABILITY_UNCERTAIN if any(g.kind is GapKind.VERSION for g in gaps) else
@@ -1087,7 +1277,7 @@ class StructuredClaimEvaluator:
         constraints = {"schema_version":"claim-resolution-v2", "as_of":analysis.effective_as_of,
             "question_dates":list(analysis.explicit_dates), "requested_claims":[asdict(s) for s in analysis.requested_claims],
             "resolution":resolutions, "applied_amendment_evidence_ids":operation_ids,
-            "revision_catalog_complete":audit_complete,
+            "revision_catalog_checked":bool(audit_hits), "revision_catalog_complete":audit_complete,
             "revision_document_count":max((int(h.get("revision_document_count",0)) for h in audit_hits), default=0)}
         summary = ("Проверены запросные слоты, локальные структурные связи, даты и явные операции над редакциями. "
                    "Семантический judge не подключён; текстовое совпадение само по себе подтверждением не считается.")

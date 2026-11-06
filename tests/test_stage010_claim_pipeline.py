@@ -17,7 +17,8 @@ TITLE = 'Положение о зачёте по практикуму «Поле
 
 def hit(ident, text, date, family='speech-corpus', version='2026', title=TITLE):
     return {'evidence_id': ident, 'text': text, 'date': date, 'family': family,
-            'version': version, 'title': title, 'source_revision_id': 'doc-' + ident}
+            'version': version, 'title': title, 'source_revision_id': 'doc-' + ident,
+            'revision_audit': True, 'revision_audit_complete': True, 'revision_document_count': 1}
 
 
 def corpus():

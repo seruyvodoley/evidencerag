@@ -1,4 +1,10 @@
-# Актуальная передача — этап 010 (03.11.2026)
+# Актуальная передача — этап 011 (03.11.2026)
+
+Implementation in progress, based on source HEAD `cf98bba91ec94a02274fca2e9d1eab713e50acd6` and the matching `origin/master`. The working tree already held Stage 011A changes from the preceding turn; this turn continued them. Read `STAGE_011_AUDIT.md`, `STAGE_011_VERSION_FIX.md`, `STAGE_011_IMPORT_UX.md` and `STAGE_011_EVALUATION.md`. Python suite: 98 passed, one existing deprecation warning; Svelte check clean; `build:local` successful. No source commit or Pages deployment has been made.
+
+The original user documents were unavailable, so the regression is a clearly marked synthetic fixture from the exact prompt text. Critical remaining blocker: the production browser-local UI loaded and displayed three ZIP entries, but Pyodide initialization stayed pending and no ZIP was committed/indexed. Diagnose before claiming success or publishing. Then run ZIP → metadata edits → batch add → as-of query/citations → metadata edit → query again → page refresh persistence in desktop and mobile Chromium. Complete the broader negative amendment and malicious ZIP tests. Do not touch VPS/TunnelDeck/Caddy/SSH/WireGuard/DNS.
+
+## Stage 010 historical handoff
 
 Исходный HEAD `06f5d28819017abc237a93323cd10daaf7bcdeb6`. На старте `experiments/e2e-results.json` уже содержал пользовательские изменения; его нельзя включать в commit. Инфраструктуру не менять.
 

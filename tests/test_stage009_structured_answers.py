@@ -16,7 +16,10 @@ QUESTION = FIXTURE["question"]
 
 def source(ident, text, date, family=FAMILY, version="2026", title="Практикум Причастный оборот"):
     return {"evidence_id": ident, "text": text, "date": date, "family": family,
-            "version": version, "title": title, "source_revision_id": "doc-" + ident}
+            "version": version, "title": title, "source_revision_id": "doc-" + ident,
+            # These small authored fixtures are the complete mock catalog for each
+            # case. Production answers still require the store's linked-revision audit.
+            "revision_audit": True, "revision_audit_complete": True, "revision_document_count": 1}
 
 
 def corpus():

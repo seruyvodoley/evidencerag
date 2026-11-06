@@ -1,3 +1,9 @@
+# Stage 011 — implementation in progress (03.11.2026)
+
+Stage 011A version-role and partial-amendment corrections, 011B bulk metadata-assisted import, persistent metadata edits and safe ZIP extraction are implemented in the working tree. Verification: `.venv/bin/pytest -q` — 98 passed (one existing Starlette/httpx warning); `npm run check` — clean; `npm run build:local` — successful. The authored version regression is synthetic because the user's original documents were unavailable.
+
+Acceptance is incomplete: production Chromium opened the interface and showed three ZIP entries in the queue, but Pyodide initialization did not finish during observation. Browser import/index/query/citation/refresh persistence and mobile E2E therefore remain unverified. No source commit or Pages deployment was made. Do not describe Stage 011 as published or complete. Reports: [audit](STAGE_011_AUDIT.md), [version fix](STAGE_011_VERSION_FIX.md), [import UX](STAGE_011_IMPORT_UX.md), [evaluation](STAGE_011_EVALUATION.md).
+
 # Актуальное состояние — этап 010 (03.11.2026)
 
 Реализовано исправление pipeline достаточности: typed question slots/facts, индекс явных связей редакций, структурная верификация цитат и единый trace/evidence контракт браузерного режима. Контрольный synthetic случай возвращает 9 записей и максимум 5 минут из полной редакции 2026 года, FLAC и 30.11.2026 включительно из межсемейной поправки. Это regression, не независимая оценка. Semantic/NLI judge, сложный парсер норм и преимущество над baseline не заявляются. Отчёты этапа: [аудит](STAGE_010_AUDIT.md), [архитектура](STAGE_010_DESIGN.md), [оценка и ограничения](STAGE_010_EVALUATION.md).
